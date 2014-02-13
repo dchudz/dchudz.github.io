@@ -10,5 +10,24 @@ title: "Posts"
       <span>{{ post.date | date: "%B %e, %Y" }}</span> <a href="{{ post.url }}">{{ post.title }}</a>
     </li>
     {% endfor %}
+
+<ul>
+  {% for post in site.posts %}
+    <li>
+     <h2> <a href="{{ post.url }}">{{ post.title }}</a></h2>
+
+{% if post.content contains '<!--more-->' %}
+    {{ post.content | split:'<!--more-->' | first }}
+        <p><a href="{{ post.url }}">(more)</a></p>
+{% else %}
+    <!-- Case for when no excerpt is defined -->
+    {{ post.content }}
+{% endif %}
+
+
+    </li>
+  {% endfor %}
+</ul>
+
   </ul>
 </section>

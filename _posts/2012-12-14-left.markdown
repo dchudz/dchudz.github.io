@@ -1,8 +1,10 @@
 ---
 layout: post
-title: Left3
+title: Left2
 category: posts
 ---
+
+Hihihihihi
 
 Left is a clean, whitespace-happy layout for [Jekyll][jekyll].
 
