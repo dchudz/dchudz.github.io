@@ -4,17 +4,12 @@ title: "Posts"
 ---
 
 <section class="content">
-  <ul class="listing">
-    {% for post in site.posts %}
-    <li>
-      <span>{{ post.date | date: "%B %e, %Y" }}</span> <a href="{{ post.url }}">{{ post.title }}</a>
-    </li>
-    {% endfor %}
 
-<ul>
   {% for post in site.posts %}
-    <li>
      <h2> <a href="{{ post.url }}">{{ post.title }}</a></h2>
+       <section class="byline">
+    {{ post.date | date: "%B %e, %Y" }}
+  </section>
 
 {% if post.content contains '<!--more-->' %}
     {{ post.content | split:'<!--more-->' | first }}
@@ -24,10 +19,7 @@ title: "Posts"
     {{ post.content }}
 {% endif %}
 
-
-    </li>
+<hr />
   {% endfor %}
-</ul>
-
   </ul>
 </section>

@@ -4,9 +4,8 @@ permalink: /posts/:title
 rdiscount:
   extensions: [smart]
 
-name: Zach Holman
-url: http://zachholman.com
-description: A fantastic blog that is fantastic.
-twitter: holman
-github: holman
-gravatar_url: http://gravatar.com/avatar/6f63cde8b16b035280ca615f621a6c8c
+name: David Chudzicki
+url: dchudz.github.io
+description: Blog draft
+github: dchudz
+gravatar_url: https://secure.gravatar.com/avatar/63bcfcfcdf0fb75e508151e5fd944092
