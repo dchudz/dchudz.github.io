@@ -13,7 +13,7 @@ Complicated models will often fit your data better than simple ones, but it's ha
 
 ### [Website for Knitters](http://plannedpooling.com)
 
-This is a site I made is useful for something some knitters do called "planned pooling". It gets about 1000 unique visitors per month.
+This is useful for something some knitters do called "planned pooling". It gets about 1000 unique visitors per month.
 
 ## Contact
 
