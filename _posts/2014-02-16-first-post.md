@@ -18,31 +18,26 @@ Here are the posts I'm intending to migrate:
 - [http://blog.davidchudzicki.com/2011/12/visualizing-chalearn-gestures-test-data.html](http://blog.davidchudzicki.com/2011/12/visualizing-chalearn-gestures-test-data.html)
 
 
-
-
-
-
 ## 2D Embeddings Based on Random Forest Proximity
 
 - [http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html](http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html)
 - [http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html](http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html)
 
+## Stan...
+
+- [http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html](http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html)
+
+
+- [http://blog.davidchudzicki.com/2013/10/dithering.html](http://blog.davidchudzicki.com/2013/10/dithering.html)
+
+
+- [http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html](http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html)
+
+
 ## Visualization of the Weirstrass Elliptic Function as a Sum of Terms
 
-![w](http://{{ site.url }}/assets/weierstrass.gif)
-
-![w]({{ site.url }}/assets/weierstrass_elliptic_function_zoomed_out.gif)
-
-{{ site.url }}
-
-
+![w](/images/posts/weierstrass.gif)
 
 
 http://blogs.ams.org/visualinsight/2014/01/15/weierstrass-elliptic-function/
-
-- [http://blog.davidchudzicki.com/2013/03/weierstrass-elliptic-function.html](http://blog.davidchudzicki.com/2013/03/weierstrass-elliptic-function.html)
-- [http://blog.davidchudzicki.com/2013/07/mine-depth-make-your-axes-meaningful.html](http://blog.davidchudzicki.com/2013/07/mine-depth-make-your-axes-meaningful.html)
-- [http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html](http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html)
-- [http://blog.davidchudzicki.com/2013/10/dithering.html](http://blog.davidchudzicki.com/2013/10/dithering.html)
-- [http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html](http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html)
 
