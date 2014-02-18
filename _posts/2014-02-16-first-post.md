@@ -29,7 +29,7 @@ Here are the posts I'm intending to migrate:
 
 ## Visualization of the Weirstrass Elliptic Function as a Sum of Terms
 
-![w]({{ site.url }}/assets/weierstrass.gif)
+![w](http://{{ site.url }}/assets/weierstrass.gif)
 
 ![w]({{ site.url }}/assets/weierstrass_elliptic_function_zoomed_out.gif)
 
