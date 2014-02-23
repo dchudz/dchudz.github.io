@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+      Posts &ndash;
+    
+    David Chudzicki
+  </title>
+
+  <meta name="author" content="David Chudzicki" />
+  <meta name="description" content="Blog draft" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel="alternate" type="application/rss+xml" href="/atom.xml" />
+
+  <link rel="stylesheet" href="/css/fontawesome.min.css" type="text/css" media="screen, projection" />
+  <link rel="stylesheet" href="/css/base.css" type="text/css" media="screen, projection" />
+  <link rel="stylesheet" href="/css/pygments.css" type="text/css" />
+  <link media="only screen and (max-device-width: 480px)" href="/css/mobile.css" type="text/css" rel="stylesheet" />
+  <link media="only screen and (device-width: 768px)" href="/css/mobile.css" type="text/css" rel="stylesheet" />
+  <link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css'>
+
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/application.js"></script>
+
+
+<script type="text/javascript" src="/js/rsyntax.js"></script>
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+ <link rel="stylesheet" href="/css/rmd.css" type="text/css" />
+
+
+
+</head>
+
+<body>
+  <section class="sidebar">
+    <a href="/">
+      <img src="https://secure.gravatar.com/avatar/63bcfcfcdf0fb75e508151e5fd944092?s=150" height="75" width="75" class="avatar" />
+    </a>
+
+    <section class="name">
+      <a href="/">
+        <span id="fname">David</span>
+        <span id="lname">Chudzicki</span>
+      </a>
+    </section>
+
+    <section class="meta">
+      <a href="https://github.com/dchudz" target="_blank"><i class="icon icon-github"></i></a>
+      <a href="/atom.xml"><i class="icon icon-rss"></i></a>
+    </section>
+
+    <section class="sections">
+      <ul>
+        <li><a href="/about.html">about</a></li>
+        <li><a href="/">posts</a></li>
+<!--!        <li><a href="/post-list.html">post list</a></li>-->
+      </ul>
+    </section>
+  </section>
+
+  <section class="content">
+
+  
+     <h2> <a href="/posts/first-post">Some Old Stuff</a></h2>
+       <section class="byline">
+    February 16, 2014
+  </section>
+
+
+    <!-- Case for when no excerpt is defined -->
+    <p>This is my first post in this new location/format. Any posts dated earlier than this are migrated from the other blog.</p>
+
+<p>Here are the posts I&#39;m intending to migrate:</p>
+
+<h3>Simulated Knitting (<a href="http://blog.davidchudzicki.com/2011/11/simulated-knitting.html">post</a>) <a href="https://github.com/dchudz/Knit3d/blob/master/CreateGraph.py"><img src="/images/posts/GitHub-Mark.png" alt="Knit3D"></a></h3>
+
+<p>I created a <code>KnittedGraph</code> class (a subclass of Python&#39;s <code>igraph</code> graph class) with methods like this:</p>
+<div class="highlight"><pre><code class="python language-python" data-lang="python"><span class="n">g</span> <span class="o">=</span> <span class="n">KnittedGraph</span><span class="p">()</span>
+<span class="n">g</span><span class="o">.</span><span class="n">AddStitches</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">ConnectToZero</span><span class="p">()</span> <span class="c"># join with the first stitch for a circular shape </span>
+<span class="n">g</span><span class="o">.</span><span class="n">NewRow</span><span class="p">()</span> <span class="c"># start a new row of stitches</span>
+<span class="n">g</span><span class="o">.</span><span class="n">Increase</span><span class="p">()</span> <span class="c"># two stitches in new row connect to one stitch in old</span>
+<span class="c">#(etc.)</span>
+</code></pre></div>
+<p>The generated graph is then embedded in 3D using a standard approach. Here&#39;s a hat I made this way:</p>
+
+<p><img src="/images/posts/hat_100_20.png" alt="hat"></p>
+
+<p>This getting <a href="https://news.ycombinator.com/item?id=3329533">Hacker News&#39;d</a> is how I learned what Hacker News is.</p>
+
+<h3>2D Embeddings Based on Random Forest Proximity (<a href="http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html">1</a>, <a href="http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html">2</a>) <a href="https://github.com/dchudz/misc/tree/master/random_forest_visualizations"><img src="/images/posts/GitHub-Mark.png" alt="random_forest_visualizations"></a></h3>
+
+<p>There are all sorts of ways to embed high-dimensional data in low dimensions for visualization. </p>
+
+<ul>
+<li><a href="http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html"></a></li>
+<li><a href="http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html">http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html</a></li>
+</ul>
+
+<p><img src="/images/posts/diamondsRF.png" alt="hat"></p>
+
+<h3>Stan...</h3>
+
+<ul>
+<li><p><a href="http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html">http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html</a></p></li>
+<li><p><a href="http://blog.davidchudzicki.com/2013/10/dithering.html">http://blog.davidchudzicki.com/2013/10/dithering.html</a></p></li>
+<li><p><a href="http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html">http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html</a></p></li>
+</ul>
+
+<h3>Visualization of the Weirstrass Elliptic Function as a Sum of Terms</h3>
+
+<p><img src="/images/posts/weierstrass.gif" alt="weierstrass"></p>
+
+<p>http://blogs.ams.org/visualinsight/2014/01/15/weierstrass-elliptic-function/</p>
+
+
+
+<hr />
+  
+  </ul>
+</section>
+</body>
+
+</html>

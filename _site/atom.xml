@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>David Chudzicki</title>
+ <link href="dchudz.github.io/atom.xml" rel="self"/>
+ <link href="dchudz.github.io/"/>
+ <updated>2014-02-23T13:19:47-08:00</updated>
+ <id>dchudz.github.io</id>
+ <author>
+   <name>David Chudzicki</name>
+ </author>
+ 
+ 
+ <entry>
+   <title>Some Old Stuff</title>
+   <link href="dchudz.github.io/posts/first-post"/>
+   <updated>2014-02-16T00:00:00-08:00</updated>
+   <id>dchudz.github.io/posts/first-post</id>
+   <content type="html">&lt;p&gt;This is my first post in this new location/format. Any posts dated earlier than this are migrated from the other blog.&lt;/p&gt;
+
+&lt;p&gt;Here are the posts I&amp;#39;m intending to migrate:&lt;/p&gt;
+
+&lt;h3&gt;Simulated Knitting (&lt;a href=&quot;http://blog.davidchudzicki.com/2011/11/simulated-knitting.html&quot;&gt;post&lt;/a&gt;) &lt;a href=&quot;https://github.com/dchudz/Knit3d/blob/master/CreateGraph.py&quot;&gt;&lt;img src=&quot;/images/posts/GitHub-Mark.png&quot; alt=&quot;Knit3D&quot;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;I created a &lt;code&gt;KnittedGraph&lt;/code&gt; class (a subclass of Python&amp;#39;s &lt;code&gt;igraph&lt;/code&gt; graph class) with methods like this:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;python language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;KnittedGraph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AddStitches&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ConnectToZero&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# join with the first stitch for a circular shape &lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NewRow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# start a new row of stitches&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Increase&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# two stitches in new row connect to one stitch in old&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#(etc.)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The generated graph is then embedded in 3D using a standard approach. Here&amp;#39;s a hat I made this way:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/posts/hat_100_20.png&quot; alt=&quot;hat&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;This getting &lt;a href=&quot;https://news.ycombinator.com/item?id=3329533&quot;&gt;Hacker News&amp;#39;d&lt;/a&gt; is how I learned what Hacker News is.&lt;/p&gt;
+
+&lt;h3&gt;2D Embeddings Based on Random Forest Proximity (&lt;a href=&quot;http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html&quot;&gt;1&lt;/a&gt;, &lt;a href=&quot;http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html&quot;&gt;2&lt;/a&gt;) &lt;a href=&quot;https://github.com/dchudz/misc/tree/master/random_forest_visualizations&quot;&gt;&lt;img src=&quot;/images/posts/GitHub-Mark.png&quot; alt=&quot;random_forest_visualizations&quot;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;There are all sorts of ways to embed high-dimensional data in low dimensions for visualization. &lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html&quot;&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html&quot;&gt;http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/posts/diamondsRF.png&quot; alt=&quot;hat&quot;&gt;&lt;/p&gt;
+
+&lt;h3&gt;Stan...&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&quot;http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html&quot;&gt;http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&quot;http://blog.davidchudzicki.com/2013/10/dithering.html&quot;&gt;http://blog.davidchudzicki.com/2013/10/dithering.html&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&quot;http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html&quot;&gt;http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3&gt;Visualization of the Weirstrass Elliptic Function as a Sum of Terms&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/posts/weierstrass.gif&quot; alt=&quot;weierstrass&quot;&gt;&lt;/p&gt;
+
+&lt;p&gt;http://blogs.ams.org/visualinsight/2014/01/15/weierstrass-elliptic-function/&lt;/p&gt;
+</content>
+ </entry>
+ 
+ 
+</feed>
