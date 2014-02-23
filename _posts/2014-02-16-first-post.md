@@ -9,7 +9,7 @@ This is my first post in this new location/format. Any posts dated earlier than 
 
 Here are the posts I'm intending to migrate:
 
-### Simulated Knitting ([post](http://blog.davidchudzicki.com/2011/11/simulated-knitting.html)) [![Knit3D](/images/posts/GitHub-Mark.png)](https://github.com/dchudz/Knit3d/blob/master/CreateGraph.py)
+### Simulated Knitting ([post](http://blog.davidchudzicki.com/2011/11/simulated-knitting.html)) [![Knit3D](/images/posts/gh.png)](https://github.com/dchudz/Knit3d/blob/master/CreateGraph.py)
 
 
 I created a ```KnittedGraph``` class (a subclass of Python's ```igraph``` graph class) with methods like this:
@@ -29,7 +29,7 @@ The generated graph is then embedded in 3D using a standard approach. Here's a h
 
 This getting [Hacker News'd](https://news.ycombinator.com/item?id=3329533) is how I learned what Hacker News is.
 
-### 2D Embeddings Based on Random Forest Proximity ([1](http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html), [2](http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html)) [![random_forest_visualizations](/images/posts/GitHub-Mark.png)](https://github.com/dchudz/misc/tree/master/random_forest_visualizations)
+### 2D Embeddings Based on Random Forest Proximity ([1](http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html), [2](http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html)) [![random_forest_visualizations](/images/posts/gh.png)](https://github.com/dchudz/misc/tree/master/random_forest_visualizations)
 
 There are all sorts of ways to embed high-dimensional data in low dimensions for visualization. 
 

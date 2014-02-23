@@ -4,7 +4,7 @@
  <title>David Chudzicki</title>
  <link href="dchudz.github.io/atom.xml" rel="self"/>
  <link href="dchudz.github.io/"/>
- <updated>2014-02-23T13:22:46-08:00</updated>
+ <updated>2014-02-23T13:23:51-08:00</updated>
  <id>dchudz.github.io</id>
  <author>
    <name>David Chudzicki</name>
@@ -20,7 +20,7 @@
 
 &lt;p&gt;Here are the posts I&amp;#39;m intending to migrate:&lt;/p&gt;
 
-&lt;h3&gt;Simulated Knitting (&lt;a href=&quot;http://blog.davidchudzicki.com/2011/11/simulated-knitting.html&quot;&gt;post&lt;/a&gt;) &lt;a href=&quot;https://github.com/dchudz/Knit3d/blob/master/CreateGraph.py&quot;&gt;&lt;img src=&quot;/images/posts/GitHub-Mark.png&quot; alt=&quot;Knit3D&quot;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;Simulated Knitting (&lt;a href=&quot;http://blog.davidchudzicki.com/2011/11/simulated-knitting.html&quot;&gt;post&lt;/a&gt;) &lt;a href=&quot;https://github.com/dchudz/Knit3d/blob/master/CreateGraph.py&quot;&gt;&lt;img src=&quot;/images/posts/gh.png&quot; alt=&quot;Knit3D&quot;&gt;&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;I created a &lt;code&gt;KnittedGraph&lt;/code&gt; class (a subclass of Python&amp;#39;s &lt;code&gt;igraph&lt;/code&gt; graph class) with methods like this:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;python language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;KnittedGraph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
@@ -36,7 +36,7 @@
 
 &lt;p&gt;This getting &lt;a href=&quot;https://news.ycombinator.com/item?id=3329533&quot;&gt;Hacker News&amp;#39;d&lt;/a&gt; is how I learned what Hacker News is.&lt;/p&gt;
 
-&lt;h3&gt;2D Embeddings Based on Random Forest Proximity (&lt;a href=&quot;http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html&quot;&gt;1&lt;/a&gt;, &lt;a href=&quot;http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html&quot;&gt;2&lt;/a&gt;) &lt;a href=&quot;https://github.com/dchudz/misc/tree/master/random_forest_visualizations&quot;&gt;&lt;img src=&quot;/images/posts/GitHub-Mark.png&quot; alt=&quot;random_forest_visualizations&quot;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;2D Embeddings Based on Random Forest Proximity (&lt;a href=&quot;http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html&quot;&gt;1&lt;/a&gt;, &lt;a href=&quot;http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html&quot;&gt;2&lt;/a&gt;) &lt;a href=&quot;https://github.com/dchudz/misc/tree/master/random_forest_visualizations&quot;&gt;&lt;img src=&quot;/images/posts/gh.png&quot; alt=&quot;random_forest_visualizations&quot;&gt;&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;There are all sorts of ways to embed high-dimensional data in low dimensions for visualization. &lt;/p&gt;
 
