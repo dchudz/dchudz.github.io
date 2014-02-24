@@ -71,11 +71,7 @@
 
 
     <!-- Case for when no excerpt is defined -->
-    <p>This is my first post in this new location/format. Any posts dated earlier than this are migrated from the other blog.</p>
-
-<p>Here are the posts I&#39;m intending to migrate:</p>
-
-<h3>Simulated Knitting (<a href="http://blog.davidchudzicki.com/2011/11/simulated-knitting.html">post</a>) <a href="https://github.com/dchudz/Knit3d/blob/master/CreateGraph.py"><img src="/images/posts/gh.png" alt="Knit3D"></a></h3>
+    <h3>Simulated Knitting (<a href="http://blog.davidchudzicki.com/2011/11/simulated-knitting.html">post</a>) <a href="https://github.com/dchudz/Knit3d/blob/master/CreateGraph.py"><img src="/images/posts/gh.png" alt="Knit3D"></a></h3>
 
 <p>I created a <code>KnittedGraph</code> class (a subclass of Python&#39;s <code>igraph</code> graph class) with methods like this:</p>
 <div class="highlight"><pre><code class="python language-python" data-lang="python"><span class="n">g</span> <span class="o">=</span> <span class="n">KnittedGraph</span><span class="p">()</span>
@@ -91,24 +87,33 @@
 
 <p>This getting <a href="https://news.ycombinator.com/item?id=3329533">Hacker News&#39;d</a> is how I learned what Hacker News is.</p>
 
-<h3>2D Embeddings Based on Random Forest Proximity (<a href="http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html">1</a>, <a href="http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html">2</a>) <a href="https://github.com/dchudz/misc/tree/master/random_forest_visualizations"><img src="/images/posts/gh.png" alt="random_forest_visualizations"></a></h3>
+<h3>2D Embeddings from Unsupervised Random Forests (<a href="http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html">1</a>, <a href="http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html">2</a>) <a href="https://github.com/dchudz/misc/tree/master/random_forest_visualizations"><img src="/images/posts/gh.png" alt="random_forest_visualizations"></a></h3>
 
-<p>There are all sorts of ways to embed high-dimensional data in low dimensions for visualization. </p>
+<p>There are all sorts of ways to embed high-dimensional data in low dimensions for visualization. Here&#39;s one:</p>
 
-<ul>
-<li><a href="http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html"></a></li>
-<li><a href="http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html">http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html</a></li>
-</ul>
+<ol>
+<li>Given some set of high dimensional examples, build a random forest to distinguish examples from non-examples.</li>
+<li>Assign similarities to pairs of examples based on how often they are in leaf nodes together.</li>
+<li>Map examples to 2D, making similarity inverse to distance as well as possible (I used <a href="https://en.wikipedia.org/wiki/Multidimensional_scaling">multidimensional scaling</a> for this).</li>
+</ol>
+
+<p>Here&#39;s the result of doing this on a set of diamond shapes I constructed. I like how it turned out:</p>
 
 <p><img src="/images/posts/diamondsRF.png" alt="hat"></p>
 
-<h3>Stan...</h3>
+<h3>___ (<a href="">post</a>) <a href="https://github.com/dchudz/misc/tree/master/random_forest_visualizations"><img src="/images/posts/gh.png" alt="random_forest_visualizations"></a></h3>
+
+<p>After reading a paper by Andrew Gelman pointing out that a uniform prior over discretized increasing functions ()</p>
 
 <ul>
-<li><p><a href="http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html">http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html</a></p></li>
-<li><p><a href="http://blog.davidchudzicki.com/2013/10/dithering.html">http://blog.davidchudzicki.com/2013/10/dithering.html</a></p></li>
-<li><p><a href="http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html">http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html</a></p></li>
+<li><a href="http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html">http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html</a></li>
 </ul>
+
+<h3>Lissijous Curves (<a href="http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html">post</a>, <a href="http://jsfiddle.net/dchudz/yYZZy/embedded/result/">JSFiddle</a>)</h3>
+
+<p>Some JavaScript I wrote (using d3) to mimick what an oscilloscope I saw at the Exploratorium was doing:</p>
+
+<p><a href="http://jsfiddle.net/dchudz/yYZZy/embedded/result/"><img src="/images/posts/lissijous.png" alt="lissijous"></a></p>
 
 <h3>Visualization of the Weirstrass Elliptic Function as a Sum of Terms</h3>
 
