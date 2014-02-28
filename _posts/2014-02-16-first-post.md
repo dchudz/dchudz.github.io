@@ -38,13 +38,15 @@ Here's the result of doing this on a set of diamond shapes I constructed. I like
 
 ![hat](/images/posts/diamondsRF.png)
 
-### ___ ([post]()) [![random_forest_visualizations](/images/posts/gh.png)](https://github.com/dchudz/misc/tree/master/random_forest_visualizations)
+### A Bayesian Model for a Function Increasing by Chi-Squared Jumps (in Stan) ([post](http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html)) [![stan_increasing_function](/images/posts/gh.png)](https://github.com/dchudz/misc/tree/master/stan%20models/increasing%20by%20chi%20square%20increments)
 
-After reading a paper by Andrew Gelman pointing out that a uniform prior over discretized increasing functions ()
+In [this paper](http://www.stat.columbia.edu/~gelman/research/published/deep.pdf), Andrew Gelman mentions a neat example where there's a big problem with the naive approach to putting a Bayesian prior on functions that are constrained to be increasing. So I thought about what sort of prior would make sense for such functions, and fit the models in Stan. 
 
-- [http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html](http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html)
+I enjoyed [Andrew's description of my attempt](http://andrewgelman.com/2013/11/22/bayesian-model-increasing-function-stan/): *"... it has a charming DIY flavor that might make you feel that you too can patch together a model in Stan to do what you need."*
 
-### Lissijous Curves ([post](http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html), [JSFiddle](http://jsfiddle.net/dchudz/yYZZy/embedded/result/))
+![increasing_uniform](/images/posts/increasing_uniform.png)
+
+### Lissijous Curves [JSFiddle](http://jsfiddle.net/dchudz/yYZZy/embedded/result/))
 
 Some JavaScript I wrote (using d3) to mimick what an oscilloscope I saw at the Exploratorium was doing:
 

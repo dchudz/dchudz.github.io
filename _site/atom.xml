@@ -4,7 +4,7 @@
  <title>David Chudzicki</title>
  <link href="dchudz.github.io/atom.xml" rel="self"/>
  <link href="dchudz.github.io/"/>
- <updated>2014-02-24T00:27:57-08:00</updated>
+ <updated>2014-02-27T19:13:34-08:00</updated>
  <id>dchudz.github.io</id>
  <author>
    <name>David Chudzicki</name>
@@ -46,15 +46,15 @@
 
 &lt;p&gt;&lt;img src=&quot;/images/posts/diamondsRF.png&quot; alt=&quot;hat&quot;&gt;&lt;/p&gt;
 
-&lt;h3&gt;___ (&lt;a href=&quot;&quot;&gt;post&lt;/a&gt;) &lt;a href=&quot;https://github.com/dchudz/misc/tree/master/random_forest_visualizations&quot;&gt;&lt;img src=&quot;/images/posts/gh.png&quot; alt=&quot;random_forest_visualizations&quot;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;A Bayesian Model for a Function Increasing by Chi-Squared Jumps (in Stan) (&lt;a href=&quot;http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html&quot;&gt;post&lt;/a&gt;) &lt;a href=&quot;https://github.com/dchudz/misc/tree/master/stan%20models/increasing%20by%20chi%20square%20increments&quot;&gt;&lt;img src=&quot;/images/posts/gh.png&quot; alt=&quot;stan_increasing_function&quot;&gt;&lt;/a&gt;&lt;/h3&gt;
 
-&lt;p&gt;After reading a paper by Andrew Gelman pointing out that a uniform prior over discretized increasing functions ()&lt;/p&gt;
+&lt;p&gt;In &lt;a href=&quot;http://www.stat.columbia.edu/%7Egelman/research/published/deep.pdf&quot;&gt;this paper&lt;/a&gt;, Andrew Gelman mentions a neat example where there&amp;#39;s a big problem with the naive approach to putting a Bayesian prior on functions that are constrained to be increasing. So I thought about what sort of prior would make sense for such functions, and fit the models in Stan. &lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html&quot;&gt;http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;I enjoyed &lt;a href=&quot;http://andrewgelman.com/2013/11/22/bayesian-model-increasing-function-stan/&quot;&gt;Andrew&amp;#39;s description of my attempt&lt;/a&gt;: &lt;em&gt;&amp;quot;... it has a charming DIY flavor that might make you feel that you too can patch together a model in Stan to do what you need.&amp;quot;&lt;/em&gt;&lt;/p&gt;
 
-&lt;h3&gt;Lissijous Curves (&lt;a href=&quot;http://blog.davidchudzicki.com/2014/01/interactive-lissijous-curves-in-d3.html&quot;&gt;post&lt;/a&gt;, &lt;a href=&quot;http://jsfiddle.net/dchudz/yYZZy/embedded/result/&quot;&gt;JSFiddle&lt;/a&gt;)&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;/images/posts/increasing_uniform.png&quot; alt=&quot;increasing_uniform&quot;&gt;&lt;/p&gt;
+
+&lt;h3&gt;Lissijous Curves &lt;a href=&quot;http://jsfiddle.net/dchudz/yYZZy/embedded/result/&quot;&gt;JSFiddle&lt;/a&gt;)&lt;/h3&gt;
 
 &lt;p&gt;Some JavaScript I wrote (using d3) to mimick what an oscilloscope I saw at the Exploratorium was doing:&lt;/p&gt;
 
