@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>
     
-      Some Old Stuff &ndash;
+      First Post &ndash;
     
     David Chudzicki
   </title>
@@ -63,7 +63,7 @@
 
   <section class="content">
   <h1>
-    Some Old Stuff
+    First Post
   </h1>
 
   <section class="byline">
@@ -72,7 +72,7 @@
 
   <h3>Simulated Knitting (<a href="http://blog.davidchudzicki.com/2011/11/simulated-knitting.html">post</a>) <a href="https://github.com/dchudz/Knit3d/blob/master/CreateGraph.py"><img src="/images/posts/gh.png" alt="Knit3D"></a></h3>
 
-<p>I created a <code>KnittedGraph</code> class (a subclass of Python&#39;s <code>igraph</code> graph class) with methods like this:</p>
+<p>I created a <code>KnittedGraph</code> class (subclassing of Python&#39;s <code>igraph</code> graph class) with methods corresponding to common operations performed while knitting:</p>
 <div class="highlight"><pre><code class="python language-python" data-lang="python"><span class="n">g</span> <span class="o">=</span> <span class="n">KnittedGraph</span><span class="p">()</span>
 <span class="n">g</span><span class="o">.</span><span class="n">AddStitches</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="n">g</span><span class="o">.</span><span class="n">ConnectToZero</span><span class="p">()</span> <span class="c"># join with the first stitch for a circular shape </span>
@@ -80,11 +80,9 @@
 <span class="n">g</span><span class="o">.</span><span class="n">Increase</span><span class="p">()</span> <span class="c"># two stitches in new row connect to one stitch in old</span>
 <span class="c">#(etc.)</span>
 </code></pre></div>
-<p>The generated graph is then embedded in 3D using a standard approach. Here&#39;s a hat I made this way:</p>
+<p>I then embed the graphs in 3D space. Here&#39;s a hat I made this way:</p>
 
 <p><img src="/images/posts/hat_100_20.png" alt="hat"></p>
-
-<p>This getting <a href="https://news.ycombinator.com/item?id=3329533">Hacker News&#39;d</a> is how I learned what Hacker News is.</p>
 
 <h3>2D Embeddings from Unsupervised Random Forests (<a href="http://blog.davidchudzicki.com/2012/08/random-forests-for-visualizing-data.html">1</a>, <a href="http://blog.davidchudzicki.com/2012/08/visualize-random-forest-that-classifies.html">2</a>) <a href="https://github.com/dchudz/misc/tree/master/random_forest_visualizations"><img src="/images/posts/gh.png" alt="random_forest_visualizations"></a></h3>
 
@@ -93,7 +91,7 @@
 <ol>
 <li>Given some set of high dimensional examples, build a random forest to distinguish examples from non-examples.</li>
 <li>Assign similarities to pairs of examples based on how often they are in leaf nodes together.</li>
-<li>Map examples to 2D, making similarity inverse to distance as well as possible (I used <a href="https://en.wikipedia.org/wiki/Multidimensional_scaling">multidimensional scaling</a> for this).</li>
+<li>Map examples to 2D in such a way that similarity decreases decreases with Euclidean 2D distance (I used <a href="https://en.wikipedia.org/wiki/Multidimensional_scaling">multidimensional scaling</a> for this).</li>
 </ol>
 
 <p>Here&#39;s the result of doing this on a set of diamond shapes I constructed. I like how it turned out:</p>
@@ -102,7 +100,7 @@
 
 <h3>A Bayesian Model for a Function Increasing by Chi-Squared Jumps (in Stan) (<a href="http://blog.davidchudzicki.com/2013/10/a-bayesian-model-for-function.html">post</a>) <a href="https://github.com/dchudz/misc/tree/master/stan%20models/increasing%20by%20chi%20square%20increments"><img src="/images/posts/gh.png" alt="stan_increasing_function"></a></h3>
 
-<p>In <a href="http://www.stat.columbia.edu/%7Egelman/research/published/deep.pdf">this paper</a>, Andrew Gelman mentions a neat example where there&#39;s a big problem with the naive approach to putting a Bayesian prior on functions that are constrained to be increasing. So I thought about what sort of prior would make sense for such functions, and fit the models in Stan. </p>
+<p>In <a href="http://www.stat.columbia.edu/%7Egelman/research/published/deep.pdf">this paper</a>, Andrew Gelman mentions a neat example where there&#39;s a big problem with a naive approach to putting a Bayesian prior on functions that are constrained to be increasing. So I thought about what sort of prior would make sense for such functions, and fit the models in Stan. </p>
 
 <p>I enjoyed <a href="http://andrewgelman.com/2013/11/22/bayesian-model-increasing-function-stan/">Andrew&#39;s description of my attempt</a>: <em>&quot;... it has a charming DIY flavor that might make you feel that you too can patch together a model in Stan to do what you need.&quot;</em></p>
 

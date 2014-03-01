@@ -3,9 +3,9 @@ pygments: true
 permalink: /posts/:title
 rdiscount:
   extensions: [smart]
-
 name: David Chudzicki
 url: dchudz.github.io
 description: Blog draft
 github: dchudz
 gravatar_url: https://secure.gravatar.com/avatar/63bcfcfcdf0fb75e508151e5fd944092
+exclude: [src]
