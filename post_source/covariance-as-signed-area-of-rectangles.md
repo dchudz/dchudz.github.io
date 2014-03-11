@@ -39,11 +39,11 @@ $\mathcal{E}[(X_j-X_i)(Y_j-Y_i)] = 2\mathcal{E}[XY] - 2\mathcal{E}[X]\mathcal{E}
 
 This follows by:
 
-- noting that when $i \neq j$, $X_j$ and $Y_i$ are independent so the expect value of their product is the product of their expected values
+- noting that when $i \neq j$, $X_j$ and $Y_i$ are independent so the expected value of their product is the product of their expected values
 - applying linearity of $\mathcal{E}$
 - simplifying the notation by writing $X$ and $Y$ where we don't need to refer to a particular i.i.d copy
 - applying the definition of covariance, $\mathcal{Cov}[X,Y] = \mathcal{E}[XY] - \mathcal{E}[X]\mathcal{E}[Y]$.
 
 ## Sum Across Pairs as an Approximation of Single-Pair Expected Value
 
-Since we've seen that the expected signed area for a single pair of points is the covariance, it follows that the average signed area across all our pairs is an estimator for the covariance (in fact it's the usual sample covariance, but I haven't shown that). This means that to go from the sum of areas to the covariance, we need to divide by the number of pairs, $\frac{n(n-1)}{2}$.
+Since we've seen that the expected signed area for a single pair of points is the covariance, it follows that the average signed area across all our pairs is an estimator for the covariance (in fact it's the usual sample covariance, but I haven't shown that). This means that to go from the sum of areas to the covariance, we need to divide by the number of pairs, $n(n-1)/2$.
