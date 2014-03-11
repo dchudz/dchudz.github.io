@@ -7,6 +7,8 @@ Bugs to fix before posting:
 
 -----------
 
+[![](/images/posts/gh.png)](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/covariance-as-signed-area-of-rectangles.md)
+
 A colleague at work recently pointed me to a wonderful [stats.stackexchange](https://stats.stackexchange.com/questions/18058/how-would-you-explain-covariance-to-someone-who-understands-only-the-mean) answer with an intuitive explanation of covariance: For each pair of points, draw the rectangle with these points at opposite corners. Treat the rectangle's area as signed, with the same sign as the slope of the line between the two points. If you add up all of the areas, you have the (sample) covariance, up to a constant that depends only on the data set set.
 
 ```{.julia hide="true" results="none"}
@@ -22,6 +24,7 @@ In this next example, $x$ and $y$ are drawn from independent normals, so we have
 
 ```{.julia hide="true"}
 n=20
+srand(100)
 covariance_rectangles_plot(DataFrame(x=randn(n), y=randn(n)))
 ```
 
