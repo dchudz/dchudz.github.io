@@ -2,8 +2,8 @@
 
 Bugs to fix before posting:
 
-- point colors
-- point movement on zoom/pan
+- [point colors](https://github.com/dcjones/Gadfly.jl/issues/225)
+- [point movement on zoom/pan](https://github.com/dcjones/Gadfly.jl/issues/226)
 
 -----------
 
