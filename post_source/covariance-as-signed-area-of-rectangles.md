@@ -9,7 +9,7 @@ Bugs to fix before posting:
 
 [![](/images/posts/gh.png)](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/covariance-as-signed-area-of-rectangles.md)
 
-A colleague at work recently pointed me to a wonderful [stats.stackexchange](https://stats.stackexchange.com/questions/18058/how-would-you-explain-covariance-to-someone-who-understands-only-the-mean) answer with an intuitive explanation of covariance: For each pair of points, draw the rectangle with these points at opposite corners. Treat the rectangle's area as signed, with the same sign as the slope of the line between the two points. If you add up all of the areas, you have the (sample) covariance, up to a constant that depends only on the data set set.
+A colleague at work recently pointed me to a wonderful [stats.stackexchange](https://stats.stackexchange.com/questions/18058/how-would-you-explain-covariance-to-someone-who-understands-only-the-mean) answer with an intuitive explanation of covariance: For each pair of points, draw the rectangle with these points at opposite corners. Treat the rectangle's area as signed, with the same sign as the slope of the line between the two points. If you add up all of the areas, you have the (sample) covariance, up to a constant that depends only on the data set.
 
 ```{.julia hide="true" results="none"}
 include(abspath("src/covariance_rectangles.jl"))
@@ -32,7 +32,7 @@ covariance_rectangles_plot(DataFrame(x=randn(n), y=randn(n)))
 
 The formal way to speak about multiple draws from a distribution is with a set of independent and identically distributed (i.i.d.) random variables. If we have a random variable $X$, saying that $X_1, X_2, \ldots$ are i.i.d means that they are all independent, but follow the same distribution.
 
-To consider covariance and these rectangles, we need to think of a random variable which is the ordered pair of random variables $(X,Y)$. Suppose that $\{(X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)\}$ are i.i.d. random variales (each of which consists of a pair of random variables that are *not* assumed to be independent). The (signed) area corresponding to $(X_i,Y_i)$ and $(X_j,Y_j)$ is $(X_j-X_i)(Y_j-Y_i)$. Before considering the sum of areas, let's examine the expected value of the signed area for just one rectangle, given just two different (i.e. $i \neq j$) i.i.d. draws:
+To consider covariance and these rectangles, we need to think of a random variable which is the ordered pair of random variables $(X,Y)$. Suppose that $\{(X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)\}$ are i.i.d. random variables (each of which consists of a pair of random variables that are *not* assumed to be independent). The (signed) area corresponding to $(X_i,Y_i)$ and $(X_j,Y_j)$ is $(X_j-X_i)(Y_j-Y_i)$. Before considering the sum of areas, let's examine the expected value of the signed area for just one rectangle, given just two different (i.e. $i \neq j$) i.i.d. draws:
 
 $(X_j-X_i)(Y_j-Y_i) = X_j Y_j - X_j Y_i + X_i Y_j - X_i Y_i$
 
