@@ -511,7 +511,7 @@ var zoomslider_thumb_mouseover = function(destcolor) {
 //@ sourceURL=gadfly.js
 </script>
 <p>Here's an example with 4 points. Each spot on the plot is colored by the sum corresponding to that point. For example, the dark space in the lower left has three &quot;positively&quot; signed rectangles going through it, but for the white space in the middle, one positive and one negative rectangle cancel out.</p>
-<div id="gadflyplot-g2ZizbrUhVzmZZvvhRM5"></div>
+<div id="gadflyplot-Z2hpiN9yfQZI62vqLsbN"></div>
 <script>
 (function (module) {
 function draw_with_data(data, parent_id) {
@@ -1349,8 +1349,8 @@ if ('undefined' !== typeof module) {
 }
 
 return module;
-})({}).exports("#gadflyplot-g2ZizbrUhVzmZZvvhRM5");
-//@ sourceURL=gadflyplot-g2ZizbrUhVzmZZvvhRM5.js
+})({}).exports("#gadflyplot-Z2hpiN9yfQZI62vqLsbN");
+//@ sourceURL=gadflyplot-Z2hpiN9yfQZI62vqLsbN.js
 </script>
 
 
@@ -4158,4 +4158,4 @@ return module;
 <h2 id="sum-across-pairs-as-an-approximation-of-single-pair-expected-value">Sum Across Pairs as an Approximation of Single-Pair Expected Value</h2>
 <p>Since we've seen that the expected signed area for a single pair of points is the covariance, it follows that the average signed area across all our pairs is an estimator for the covariance (in fact it's the usual sample covariance, but I haven't shown that). This means that to go from the sum of areas to the covariance, we need to divide by the number of pairs, <span class="math"><em>n</em>(<em>n</em> − 1)/2</span>.</p>
 <h2 id="making-these-plots-yourself">Making These Plots Yourself</h2>
-<p>These plots were made using the <a href="http://julialang.org/">Julia</a> language. If you want to make similar plots using my code, get the relevant function definitions <a href="https://github.com/dchudz/dchudz.github.io/blob/master/post_source/src/covariance_rectangles.jl">here</a>, and use <a href="https://github.com/dchudz/dchudz.github.io/blob/master/post_source/covariance-as-signed-area-of-rectangles.md">the source for this blog post)</a> as an example.</p>
+<p>These plots were made using the <a href="http://julialang.org/">Julia</a> language. If you want to make similar plots using my code, get the relevant function definitions <a href="https://github.com/dchudz/dchudz.github.io/blob/master/post_source/src/covariance_rectangles.jl">here</a>, and use <a href="https://github.com/dchudz/dchudz.github.io/blob/master/post_source/covariance-as-signed-area-of-rectangles.md">the source for this blog post</a> as an example. Note that the Julia ecosystem is rapidly developing (and changing), so it's possible that when you read this the packages used (e.g. <a href="dcjones.github.io/Gadfly.jl/">Gadfly</a>, for plotting) work a little differently from when I wrote it.</p>

@@ -46,4 +46,6 @@ Since we've seen that the expected signed area for a single pair of points is th
 
 ## Making These Plots Yourself
 
-These plots were made using the [Julia](http://julialang.org/) language. If you want to make similar plots using my code, get the relevant function definitions [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/src/covariance_rectangles.jl), and use [the source for this blog post)](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/covariance-as-signed-area-of-rectangles.md) as an example.
+These plots were made using the [Julia](http://julialang.org/) language. If you want to make similar plots using my code, get the relevant function definitions [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/src/covariance_rectangles.jl), and use [the source for this blog post][thispost] as an example. Note that the Julia ecosystem is rapidly developing (and changing), so it's possible that when you read this the packages used (e.g. [Gadfly](dcjones.github.io/Gadfly.jl/), for plotting) work a little differently from when I wrote it.
+
+[thispost]: https://github.com/dchudz/dchudz.github.io/blob/master/post_source/covariance-as-signed-area-of-rectangles.md
