@@ -52,6 +52,6 @@ Some JavaScript I wrote (using d3) to mimick what an oscilloscope I saw at the E
 
 ![weierstrass](/images/posts/weierstrass.gif)
 
+John Baez used this in his AMS blog [Visual Insight](http://blogs.ams.org/visualinsight/2014/01/15/weierstrass-elliptic-function/).
 
-http://blogs.ams.org/visualinsight/2014/01/15/weierstrass-elliptic-function/
 
