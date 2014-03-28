@@ -17,15 +17,6 @@ var y = d3.scale.linear()
     .domain([0, 1])
     .range([height, 1]);
 
-var t = 0
-var points = [];
-xs = [1,2,3];
-ys = [1,2,3];
-nPoints = 3;
-for (var i = 0; i < nPoints + 1; i++) points[i] = {
-    x: xs[i],
-    y: ys[i]
-}
 
 //Create SVG element
 var svg = d3.select("#hello")
