@@ -1,0 +1,117 @@
+---
+layout: post
+title: ""
+---
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<div id="hello">
+<script>
+var width = 300;
+var height = 100;
+
+var x = d3.scale.linear()
+    .domain([0, 6])
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .domain([0, 5])
+    .range([height, 5]);
+
+var t = 0
+var points = [];
+xs = [1,2,3];
+ys = [1,2,3];
+nPoints = 3;
+for (var i = 0; i < nPoints + 1; i++) points[i] = {
+    x: xs[i],
+    y: ys[i]
+}
+
+//Create SVG element
+var svg = d3.select("#hello")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+
+var texts = svg.selectAll("text")
+                .data("Hello!".split(""))
+                .enter();
+
+texts.append("text")
+     .text(function(d){
+                    return d;
+                })
+    .attr("font-size", 50)
+    .attr("x", function(d,i){return x(i+1)})
+    .attr("y", function(d,i){return x(i+1)})
+    .transition().ease("linear").duration(2000)
+    .attrTween("y", function (d,i) {
+    return brownianBridgeInterp(y(3), y(3), 100)
+    // Here's how we could do this by referring the element's current attribute:    
+//    return brownianBridgeInterp(d3.select(this).attr("cy"), y(0.5+0.5*Math.sin(2*Math.PI*d.y)), 100)
+    })
+    .attrTween("x", function (d,i) {
+    return (brownianBridgeInterp(x(Math.random()*6), x(i), 100))
+})
+
+
+
+///////////////////
+brownianBridgeInterp = function (a, b, variance) {
+    a = Number(a);
+    b = Number(b);
+    var W = Brownian(100, variance);
+    return function (t) {
+        currentValue = a + (W(t) - t * (W(1) - (b - a)));
+        return currentValue;
+    }
+}
+
+function RandomWalk(n) {
+    var delta = .1;
+    var randoms = [];
+    for (var i = 0; i < n + 1; i++) randoms[i] = Math.random() - .5;
+    return function W(t) {
+        if (t == 0) {
+            return 0
+        } else {
+            return W(t - 1) + randoms[t]
+        }
+    }
+}
+
+function Brownian(n, variance) {
+    //n: number of endpoints from random walk to use (we'll interpolate 
+    //between them
+    //variance: desired variance at W(1)
+    var walk = RandomWalk(n);
+    return function W(t) {
+        begin = walk(Math.floor(t * (n)));
+        end = walk(Math.ceil(t * (n)));
+        s = t * n - Math.floor(t * (n)) //(how far we've gone in path from begin to end
+        return Math.sqrt(variance) * (12 / Math.sqrt(n)) * d3.interpolate(begin, end)(s);
+        //uniform on [0,1] has variance 1/12 and variance is additive
+        //so 12/sqrt(n) factor gets variance 1
+        //then multiply by sqrt of desired variance
+    }
+}
+
+</script>
+
+</div>
+<p>Hi! I work at Kaggle building statistical models.</p>
+
+<h2>Stuff I&#39;ve Made</h2>
+
+<h3><a href="http://dchudz.github.io/predcomps/">R Package for Average Predictive Comparisons</a></h3>
+
+<p>Complicated models will often fit your data better than simple ones, but it&#39;s harder to understand what they&#39;re telling you. This is a project I&#39;m working on to help with that.</p>
+
+<h3><a href="http://plannedpooling.com">Website for Knitters</a></h3>
+
+<p>This is useful for something some knitters do called &quot;planned pooling&quot;. It gets about 1000 unique visitors per month.</p>
+
+<h2>Contact</h2>
+
+<p>dchudz@gmail.com</p>
