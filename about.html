@@ -61,7 +61,7 @@ texts.append("text")
 brownianBridgeInterp = function (a, b, variance) {
     a = Number(a);
     b = Number(b);
-    var W = Brownian(100, variance);
+    var W = Brownian(10, variance);
     return function (t) {
         currentValue = a + (W(t) - t * (W(1) - (b - a)));
         return currentValue;
