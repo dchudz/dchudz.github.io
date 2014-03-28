@@ -42,7 +42,7 @@ I enjoyed [Andrew's description of my attempt](http://andrewgelman.com/2013/11/2
 
 ![increasing_uniform](/images/posts/increasing_uniform.png)
 
-### Lissijous Curves [JSFiddle](http://jsfiddle.net/dchudz/yYZZy/embedded/result/))
+### Lissijous Curves [JSFiddle](http://jsfiddle.net/dchudz/yYZZy/embedded/result/)
 
 Some JavaScript I wrote (using d3) to mimick what an oscilloscope I saw at the Exploratorium was doing:
 
