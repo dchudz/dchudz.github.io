@@ -7,15 +7,15 @@ title: ""
 <div id="hello">
 <script>
 var width = 300;
-var height = 100;
+var height = 150;
 
 var x = d3.scale.linear()
     .domain([0, 6])
     .range([0, width]);
 
 var y = d3.scale.linear()
-    .domain([0, 5])
-    .range([height, 5]);
+    .domain([0, 1])
+    .range([height, 1]);
 
 var t = 0
 var points = [];
@@ -47,13 +47,12 @@ texts.append("text")
     .attr("y", function(d,i){return x(i+1)})
     .transition().ease("linear").duration(2000)
     .attrTween("y", function (d,i) {
-    return brownianBridgeInterp(y(3), y(3), 100)
-    // Here's how we could do this by referring the element's current attribute:    
-//    return brownianBridgeInterp(d3.select(this).attr("cy"), y(0.5+0.5*Math.sin(2*Math.PI*d.y)), 100)
-    })
+    return brownianBridgeInterp(y(.5), y(.5), 100)})
     .attrTween("x", function (d,i) {
-    return (brownianBridgeInterp(x(Math.random()*6), x(i), 100))
-})
+    return (brownianBridgeInterp(x(Math.random()*6), x(i), 100))})
+    .attrTween("font-size", function (d,i) {
+    return brownianBridgeInterp(50, 50, 100)})
+
 
 
 
