@@ -1,3 +1,8 @@
+---
+layout: post
+category: posts
+---
+
 ```{r}
 library(ggplot2)
 library(plyr)
