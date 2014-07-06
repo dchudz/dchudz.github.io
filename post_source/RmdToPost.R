@@ -1,0 +1,10 @@
+rmdFile <- commandArgs(trailingOnly = TRUE)[1]
+date <- commandArgs(trailingOnly = TRUE)[2]
+baseName <- tools::file_path_sans_ext(rmdFile)
+cat(sprintf("Turning %s into a post dated %s\n", rmdFile, date))
+
+library(knitr)
+opts_knit$set(base.dir = "..")
+opts_chunk$set(fig.path=sprintf("images/posts/%s/", baseName))
+knit2html(rmdFile, output=sprintf('../_posts/%s-%s.md', date, baseName))
+file.remove(sprintf('../_posts/%s-%s.html', date, baseName))
