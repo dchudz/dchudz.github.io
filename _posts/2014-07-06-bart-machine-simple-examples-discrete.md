@@ -1,15 +1,11 @@
 ---
+title: "Bayesian Trees: Looking for Sensible Results in Simple Examples"
 layout: post
 category: posts
 draft: true
 ---
+  
 
-
-```r
-library(ggplot2)
-library(plyr)
-library(bartMachine)
-```
 
 
 # Simplest possible example:
@@ -32,6 +28,7 @@ bartFit <- bartMachine(X = train, y = y)
 
 ```
 ## bartMachine initializing with 50 trees...
+## Java initialized with 1.14GB maximum memory (the default).
 ## Now building bartMachine for regression ...
 ## evaluating in sample data...done
 ```
@@ -52,7 +49,7 @@ mean(sigmaPosterior)
 ```
 
 ```
-## [1] 0.8657
+## [1] 0.8619
 ```
 
 ```r
@@ -85,6 +82,8 @@ ggplot(sampleDF) + geom_histogram(aes(fill = factor(X1), x = SampleY))
 
 ![plot of chunk unnamed-chunk-4](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-42.png) 
 
+
+<!--more-->
 
 
 # A little bit more noise shows the difference between one tree and two trees more clearly
@@ -199,9 +198,9 @@ bartMachine:::get_tree_depths(bartFitByNumTrees[["100"]])[1, ]
 ```
 
 ```
-##   [1] 1 1 1 2 1 2 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 0 2 1 1 2 1 2 1 2 1 2 2 2 1
-##  [36] 2 1 1 2 1 2 2 1 1 1 1 1 2 2 2 1 1 1 1 1 2 1 2 1 1 2 1 2 2 1 1 2 1 2 1
-##  [71] 1 2 2 1 2 1 2 2 1 1 1 1 1 1 1 0 1 1 2 1 1 2 2 2 1 1 1 1 1 2
+##   [1] 1 2 1 2 2 2 1 2 2 1 1 2 1 1 1 1 1 2 1 1 1 1 2 2 2 1 1 2 1 1 1 1 1 1 1
+##  [36] 1 1 1 1 1 1 1 2 2 2 1 1 1 1 1 1 1 1 1 2 0 1 2 1 1 2 1 1 2 1 2 1 1 1 1
+##  [71] 2 2 1 1 1 2 1 2 1 2 1 2 1 1 1 1 2 1 1 2 2 1 1 1 1 1 2 1 2 1
 ```
 
 

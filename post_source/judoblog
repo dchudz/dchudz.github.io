@@ -1,0 +1,6 @@
+output=$(sed 's/.md/.html/' <<< $1)
+echo $output
+#output=$(sed 's/.*\///' <<< $output)
+#echo $output
+judo $1 --template "david" #--pandocargs "--self-contained"
+cp $output ../_posts/$(date "+%Y-%m-%d")-$output

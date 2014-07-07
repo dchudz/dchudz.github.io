@@ -1,10 +1,11 @@
 ---
+title: "Bayesian Trees: Looking for Sensible Results in Simple Examples"
 layout: post
 category: posts
 draft: true
 ---
-
-```{r}
+  
+```{r echo=FALSE, message=FALSE, results='hide'}
 library(ggplot2)
 library(plyr)
 library(bartMachine)
@@ -41,6 +42,8 @@ sampleDF <- ldply(1:ncol(posteriorSamples), function(ixSample) {
 ggplot(sampleDF) + geom_point(aes(x=factor(X1), y=SampleY), alpha=.5)
 ggplot(sampleDF) + geom_histogram(aes(fill=factor(X1), x=SampleY))
 ```
+
+<!--more-->
 
 
 # A little bit more noise shows the difference between one tree and two trees more clearly

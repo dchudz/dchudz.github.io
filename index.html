@@ -14,7 +14,7 @@ title: "Posts"
 
 {% if post.content contains '<!--more-->' %}
     {{ post.content | split:'<!--more-->' | first }}
-        <p><a href="{{ post.url }}">(more)</a></p>
+        <p><a href="{{ post.url }}">(...click here for the rest of this post)</a></p>
 {% else %}
     <!-- Case for when no excerpt is defined -->
     {{ post.content }}

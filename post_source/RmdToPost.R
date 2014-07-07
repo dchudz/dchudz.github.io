@@ -17,8 +17,10 @@ knit2html(rmdFile, output=sprintf('../_posts/%s-%s.WRONGPATHS.md', date, baseNam
 
 
 
-system("sed 's/images\/posts/\/images\/posts/g' ../_posts/%s-%s.WRONGPATHS.md > ../_posts/%s-%s.md",
-       date, baseName, date, baseName)
+system(sprintf("sed 's/images\\/posts/\\/images\\/posts/g' ../_posts/%s-%s.WRONGPATHS.md > ../_posts/%s-%s.md",
+       date, baseName, date, baseName))
 
 
-file.remove(sprintf('../_posts/%s-%s.html', date, baseName))
+
+file.remove(sprintf('../_posts/%s-%s.WRONGPATHS.md', date, baseName))
+file.remove(sprintf('../_posts/%s-%s.WRONGPATHS.html', date, baseName))
