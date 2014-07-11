@@ -1,23 +1,26 @@
 ---
-title: "Bayesian Trees: Looking for Sensible Results in Simple Examples"
+title: "Bayesian Trees: Looking for Sensible Results in Simple Examples [source]()"
 layout: post
 category: posts
 draft: true
 ---
-  
 
 
 
-# Simplest possible example:
 
+The Bayesian Additive Regression Trees (BART) model consists of a sum of trees, along with values at the leaf notes. I'm attracted to the method as a way to obtain similar out-of-the-box (no hand tuning or model selection needed) performance to common machine learning methods (random forests, gradient boosting machines, etc.), but also provide **uncertainties** along with each individual prediction. BART is an MCMC method, meaning that we receive a series of draws from the posterior distribution, each of which is a set of tree structures along with values at the leaf nodes.
 
-```r
-set.seed(0)
-sigmaTrue <- 1
-train <- data.frame(X1 = sample(c(rep(0, 10), rep(1, 100))))
-test <- unique(train)
-y <- ifelse(train$X1 == 0, 5, 6) + rnorm(nrow(train)) * sigmaTrue
-```
+The purpose of this post is to explore how appropriate the resulting uncertainties seem in a few simple simulated examples where we know the truth. For this, I use the [`bartMachine`]() implementation by SOMEONE and SOMEONEELSE. The above description of the algorithm might be enough to follow along with this post, but I highly recommend reading at least the first page of the package authors' [vignette](), which provides a very clear description of the algorithm.
+
+### Simplest possible example:
+
+In this example, $X_1$ (which is $0$ for 10 observations and $1$ for 100) is the only input, and 
+
+$$y = X_1 + 5 + \mathcal{N}(0,1)$$
+
+The model assumes that the noise is independent of everything, which is consistent with the example. You can see that the mean of $y$ depends on $X_1$, and that we have much more data with $X_1=1$ than $X_1=0$ 
+
+![plot of chunk unnamed-chunk-2](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-2.png) 
 
 
 # Default bartMachine (behavior would be the same with only one tree)
@@ -49,7 +52,7 @@ mean(sigmaPosterior)
 ```
 
 ```
-## [1] 0.8619
+## [1] 0.868
 ```
 
 ```r
@@ -78,6 +81,10 @@ ggplot(sampleDF) + geom_histogram(aes(fill = factor(X1), x = SampleY))
 
 ```
 ## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+```
+
+```
+## Warning: position_stack requires constant width: output may be incorrect
 ```
 
 ![plot of chunk unnamed-chunk-4](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-42.png) 
@@ -198,9 +205,9 @@ bartMachine:::get_tree_depths(bartFitByNumTrees[["100"]])[1, ]
 ```
 
 ```
-##   [1] 1 2 1 2 2 2 1 2 2 1 1 2 1 1 1 1 1 2 1 1 1 1 2 2 2 1 1 2 1 1 1 1 1 1 1
-##  [36] 1 1 1 1 1 1 1 2 2 2 1 1 1 1 1 1 1 1 1 2 0 1 2 1 1 2 1 1 2 1 2 1 1 1 1
-##  [71] 2 2 1 1 1 2 1 2 1 2 1 2 1 1 1 1 2 1 1 2 2 1 1 1 1 1 2 1 2 1
+##   [1] 1 2 1 2 1 1 1 1 2 1 1 1 2 2 1 2 1 1 1 2 1 1 2 2 1 1 1 1 2 2 2 1 1 2 1
+##  [36] 1 1 1 1 1 1 1 1 2 1 1 2 1 2 2 1 1 1 1 1 1 1 1 2 1 2 1 2 2 1 1 2 1 1 1
+##  [71] 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 2 1 2 1 2 2 2 1 1 1 1 1 1 0 1
 ```
 
 
