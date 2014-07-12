@@ -1,3 +1,4 @@
+
 @charset "UTF-8";
 body {
   font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
@@ -108,7 +109,7 @@ a {
     margin-top: 0;
     margin-bottom: 1.2em;
     line-height: 1.7em; }
-    .content p code {
+    .content p code:not(.has-jax) {
       font-size: 12px;
       background-color: #eeeeee;
       border: 1px solid #777777;

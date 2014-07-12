@@ -15,13 +15,13 @@ The Bayesian Additive Regression Trees (BART) model consists of a sum of trees, 
 
 The purpose of this post is to explore how appropriate the resulting uncertainties seem in a few simple simulated examples where we know the truth. For this, I use the [`bartMachine`]() implementation by SOMEONE and SOMEONEELSE. The above description of the algorithm might be enough to follow along with this post, but I highly recommend reading at least the first page of the package authors' [vignette](), which provides a very clear description of the algorithm.
 
-### Simplest possible example:
+### Example 1: Simplest possible example
 
 In this example, $X_1$ (which is $0$ for 10 observations and $1$ for 100) is the only input, and 
 
-$$y = X_1 + 5 + \mathcal{N}(0,1)$$
+`$$y = X_1 + 5 + \mathcal{N}(0,1)$$`
 
-The model assumes that the noise is independent of everything, which is consistent with the example. You can see that the mean of $y$ depends on $X_1$, and that we have much more data with $X_1=1$ than $X_1=0$ 
+The model assumes that the noise is independent of everything, which is consistent with the example. You can see that the mean of $y$ depends on $X_1$ and that we have much more data with `$X_1=1$` than `$X_1=0$`. 
 
 ```{r echo=FALSE}
 set.seed(0)
@@ -29,7 +29,7 @@ sigmaTrue <- 1
 train <- data.frame(X1 = sample(c(rep(0,10), rep(1, 100))))
 test <- unique(train)
 y <- train$X1 + 5 + rnorm(nrow(train))*sigmaTrue
-qplot(train$X1, y, alpha=I(.5))
+qplot(train$X1, y, alpha=I(.5)) + ggtitle("Example 1 Training Data")
 ```
 
 # Default bartMachine (behavior would be the same with only one tree)
