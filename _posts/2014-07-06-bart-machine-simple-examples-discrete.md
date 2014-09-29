@@ -20,54 +20,16 @@ In this example, $X_1$ (which is $0$ for 10 observations and $1$ for 100) is the
 
 The model assumes that the noise is independent of everything, which is consistent with the example. You can see that the mean of $y$ depends on $X_1$ and that we have much more data with `$X_1=1$` than `$X_1=0$`. 
 
+First I'll generate and display the simulated training data:
+
 ![plot of chunk unnamed-chunk-2](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-2.png) 
 
 
-# Default bartMachine (behavior would be the same with only one tree)
-
-```r
-bartFit <- bartMachine(X = train, y = y)
-```
-
-```
-## bartMachine initializing with 50 trees...
-## Java initialized with 1.14GB maximum memory (the default).
-## Now building bartMachine for regression ...
-## evaluating in sample data...done
-```
-
-```r
-sigmaPosterior <- get_sigsqs(bartFit)
-qplot(sigmaPosterior)
-```
-
-```
-## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
-```
-
-![plot of chunk unnamed-chunk-3](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-3.png) 
-
-```r
-mean(sigmaPosterior)
-```
-
-```
-## [1] 0.8655
-```
-
-```r
-posteriorSamples <- bart_machine_get_posterior(bartFit, test)$y_hat_posterior_samples
-
-sampleDF <- ldply(1:ncol(posteriorSamples), function(ixSample) {
-    testOneSample <- test
-    testOneSample$SampleY <- posteriorSamples[, ixSample]
-    return(testOneSample)
-})
-```
+We fit the BART model and plot `$\mathcal{E}(y|X)$   and see that as we'd expect uncertainty is higher for the 0's (where we have fewer observations)
 
 
 
-# As you'd expect, uncertainty is higher for the 0's (where we have fewer observations)
+
 
 ```r
 ggplot(sampleDF) + geom_point(aes(x = factor(X1), y = SampleY), alpha = 0.5)
@@ -201,9 +163,9 @@ bartMachine:::get_tree_depths(bartFitByNumTrees[["100"]])[1, ]
 ```
 
 ```
-##   [1] 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 2 2 1 1 1 2 1 1 2 1 1 1 1 1 1 1 1
-##  [36] 1 1 1 1 2 0 0 1 2 2 2 2 2 2 1 2 2 1 1 1 2 2 2 1 2 2 2 2 1 1 2 1 1 1 2
-##  [71] 2 1 1 1 1 1 1 2 1 2 2 1 2 1 1 2 1 1 2 1 2 1 2 1 2 2 2 1 1 1
+##   [1] 1 2 2 1 2 2 2 1 2 1 2 1 2 2 1 1 2 1 2 1 1 2 1 2 2 2 2 1 1 2 1 1 2 1 2
+##  [36] 1 1 2 2 1 1 1 2 1 2 1 1 1 2 2 1 1 1 1 1 2 1 1 1 1 1 1 1 2 1 2 1 1 2 2
+##  [71] 2 2 1 1 2 2 1 1 2 1 1 2 1 2 2 2 2 2 2 1 2 1 1 1 0 1 2 1 2 2
 ```
 
 

@@ -23,6 +23,8 @@ In this example, $X_1$ (which is $0$ for 10 observations and $1$ for 100) is the
 
 The model assumes that the noise is independent of everything, which is consistent with the example. You can see that the mean of $y$ depends on $X_1$ and that we have much more data with `$X_1=1$` than `$X_1=0$`. 
 
+First I'll generate and display the simulated training data:
+
 ```{r echo=FALSE}
 set.seed(0)
 sigmaTrue <- 1
@@ -32,12 +34,10 @@ y <- train$X1 + 5 + rnorm(nrow(train))*sigmaTrue
 qplot(train$X1, y, alpha=I(.5)) + ggtitle("Example 1 Training Data")
 ```
 
-# Default bartMachine (behavior would be the same with only one tree)
-```{r}
+We fit the BART model and plot `$\mathcal{E}(y|X)$   and see that as we'd expect uncertainty is higher for the 0's (where we have fewer observations)
+
+```{r echo=FALSE, message=FALSE, results='hide'}
 bartFit <- bartMachine(X = train, y = y)
-sigmaPosterior <- get_sigsqs(bartFit)
-qplot(sigmaPosterior)
-mean(sigmaPosterior)
 posteriorSamples <- bart_machine_get_posterior(bartFit, test)$y_hat_posterior_samples
 
 sampleDF <- ldply(1:ncol(posteriorSamples), function(ixSample) {
@@ -47,8 +47,6 @@ sampleDF <- ldply(1:ncol(posteriorSamples), function(ixSample) {
 })      
 ```
 
-
-# As you'd expect, uncertainty is higher for the 0's (where we have fewer observations)
 ```{r}
 ggplot(sampleDF) + geom_point(aes(x=factor(X1), y=SampleY), alpha=.5)
 ggplot(sampleDF) + geom_histogram(aes(fill=factor(X1), x=SampleY))

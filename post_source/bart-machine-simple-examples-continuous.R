@@ -105,9 +105,6 @@ ggplot(sampleDFSummary) + geom_line(aes(x=X1, y=Percentile50)) +
   geom_line(aes(x=X1, y=coef*X1), data=train)
 
 
-
-
-
 # Continuous Example -- ten features, higher uncertainty at the ends
 set.seed(1)
 sigmaTrue <- 1
