@@ -7,8 +7,12 @@ draft: true
 
 
 
+Bayesian Additive Regression Trees (BART) is a sum-of-trees model. If you're only familiar with random forests (probably the most popular tree-based model out there), the key differences to keep in mind with BART are: 
 
-The Bayesian Additive Regression Trees (BART) model consists of a sum of trees, along with values at the leaf notes. I'm attracted to the method as a way to obtain similar out-of-the-box (no hand tuning or model selection needed) performance to common machine learning methods (random forests, gradient boosting machines, etc.), but also provide **uncertainties** along with each individual prediction. BART is an MCMC method, meaning that we receive a series of draws from the posterior distribution, each of which is a set of tree structures along with values at the leaf nodes.
+- it's an MCMC method, so one iteration consists of a sum of trees, and we look across many iterations for a our uncertainty (these are samples from a posterior distribution)
+- each tree is constructed based on the residual from the other trees (rather than independently of the other trees); this makes bart more like [boosting](https://en.wikipedia.org/wiki/Boosting_(machine_learning)), where random forests are an example of [bagging](https://en.wikipedia.org/wiki/Bootstrap_aggregating)
+
+I'm attracted to the method as a way to obtain similar out-of-the-box (no hand tuning or model selection needed) performance to common machine learning methods (random forests, gradient boosting machines, etc.), but also provide **uncertainties** along with each individual prediction. BART is an MCMC method, meaning that we receive a series of draws from the posterior distribution, each of which is a set of tree structures along with values at the leaf nodes.
 
 The purpose of this post is to explore how appropriate the resulting uncertainties seem in a few simple simulated examples where we know the truth. For this, I use the [`bartMachine`]() implementation by SOMEONE and SOMEONEELSE. The above description of the algorithm might be enough to follow along with this post, but I highly recommend reading at least the first page of the package authors' [vignette](), which provides a very clear description of the algorithm.
 
@@ -24,21 +28,19 @@ First I'll generate and display the simulated training data:
 
 ![plot of chunk unnamed-chunk-2](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-2.png) 
 
-
 We fit the BART model and plot `$\mathcal{E}(y|X)$   and see that as we'd expect uncertainty is higher for the 0's (where we have fewer observations)
 
 
 
 
-
 ```r
-ggplot(sampleDF) + geom_point(aes(x = factor(X1), y = SampleY), alpha = 0.5)
+ggplot(sampleDF) + geom_point(aes(x=factor(X1), y=SampleY), alpha=.5)
 ```
 
 ![plot of chunk unnamed-chunk-4](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-41.png) 
 
 ```r
-ggplot(sampleDF) + geom_histogram(aes(fill = factor(X1), x = SampleY))
+ggplot(sampleDF) + geom_histogram(aes(fill=factor(X1), x=SampleY))
 ```
 
 ```
@@ -46,7 +48,6 @@ ggplot(sampleDF) + geom_histogram(aes(fill = factor(X1), x = SampleY))
 ```
 
 ![plot of chunk unnamed-chunk-4](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-42.png) 
-
 
 <!--more-->
 
@@ -59,21 +60,19 @@ set.seed(0)
 sigmaTrue <- 3
 nTrain <- 300
 coef <- 2
-test <- merge(data.frame(X1 = c(0, 1)), data.frame(X2 = c(0, 1)))
-train <- test[sample(c(rep(1, nTrain * 0.45), rep(2, nTrain * 0.05), rep(3, 
-    nTrain * 0.05), rep(4, nTrain * 0.45))), ]
-ggplot(train) + geom_bar(aes(x = factor(X1), fill = factor(X2)))
+test <- merge(data.frame(X1=c(0,1)), data.frame(X2=c(0,1)))
+train <- test[sample(c(rep(1,nTrain*.45), rep(2,nTrain*.05), rep(3, nTrain*.05), rep(4, nTrain*.45))), ]
+ggplot(train) + geom_bar(aes(x=factor(X1), fill=factor(X2)))
 ```
 
 ![plot of chunk unnamed-chunk-5](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-5.png) 
 
 ```r
-y <- coef * train$X1 + coef * train$X2 + rnorm(nrow(train)) * sigmaTrue
-numTreesList <- c(1, 2, 100)
+y <- coef*train$X1 + coef*train$X2 + rnorm(nrow(train))*sigmaTrue
+numTreesList <- c(1,2,100)
 names(numTreesList) <- numTreesList
 # Default bartMachine
-bartFitByNumTrees <- Map(function(numTrees) bartMachine(X = train, y = y, num_trees = numTrees), 
-    numTreesList)
+bartFitByNumTrees <- Map(function(numTrees) bartMachine(X = train, y = y, num_trees=numTrees), numTreesList)
 ```
 
 ```
@@ -89,33 +88,29 @@ bartFitByNumTrees <- Map(function(numTrees) bartMachine(X = train, y = y, num_tr
 ```
 
 ```r
-posteriorSamplesByNumTrees <- Map(function(bartFit) bart_machine_get_posterior(bartFit, 
-    test)$y_hat_posterior_samples, bartFitByNumTrees)
+posteriorSamplesByNumTrees <- Map(function(bartFit) bart_machine_get_posterior(bartFit, test)$y_hat_posterior_samples, bartFitByNumTrees)
 
 sampleDFByNumTrees <- Map(function(posteriorSamples) {
-    return(ldply(1:ncol(posteriorSamples), function(ixSample) {
-        testOneSample <- test
-        testOneSample$SampleY <- posteriorSamples[, ixSample]
-        return(testOneSample)
-    }))
-}, posteriorSamplesByNumTrees)
+  return(ldply(1:ncol(posteriorSamples), function(ixSample) {
+    testOneSample <- test
+    testOneSample$SampleY <- posteriorSamples[,ixSample]
+    return(testOneSample)}))},
+  posteriorSamplesByNumTrees)
 
 sampleDF <- ldply(names(sampleDFByNumTrees), function(numTreesString) {
-    oneSampleDF <- sampleDFByNumTrees[[numTreesString]]
-    oneSampleDF$NumTrees <- as.integer(numTreesString)
-    return(oneSampleDF)
+  oneSampleDF <- sampleDFByNumTrees[[numTreesString]]
+  oneSampleDF$NumTrees <- as.integer(numTreesString)
+  return(oneSampleDF)
 })
 ```
 
 
-
 ```r
-ggplot(sampleDF) + geom_histogram(aes(fill = factor(X1), x = SampleY), alpha = 0.6, 
-    position = position_identity()) + # geom_vline(aes(xintercept = SampleY, color=factor(X1)),
-# data=ddply(sampleDF, c('X1', 'X2', 'NumTrees'), summarize, SampleY =
-# median(SampleY))) +
-facet_grid(X2 + NumTrees ~ ., labeller = function(variable, value) sprintf("%s: %s", 
-    variable, value))
+ggplot(sampleDF) + geom_histogram(aes(fill=factor(X1), x=SampleY), alpha=.6, position=position_identity()) + 
+#   geom_vline(aes(xintercept = SampleY, color=factor(X1)), data=ddply(sampleDF, c("X1", "X2", "NumTrees"),
+#                                                                      summarize,
+#                                                                      SampleY = median(SampleY))) +
+  facet_grid(X2 + NumTrees ~ ., labeller=function(variable, value) sprintf("%s: %s", variable, value))
 ```
 
 ```
@@ -130,7 +125,6 @@ facet_grid(X2 + NumTrees ~ ., labeller = function(variable, value) sprintf("%s: 
 ![plot of chunk unnamed-chunk-6](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-6.png) 
 
 
-
 # With only 1 tree, the posterior for the X1!=X2 cases is very diffuse and even multi-modal
 # This is the right answer when your prior doesn't have an additive structure:
 # If X1=1, X2=0... will it behave like X1? Like X2? Or like the X1=1, X2=0 cases you saw in the training data? All of these are possible.
@@ -139,35 +133,32 @@ facet_grid(X2 + NumTrees ~ ., labeller = function(variable, value) sprintf("%s: 
 # That's the right depth to capture the relevant variation
 
 ```r
-qplot(factor(as.vector(bartMachine:::get_tree_depths(bartFitByNumTrees[["1"]])))) + 
-    ggtitle("Distribution of Tree Depths for Single-Tree Model")
+qplot(factor(as.vector(bartMachine:::get_tree_depths(bartFitByNumTrees[["1"]])))) +
+  ggtitle("Distribution of Tree Depths for Single-Tree Model")
 ```
 
 ![plot of chunk unnamed-chunk-7](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-7.png) 
 
-
 # 1/1 ("correct" model) is most common distribution of tree depths, 
 
 ```r
-qplot(apply(bartMachine:::get_tree_depths(bartFitByNumTrees[["2"]]), 1, function(numbers) do.call(paste, 
-    as.list(sort(numbers))))) + ggtitle("Distribution of Tree Depths for Two-Tree Model")
+qplot(apply(bartMachine:::get_tree_depths(bartFitByNumTrees[["2"]]), 1, function(numbers) do.call(paste, as.list(sort(numbers))))) + 
+  ggtitle("Distribution of Tree Depths for Two-Tree Model")
 ```
 
 ![plot of chunk unnamed-chunk-8](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-8.png) 
 
-
 # Harder to fully understand the distribution of tree depths in the 100-tree model, but here's one example:
 
 ```r
-bartMachine:::get_tree_depths(bartFitByNumTrees[["100"]])[1, ]
+bartMachine:::get_tree_depths(bartFitByNumTrees[["100"]])[1,]
 ```
 
 ```
-##   [1] 1 2 2 1 2 2 2 1 2 1 2 1 2 2 1 1 2 1 2 1 1 2 1 2 2 2 2 1 1 2 1 1 2 1 2
-##  [36] 1 1 2 2 1 1 1 2 1 2 1 1 1 2 2 1 1 1 1 1 2 1 1 1 1 1 1 1 2 1 2 1 1 2 2
-##  [71] 2 2 1 1 2 2 1 1 2 1 1 2 1 2 2 2 2 2 2 1 2 1 1 1 0 1 2 1 2 2
+##   [1] 1 2 1 2 2 2 1 2 2 1 1 1 2 2 1 1 2 2 1 1 1 1 1 2 1 1 1 2 2 2 1 1 1 1 1
+##  [36] 1 1 1 1 1 1 2 2 1 2 2 2 1 2 2 2 2 1 1 2 1 1 1 2 1 2 2 2 2 1 1 1 1 1 2
+##  [71] 2 1 1 2 1 1 0 1 2 2 1 1 2 1 1 1 1 1 1 1 1 2 1 1 2 1 2 2 1 1
 ```
-
 
 # You might ask why more than 2 of the trees need to have any splits at all. 
 # The answer is that the prior for the leafs scales with the number of trees, so that with 100 trees it's very concentrated on 0.
@@ -177,12 +168,14 @@ bartMachine:::get_tree_depths(bartFitByNumTrees[["100"]])[1, ]
 
 ```r
 treeDepthDF <- ldply(0:2, function(depth) {
-    return(data.frame(Depth = depth, NumTreesAtDepth = apply(bartMachine:::get_tree_depths(bartFitByNumTrees[["100"]]), 
-        1, function(numbers) sum(numbers == depth))))
+  return(data.frame(Depth=depth,
+                    NumTreesAtDepth=apply(bartMachine:::get_tree_depths(bartFitByNumTrees[["100"]]), 1, 
+                                          function(numbers) sum(numbers==depth))))
 })
 
-ggplot(treeDepthDF) + geom_histogram(aes(x = NumTreesAtDepth, fill = factor(Depth)), 
-    position = position_identity()) + ggtitle("Distribution Across Iteration of Number of Trees at Each Depth")
+ggplot(treeDepthDF) + 
+  geom_histogram(aes(x=NumTreesAtDepth, fill=factor(Depth)), position=position_identity()) +
+  ggtitle("Distribution Across Iteration of Number of Trees at Each Depth")
 ```
 
 ```
@@ -190,7 +183,6 @@ ggplot(treeDepthDF) + geom_histogram(aes(x = NumTreesAtDepth, fill = factor(Dept
 ```
 
 ![plot of chunk unnamed-chunk-10](/images/posts/bart-machine-simple-examples-discrete/unnamed-chunk-10.png) 
-
 
 # We see that for all of the iterations, at least half the trees are of depth one which is consistent with the (correct) linear model. 
 # A decent number have depth 2, though. Note that for the X1 != X2 observations, these depth-2 trees will have very little influence on the final result: The leafs' prior is strongly concentrated on 0, and the likelihood function will be very diffuse.

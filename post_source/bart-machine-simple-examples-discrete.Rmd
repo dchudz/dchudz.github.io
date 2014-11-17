@@ -11,7 +11,12 @@ library(plyr)
 library(bartMachine)
 ```
 
-The Bayesian Additive Regression Trees (BART) model consists of a sum of trees, along with values at the leaf notes. I'm attracted to the method as a way to obtain similar out-of-the-box (no hand tuning or model selection needed) performance to common machine learning methods (random forests, gradient boosting machines, etc.), but also provide **uncertainties** along with each individual prediction. BART is an MCMC method, meaning that we receive a series of draws from the posterior distribution, each of which is a set of tree structures along with values at the leaf nodes.
+Bayesian Additive Regression Trees (BART) is a sum-of-trees model. If you're only familiar with random forests (probably the most popular tree-based model out there), the key differences to keep in mind with BART are: 
+
+- BART is an MCMC method, so one iteration consists of a sum of trees, and we look across many iterations for a our uncertainty (these are samples from a posterior distribution)
+- each tree is constructed based on the residual from the other trees (rather than independently of the other trees); this makes bart more like [boosting](https://en.wikipedia.org/wiki/Boosting_(machine_learning)), where random forests are an example of [bagging](https://en.wikipedia.org/wiki/Bootstrap_aggregating)
+
+I'm attracted to the method as a way to obtain similar out-of-the-box (no hand tuning or model selection needed) performance to common machine learning methods (random forests, gradient boosting machines, etc.), but also provide **uncertainties** along with each individual prediction. BART is an MCMC method, meaning that we receive a series of draws from the posterior distribution, each of which is a set of tree structures along with values at the leaf nodes.
 
 The purpose of this post is to explore how appropriate the resulting uncertainties seem in a few simple simulated examples where we know the truth. For this, I use the [`bartMachine`]() implementation by SOMEONE and SOMEONEELSE. The above description of the algorithm might be enough to follow along with this post, but I highly recommend reading at least the first page of the package authors' [vignette](), which provides a very clear description of the algorithm.
 
