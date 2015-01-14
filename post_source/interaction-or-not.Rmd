@@ -1,0 +1,78 @@
+---
+title: "Stuff"
+layout: post
+category: posts
+draft: true
+---
+
+```{r echo=FALSE, message=FALSE}
+library(ggplot2)
+library(knitr)
+
+ColorScale <- function(...) {
+  return(scale_color_gradientn(colours = c('#3288bd','#99d594','#e6f598', '#fee08b', '#fc8d59', '#d53e4f'), na.value="lightgrey", ...))
+}
+
+
+nTrain <- 100
+X1 <- sample(c("A", "B"), size=nTrain, replace=TRUE)
+X2 <- ifelse(X1 == "A", "C", sample(c("C", "D"), size=nTrain, replace=TRUE))
+train <- data.frame(X1, X2, stringsAsFactors=TRUE)
+train$Y <-  10*(X1=="B") + 2*(X2=="D")
+uniques <- unique(train)
+train$Y <- train$Y + rnorm(n=nTrain, sd=.1)
+uniques$Y <- sprintf("%d + very small noise", uniques$Y)
+uniques <- rbind(uniques, data.frame(X1 = "A", X2 = "D", Y = "?"))
+
+ggplot(train) + 
+  geom_point(aes(x=X1, y=X2, color=Y), position=position_jitter(.1, .1)) + 
+  geom_text(aes(x="A", y="D", label=I("?")), size=30) +
+  ColorScale() + 
+  ggtitle("Training Data")
+
+```
+
+```{r results='asis'}
+library(xtable)
+print(xtable(uniques, align=rep("c", 4)), type="html", include.rownames=FALSE)
+```
+
+
+```{r}
+# test <- expand.grid(X1 = c("A", "B"),  X2 = c("C", "D"))
+# ?randomForest
+# library(randomForest)
+# rf <- randomForest(train, y = Y, mtry=2, ntree=1)
+# 
+# test$YHat <- predict(rf, test)
+# test
+# table(train)
+# 
+# 
+# rf$forest$leftDaughter
+# rf$forest$rightDaughter
+# 
+
+# Title: An Interaction or Not? Know Your Priors
+
+# chart-- training data (colored by Y... or use numbers), question mark where we don't have any
+# 
+# Two reasonable possibilities are...:
+# 
+# I'll use this extreme example to probe a few types of models 
+# 
+# ## Random Forest
+# 
+# learns interaction
+# 
+# ## Linear regression (no interaction)
+# 
+# 
+# ## Linear regression (with interaction)
+# 
+# ## BART
+
+```
+
+
+## hi

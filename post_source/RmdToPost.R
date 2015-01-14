@@ -1,9 +1,6 @@
 rmdFile <- commandArgs(trailingOnly = TRUE)[1]
 date <- commandArgs(trailingOnly = TRUE)[2]
 
-rmdFile <- "bart-machine-simple-examples-discrete.Rmd"
-date <- "2014-07-06"
-
 baseName <- tools::file_path_sans_ext(rmdFile)
 cat(sprintf("Turning %s into a post dated %s\n", rmdFile, date))
 
