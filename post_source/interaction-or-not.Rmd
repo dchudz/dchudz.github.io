@@ -1,9 +1,15 @@
 ---
-title: "Stuff"
+title: "A Preference for Interactions? (Know Your Implicit Priors!)"
 layout: post
 category: posts
 draft: true
 ---
+
+Often we think of "interactions" (when the effect of one feature differs depending on the value of another) as interesting/surprising discoveries. Given that, we often use models that prefer not using interactions, introducing them only when the evidence warrants. In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (Random Forests) do just the opposite: When the evidence is equally consistent with an interaction effect and no interaction, they prefer the interaction effect.
+
+I'll also look at a neat Bayesian machine learning algorithm, [Bayesian Additive Regression Trees](http://cran.r-project.org/web/packages/bartMachine/vignettes/bartMachine.pdf), and show how the parameters controlling the prior distribution affect the model's tendency to learn an interaction effect.
+
+Suppose you're given this data and asked to make a prediction about `$X_1 = 0$, $X_2 = 1$`.
 
 ```{r echo=FALSE, message=FALSE}
 library(ggplot2)
@@ -15,31 +21,55 @@ ColorScale <- function(...) {
 
 
 nTrain <- 100
-X1 <- sample(c("A", "B"), size=nTrain, replace=TRUE)
-X2 <- ifelse(X1 == "A", "C", sample(c("C", "D"), size=nTrain, replace=TRUE))
+X1 <- sample(c(0, 1), size=nTrain, replace=TRUE)
+X2 <- ifelse(X1 == 0, 0, sample(c(0, 1), size=nTrain, replace=TRUE))
 train <- data.frame(X1, X2, stringsAsFactors=TRUE)
-train$Y <-  10*(X1=="B") + 2*(X2=="D")
+train$Y <-  5 + 10*X1 + 2*X2
 uniques <- unique(train)
 train$Y <- train$Y + rnorm(n=nTrain, sd=.1)
-uniques$Y <- sprintf("%d + very small noise", uniques$Y)
-uniques <- rbind(uniques, data.frame(X1 = "A", X2 = "D", Y = "?"))
+uniques$Y <- sprintf("%d + small noise", uniques$Y)
+uniquesWithQuestionMark <- rbind(uniques, data.frame(X1 = 0, X2 = 1, Y = "?"))
+
+uniquesForLabelingPlot <- transform(uniques, X1 = X1 + 1.1, X2 = X2 + 1.1)
 
 ggplot(train) + 
-  geom_point(aes(x=X1, y=X2, color=Y), position=position_jitter(.1, .1)) + 
-  geom_text(aes(x="A", y="D", label=I("?")), size=30) +
+  geom_point(aes(x=factor(X1), y=factor(X2), color=Y), position=position_jitter(.03, .03)) + 
+  geom_text(aes(x=factor(0), y=factor(1), label=I("?")), size=30) +
+  geom_text(aes(x=X1, y=X2, label=Y), data=uniquesForLabelingPlot) +
   ColorScale() + 
-  ggtitle("Training Data")
+  ggtitle("Training Data") + 
+  xlab("X1") + ylab("X2")
 
 ```
 
-```{r results='asis'}
+```{r results='asis', echo=FALSE}
 library(xtable)
-print(xtable(uniques, align=rep("c", 4)), type="html", include.rownames=FALSE)
+print(xtable(uniquesWithQuestionMark, digits=rep(0,4), align=rep("c", 4)), type="html", include.rownames=FALSE)
 ```
+
+This example is probably so simple that in practice a model wouldn't be useful. It reminds me of an old criticism of Bayesian reasoning: *If you can really know your prior (what you should think given all previous information), why bother with a model rather than just look at the data and report what you think afterward (your new 'prior') as the answer?* In this case, that's probably exactly what you *should* do.
+
+### A Linear Model
+
+If you fit a linear model of the form `$\mathbb{E}[Y] = \beta_0 + \beta_1 X_1 + \beta_2 X_2$`, you find
+
+`$$\mathbb{E}[Y] = 5 + 10 X_1 + 2 X_2$$`
+
+and this fits the data very well. 
+
+```{r results='asis', echo=FALSE}
+
+# chart showing predictions / parallel lines -- label on "prediction" as "previously unseen"
+
+```
+
+### Random Forest
+
+
 
 
 ```{r}
-# test <- expand.grid(X1 = c("A", "B"),  X2 = c("C", "D"))
+test <- expand.grid(X1 = 0:1,  X2 = 0:1)
 # ?randomForest
 # library(randomForest)
 # rf <- randomForest(train, y = Y, mtry=2, ntree=1)
