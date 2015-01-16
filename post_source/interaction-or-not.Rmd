@@ -8,7 +8,7 @@ draft: true
 Todo:
 
 - better chart titles (state the conclusion)
-- label the predictions charts, e.g. "here we're making predictions about data unlike that seen in the training set"
+- label the predictions charts, e.g. "here we're making predictions about data unlike that seen in the training set" - maybe also label the bottom line in both charts? "influence of X2 is the same here as when X1=1", "X2 makes no difference to the prediction when X1=0"
 - draw the trees
 - explanation about why `mtry=2`
 - bart

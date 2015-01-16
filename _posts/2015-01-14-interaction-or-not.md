@@ -8,7 +8,7 @@ draft: true
 Todo:
 
 - better chart titles (state the conclusion)
-- label the predictions charts, e.g. "here we're making predictions about data unlike that seen in the training set"
+- label the predictions charts, e.g. "here we're making predictions about data unlike that seen in the training set" - maybe also label the bottom line in both charts? "influence of X2 is the same here as when X1=1", "X2 makes no difference to the prediction when X1=0"
 - draw the trees
 - explanation about why `mtry=2`
 - bart
@@ -22,12 +22,12 @@ Suppose you're given this data and asked to make a prediction about `$X_1 = 0$, 
 ![plot of chunk unnamed-chunk-1](/images/posts/interaction-or-not/unnamed-chunk-1.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Fri Jan 16 10:46:50 2015 -->
+<!-- Fri Jan 16 10:52:37 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
-  <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> 5 + small noise </TD> <TD align="center"> 67 </TD> </TR>
-  <TR> <TD align="center"> 1 </TD> <TD align="center"> 0 </TD> <TD align="center"> 15 + small noise </TD> <TD align="center"> 20 </TD> </TR>
-  <TR> <TD align="center"> 1 </TD> <TD align="center"> 1 </TD> <TD align="center"> 17 + small noise </TD> <TD align="center"> 13 </TD> </TR>
+  <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> 5 + small noise </TD> <TD align="center"> 44 </TD> </TR>
+  <TR> <TD align="center"> 1 </TD> <TD align="center"> 0 </TD> <TD align="center"> 15 + small noise </TD> <TD align="center"> 32 </TD> </TR>
+  <TR> <TD align="center"> 1 </TD> <TD align="center"> 1 </TD> <TD align="center"> 17 + small noise </TD> <TD align="center"> 24 </TD> </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 1 </TD> <TD align="center"> ? </TD> <TD align="center"> 0 </TD> </TR>
    </TABLE>
 
