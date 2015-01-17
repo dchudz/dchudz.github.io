@@ -15,7 +15,7 @@ Todo:
 
 Often we think of "interactions" (when the effect of one feature differs depending on the value of another) as interesting/surprising discoveries. Given that, we often use models that prefer not using interactions, introducing them only when the evidence warrants. In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (Random Forests) do just the opposite: When the evidence is equally consistent with an interaction effect and no interaction, they prefer the interaction effect.
 
-I'll also look at a neat Bayesian machine learning algorithm, [Bayesian Additive Regression Trees](http://cran.r-project.org/web/packages/bartMachine/vignettes/bartMachine.pdf), and show how the parameters controlling the prior distribution affect the model's tendency to learn an interaction effect.
+I'll also look at a neat Bayesian machine learning algorithm, [Bayesian Additive Regression Trees](http://cran.r-project.org/web/packages/bartMachine/vignettes/bartMachine.pdf) (BART), and show how the parameters controlling the prior distribution affect the model's tendency to learn an interaction effect.
 
 Suppose you're given this data and asked to make a prediction about `$X_1 = 0$, $X_2 = 1$`.
 
@@ -35,8 +35,8 @@ train <- data.frame(X1, X2, stringsAsFactors=TRUE)
 train$Y <-  5 + 10*X1 + 2*X2
 
 uniques <- train %>% group_by(X1, X2) %>% summarise(Y = mean(Y), NumTrain = n())
-train$Y <- train$Y + rnorm(n=nTrain, sd=.1)
-uniques$Y <- sprintf("%d + small noise", uniques$Y)
+train$Y <- train$Y + rnorm(n=nTrain, sd=.2)
+uniques$Y <- sprintf("Y = %d + small noise", uniques$Y)
 uniquesWithQuestionMark <- rbind(uniques, data.frame(X1 = 0, X2 = 1, Y = "?", NumTrain = 0)) %>% rename("N Training Rows:" = NumTrain) %>% 
   data.frame(check.names=FALSE)
 
@@ -47,7 +47,7 @@ ggplot(train) +
   geom_text(aes(x=factor(0), y=factor(1), label=I("?")), size=30) +
   geom_text(aes(x=X1, y=X2, label=Y), data=uniquesForLabelingPlot) +
   ColorScale() + 
-  ggtitle("Training Data") + 
+  ggtitle("The Region of Feature Space Marked '?' Has No Training Data") + 
   xlab("X1") + ylab("X2")
 
 ```
@@ -79,7 +79,7 @@ predictions <- expand.grid(X1 = 0:1,  X2 = 0:1)
 predictions$LmPrediction <- predict(lmFit, predictions)
 
 ggplot(predictions) + geom_line(aes(x=factor(X2), y=LmPrediction, color=factor(X1), group=X1)) +
-  ggtitle("Predictions from Linear Model") + 
+  ggtitle("Linear Model Predictions: Effect of X2 Does Not Depend on X1") + 
   xlab("X2") +
   scale_color_discrete(name = "X1")
 
@@ -103,52 +103,95 @@ rfFit <- randomForest(Y ~ X1 + X2, data = train, mtry=2)
 ```{r echo=FALSE}
 predictions$RfPrediction <- predict(rfFit, predictions)
 ggplot(predictions) + geom_line(aes(x=factor(X2), y=RfPrediction, color=factor(X1), group=X1)) +
-  ggtitle("Predictions from Random Forest") + 
+  ggtitle("Random Forest Predictions: X2 only matters when X1=1") + 
   xlab("X2") +
   scale_color_discrete(name = "X1")
 ```
 
 It's easy to understand from the trees why this happened. In this simple example, all of the trees are the same, so it's just as if we had one decision tree:
 
-(draw tree)
+![tree](images/posts/tree.png)
 
-You'll notice I set `mtry=2`. This tells the random forest to consider both variables at each split. ....
+
+You'll notice I set `mtry=2`. This tells the random forest to consider both variables at each split (normally you consider only a randomly chosen subset of the variables for each split). This choice makes the example clearer. I don't consider that "cheating" because with the default settings, the random forest fails to replicate even the training data (where there should be no question what predictions are correct).
+
+## BART
+
 
 ```{r}
+library(reshape2)
+library(bartMachine)
+nIterAfterBurnIn <- 50000
+bartFit <- bartMachine(train[c("X1","X2")], train$Y, 
+                       num_burn_in=50000, 
+                       num_trees=10, 
+                       num_iterations_after_burn_in=nIterAfterBurnIn)
+predict(bartFit, predictions[c("X1", "X2")])
 
-# ?randomForest
-# library(randomForest)
-# rf <- randomForest(train, y = Y, mtry=2, ntree=1)
-# 
-# test$YHat <- predict(rf, test)
-# test
-# table(train)
-# 
-# 
-# rf$forest$leftDaughter
-# rf$forest$rightDaughter
-# 
+bartPredictions <- bartMachine::bart_machine_get_posterior(bartFit, predictions[c("X1", "X2")]) %>%
+  data.frame %>%
+  cbind(predictions[c("X1", "X2")]) %>%
+  melt(id=c("X1", "X2"), value.name="BartSample") %>%
+  transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
 
-# Title: An Interaction or Not? Know Your Priors
+ggplot(bartPredictions) + geom_histogram(aes(x=BartSample)) + facet_grid(X2 ~ X1)
 
-# chart-- training data (colored by Y... or use numbers), question mark where we don't have any
-# 
-# Two reasonable possibilities are...:
-# 
-# I'll use this extreme example to probe a few types of models 
-# 
-# ## Random Forest
-# 
-# learns interaction
-# 
-# ## Linear regression (no interaction)
-# 
-# 
-# ## Linear regression (with interaction)
-# 
-# ## BART
+
+
+# bartMachine:::get_tree_depths(bartFit)
+destroy_bart_machine(bartFit)
+
 
 ```
 
+```{r}
+# library(reshape2)
+# nIterAfterBurnIn <- 10000
+# bartFit <- bartMachine(train[c("X1","X2")], train$Y, 
+#                        num_burn_in=5000, 
+#                        num_trees=20, 
+#                        #                        alpha = .5,
+# #                        beta = 5,
+#                        num_iterations_after_burn_in=nIterAfterBurnIn)
+# predict(bartFit, predictions[c("X1", "X2")])
+# 
+# bartPredictions <- 
+#   bartMachine::bart_machine_get_posterior(bartFit, predictions[c("X1", "X2")])$y_hat_posterior_samples %>%
+#   data.frame %>%
+#   setNames(paste0("Sample", 1:(nIterAfterBurnIn))) %>%
+#   cbind(predictions[c("X1", "X2")]) %>%
+#   melt(id=c("X1", "X2"), value.name="BartSample") %>%
+#   transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
+# 
+# ggplot(bartPredictions) + geom_histogram(aes(x=BartSample)) + facet_grid(X2 ~ X1)
+# 
+# 
+# depths <- bartMachine:::get_tree_depths(bartFit)
+# onlyAdditive <- apply(depths, 1, max)==1
+# exactlyOneTreeDepth2 <- apply(depths, 1, function(depths) sum(depths==2)==1)==1
+# atLeast2TreesDepth2 <- apply(depths, 1, function(depths) sum(depths==2)>1)==1
+# 
+# preds <- bartMachine::bart_machine_get_posterior(bartFit, predictions[c("X1", "X2")])
+# 
+# PlotForSubset <- function(subsetIndices) {
+#   bartPredictions <- 
+#     preds$y_hat_posterior_samples[,subsetIndices] %>%
+#     data.frame %>%
+#     setNames(paste0("Sample", 1:(sum(subsetIndices)))) %>%
+#     cbind(predictions[c("X1", "X2")]) %>%
+#     melt(id=c("X1", "X2"), value.name="BartSample") %>%
+#     transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
+#   
+#   p <- ggplot(bartPredictions) + geom_histogram(aes(x=BartSample)) + facet_grid(X2 ~ X1)
+#   print(p)  
+# }
+# 
+# PlotForSubset(onlyAdditive)
+# PlotForSubset(exactlyOneTreeDepth2)
+# PlotForSubset(atLeast2TreesDepth2)
+# 
+# destroy_bart_machine(bartFit)
+# 
 
-## hi
+```
+
