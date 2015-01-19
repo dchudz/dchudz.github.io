@@ -202,7 +202,7 @@ ggplot(subset(stan1Predictions, X1==0 & X2==1)) +
 
 The interaction term can be positive or negative. When the interaction term `$\beta_{12}$` is high, `$\beta_2$` makes up for it by being low (and vice versa):
 
-```{r warning=FALSE}
+```{r warning=FALSE, echo=FALSE}
 qplot(beta2, beta12, data=samples1)
 ````
 
