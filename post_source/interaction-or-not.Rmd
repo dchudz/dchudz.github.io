@@ -75,8 +75,8 @@ If you fit a linear model of the form `$\mathbb{E}[Y] = \beta_0 + \beta_1 X_1 + 
 This fits the training data perfectly and extrapolates to the unseen region of feature space using the assumption that effects are additive.
 
 ```{r results='asis', echo=FALSE}
-predictions <- expand.grid(X1 = 0:1,  X2 = 0:1)
-predictions$LmPrediction <- predict(lmFit, predictions)
+predictionFeatures <- expand.grid(X1 = 0:1,  X2 = 0:1)
+predictions <- transform(predictionFeatures, LmPrediction = predict(lmFit, predictions))
 
 ggplot(predictions) + geom_line(aes(x=factor(X2), y=LmPrediction, color=factor(X1), group=X1)) +
   ggtitle("Linear Model Predictions: Effect of X2 Does Not Depend on X1") + 
@@ -114,6 +114,94 @@ It's easy to understand from the trees why this happened. In this simple example
 
 
 You'll notice I set `mtry=2`. This tells the random forest to consider both variables at each split (normally you consider only a randomly chosen subset of the variables for each split). This choice makes the example clearer. I don't consider that "cheating" because with the default settings, the random forest fails to replicate even the training data (where there should be no question what predictions are correct).
+
+## Linear Regression with Regularized Interaction Term
+
+We can add an interaction term (with a prior pushing it toward zero). The model is:
+
+`$$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_{23} X_2 X_3 + N(0,\sigma).$$`
+
+In this version all parameters except `$\beta_{23}$` have improper flat priors while `$$\beta_{23} \sim N(0,3).$$`
+
+Such a simple model doesn't need a flexible tool like Stan, but I like how clear and explicit a model is when you write it down in the Stan language:
+
+```{r, message=FALSE, results='hide', warning=FALSE}
+library(rstan)
+
+stanModel1 <- "
+data {
+  int<lower=0> N;
+  vector[N] X1;
+  vector[N] X2;
+  vector[N] Y;
+}
+parameters {
+  real beta0;
+  real beta1;
+  real beta2;
+  real beta12;
+  real<lower=0> sigma;
+}
+model {
+  beta12 ~ normal(0, 2);
+  Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
+}
+"
+
+stanData <- c(as.list(train), N=nrow(train))
+stanFit1 <- stan(model_code=stanModel1, data=stanData, chains=1)
+
+samples1 <- extract(stanFit1) %>% data.frame
+samples1$SampleNumber <- 1:nrow(samples1)
+
+stan1Predictions <- merge(samples1, predictionFeatures) %>% 
+  mutate(SamplePredictedY = beta0 + beta1*X1 + beta2*X2 + beta12*X1*X2)
+```
+
+Now instead of one prediction for each point in feature space, we have a set of posterior samples:
+
+```{r warning=FALSE}
+ggplot(stan1Predictions) + 
+  geom_line(aes(x=factor(X2), y=SamplePredictedY, color=factor(X1), group=paste(X1, SampleNumber)), alpha=.2) +
+  ggtitle("Posterior Samples") + 
+  xlab("X2") +
+  scale_color_discrete(name = "X1")
+```
+
+There's no variation in the predictions for points in feature space that we saw in the training data, but the predicted effect of `$X_2$` varies a lot when `$X_1 = 0$`.
+
+The posterior for the interaction term is actually the same as the prior, which makes sense because the data don't tell you anything about whether there's an interaction:
+
+```{r echo=FALSE}
+qplot(beta12, data=samples1) + ggtitle("Posterior samples for interaction parameter")
+```
+
+Looking at histograms of posterior samples for predictions, we again see basically no variation at the points where we have training data:
+
+```{r echo=FALSE}
+ggplot(stan1Predictions %>% transform(X1 = factor(X1, levels = c("0","1")), X2 = factor(X2, levels=c("1","0")))) + 
+  geom_histogram(aes(x=SamplePredictedY)) + 
+  facet_grid(X2 ~ X1, scales="free_y", labeller=function(variable, value) sprintf("%s = %s", variable, value)) + 
+  ggitle("Posterior Samples for Predictions")
+```
+
+Looking closer at the posterior samples at `$X_1 = 0$, $X_2 = 1$`, we see that the predictions are centered on $7$ (the prediction from our model with no interaction), but has substantial variation in both directions:
+
+```{r echo=FALSE}
+ggplot(subset(stan1Predictions, X1==0 & X2==1)) + geom_histogram(aes(x=SamplePredictedY))
+
+```
+
+When the interaction term is high, `$\beta_2$` makes up for it by being low (and vice versa):
+```{r}
+qplot(beta2, beta12, data=samples1)
+````
+
+
+
+## Linear Regression with Interaction Term and Main Effects Regularized
+
+I won't walk through this situation in detail, but note if we put a prior centered on $0$ on `$\beta_2$` as well as `$\beta_{12}$`, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. In that case, sets of parameters with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for pushing `$\beta_2$` higher than it otherwise had to be.
 
 ## BART
 
