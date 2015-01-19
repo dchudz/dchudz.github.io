@@ -7,11 +7,7 @@ draft: true
 
 Todo:
 
-- better chart titles (state the conclusion)
 - label the predictions charts, e.g. "here we're making predictions about data unlike that seen in the training set" - maybe also label the bottom line in both charts? "influence of X2 is the same here as when X1=1", "X2 makes no difference to the prediction when X1=0"
-- draw the trees
-- explanation about why `mtry=2`
-- bart
 
 Often we think of "interactions" (when the effect of one feature differs depending on the value of another) as interesting/surprising discoveries. Given that, we often use models that prefer not using interactions, introducing them only when the evidence warrants. In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (Random Forests) do just the opposite: When the evidence is equally consistent with an interaction effect and no interaction, they prefer the interaction effect.
 
@@ -76,7 +72,7 @@ This fits the training data perfectly and extrapolates to the unseen region of f
 
 ```{r results='asis', echo=FALSE}
 predictionFeatures <- expand.grid(X1 = 0:1,  X2 = 0:1)
-predictions <- transform(predictionFeatures, LmPrediction = predict(lmFit, predictions))
+predictions <- transform(predictionFeatures, LmPrediction = predict(lmFit, predictionFeatures))
 
 ggplot(predictions) + geom_line(aes(x=factor(X2), y=LmPrediction, color=factor(X1), group=X1)) +
   ggtitle("Linear Model Predictions: Effect of X2 Does Not Depend on X1") + 
@@ -192,7 +188,7 @@ ggplot(subset(stan1Predictions, X1==0 & X2==1)) + geom_histogram(aes(x=SamplePre
 
 ```
 
-When the interaction term is high, `$\beta_2$` makes up for it by being low (and vice versa):
+When the interaction term `$\beta_{12}$` is high, `$\beta_2$` makes up for it by being low (and vice versa):
 ```{r}
 qplot(beta2, beta12, data=samples1)
 ````
@@ -201,7 +197,7 @@ qplot(beta2, beta12, data=samples1)
 
 ## Linear Regression with Interaction Term and Main Effects Regularized
 
-I won't walk through this situation in detail, but note if we put a prior centered on $0$ on `$\beta_2$` as well as `$\beta_{12}$`, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. In that case, sets of parameters with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for pushing `$\beta_2$` higher than it otherwise had to be.
+I won't walk through this situation in detail, but note if we put a prior centered on $0$ on `$\beta_2$` as well as `$\beta_{12}$`, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. In that case, parameters choices with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for pushing `$\beta_2$` higher than it otherwise had to be.
 
 ## BART
 
@@ -214,11 +210,11 @@ bartFit <- bartMachine(train[c("X1","X2")], train$Y,
                        num_burn_in=50000, 
                        num_trees=10, 
                        num_iterations_after_burn_in=nIterAfterBurnIn)
-predict(bartFit, predictions[c("X1", "X2")])
+predict(bartFit, predictionFeatures)
 
-bartPredictions <- bartMachine::bart_machine_get_posterior(bartFit, predictions[c("X1", "X2")]) %>%
+bartPredictions <- bartMachine::bart_machine_get_posterior(bartFit, predictionFeatures) %>%
   data.frame %>%
-  cbind(predictions[c("X1", "X2")]) %>%
+  cbind(predictionFeatures) %>%
   melt(id=c("X1", "X2"), value.name="BartSample") %>%
   transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
 
@@ -241,13 +237,13 @@ destroy_bart_machine(bartFit)
 #                        #                        alpha = .5,
 # #                        beta = 5,
 #                        num_iterations_after_burn_in=nIterAfterBurnIn)
-# predict(bartFit, predictions[c("X1", "X2")])
+# predict(bartFit, predictionFeatures)
 # 
 # bartPredictions <- 
-#   bartMachine::bart_machine_get_posterior(bartFit, predictions[c("X1", "X2")])$y_hat_posterior_samples %>%
+#   bartMachine::bart_machine_get_posterior(bartFit, predictionFeatures)$y_hat_posterior_samples %>%
 #   data.frame %>%
 #   setNames(paste0("Sample", 1:(nIterAfterBurnIn))) %>%
-#   cbind(predictions[c("X1", "X2")]) %>%
+#   cbind(predictionFeatures) %>%
 #   melt(id=c("X1", "X2"), value.name="BartSample") %>%
 #   transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
 # 
@@ -259,14 +255,14 @@ destroy_bart_machine(bartFit)
 # exactlyOneTreeDepth2 <- apply(depths, 1, function(depths) sum(depths==2)==1)==1
 # atLeast2TreesDepth2 <- apply(depths, 1, function(depths) sum(depths==2)>1)==1
 # 
-# preds <- bartMachine::bart_machine_get_posterior(bartFit, predictions[c("X1", "X2")])
+# preds <- bartMachine::bart_machine_get_posterior(bartFit, predictionFeatures)
 # 
 # PlotForSubset <- function(subsetIndices) {
 #   bartPredictions <- 
 #     preds$y_hat_posterior_samples[,subsetIndices] %>%
 #     data.frame %>%
 #     setNames(paste0("Sample", 1:(sum(subsetIndices)))) %>%
-#     cbind(predictions[c("X1", "X2")]) %>%
+#     cbind(predictionFeatures) %>%
 #     melt(id=c("X1", "X2"), value.name="BartSample") %>%
 #     transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
 #   
