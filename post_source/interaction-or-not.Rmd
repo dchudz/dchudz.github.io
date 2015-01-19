@@ -5,15 +5,15 @@ category: posts
 draft: true
 ---
 
-Todo:
+We describe a model as having an "interaction" when the influence of one feature differs depending on the value of another. Interactions are often real and important, but in many contexts we treat "no interaction" (or "small interactions") as a natural default assumption unless there's evidence of an interaction. However, (ensembles of) decision trees can do just the opposite. 
 
-- label the predictions charts, e.g. "here we're making predictions about data unlike that seen in the training set" - maybe also label the bottom line in both charts? "influence of X2 is the same here as when X1=1", "X2 makes no difference to the prediction when X1=0"
+In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (random forests) can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
 
-Often we think of "interactions" (when the effect of one feature differs depending on the value of another) as interesting/surprising discoveries. Given that, we often use models that prefer not using interactions, introducing them only when the evidence warrants. In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (Random Forests) do just the opposite: When the evidence is equally consistent with an interaction effect and no interaction, they prefer the interaction effect.
+I'll also look at other models, including a neat Bayesian machine learning algorithm, [Bayesian Additive Regression Trees](http://cran.r-project.org/web/packages/bartMachine/vignettes/bartMachine.pdf) (BART). BART is the advantage of being **appropriately uncertain** about the interaction effect while being a "machine learning" type model that learns interactions, non-linearities, etc. without the user having to decide which terms to include or the particular functional form.
 
-I'll also look at a neat Bayesian machine learning algorithm, [Bayesian Additive Regression Trees](http://cran.r-project.org/web/packages/bartMachine/vignettes/bartMachine.pdf) (BART), and show how the parameters controlling the prior distribution affect the model's tendency to learn an interaction effect.
+## The Example
 
-Suppose you're given this data and asked to make a prediction about `$X_1 = 0$, $X_2 = 1$`.
+Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_2 = 1$` (where we don't have any training data).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -21,7 +21,7 @@ library(knitr)
 library(dplyr)
 ColorScale <- function(...) {
   return(scale_color_gradientn(colours = c('#3288bd','#99d594','#e6f598', '#fee08b', '#fc8d59', '#d53e4f'), na.value="lightgrey", ...))
-}
+  }
 
 
 nTrain <- 100
@@ -53,7 +53,7 @@ library(xtable)
 print(xtable(uniquesWithQuestionMark, digits=rep(0,5), align=rep("c", 5)), type="html", include.rownames=FALSE)
 ```
 
-In practice making an inference at `$X_1 = 0$, $X_2 = 1$` is pretty hopeless. The training data doesn't help much, so your prediction will depend entirely on your priors. But that's exactly why I'm using this example to get at what the priors are in various models. Real problems will have pieces in common with this example, so it helps get a handle on how models will behave for those problems.
+In practice making an inference at `$X_1 = 0$, $X_2 = 1$` is pretty hopeless. The training data doesn't help much, so your prediction will depend entirely on your priors. But that's exactly why I'm using this example to get at what the biases are in various models. Real problems will have elements in common with this example, so it helps get a handle on how models will behave for those problems.
 
 (In fact, if for some reason you had this example in real life, you probably wouldn't even bother with a model. It reminds me of an old criticism of Bayesian reasoning: *If you can really know your prior (what you should think given all previous information), why bother with a model rather than just look at the data and report what you think afterward (your new 'prior') as the answer?* In this case, that's probably exactly what you *should* do.)
 
@@ -72,9 +72,12 @@ This fits the training data perfectly and extrapolates to the unseen region of f
 
 ```{r results='asis', echo=FALSE}
 predictionFeatures <- expand.grid(X1 = 0:1,  X2 = 0:1)
+predictionFeatures$Unseen <- with(predictionFeatures, X1==0 & X2 == 1)
 predictions <- transform(predictionFeatures, LmPrediction = predict(lmFit, predictionFeatures))
 
-ggplot(predictions) + geom_line(aes(x=factor(X2), y=LmPrediction, color=factor(X1), group=X1)) +
+ggplot(predictions, aes(x=factor(X2), y=LmPrediction)) + 
+  geom_line(aes(color=factor(X1), group=X1)) +  
+  geom_text(aes(label="(previously unseen)"), vjust=-1, data=subset(predictions, Unseen)) +  
   ggtitle("Linear Model Predictions: Effect of X2 Does Not Depend on X1") + 
   xlab("X2") +
   scale_color_discrete(name = "X1")
@@ -98,26 +101,29 @@ rfFit <- randomForest(Y ~ X1 + X2, data = train, mtry=2)
 
 ```{r echo=FALSE}
 predictions$RfPrediction <- predict(rfFit, predictions)
-ggplot(predictions) + geom_line(aes(x=factor(X2), y=RfPrediction, color=factor(X1), group=X1)) +
-  ggtitle("Random Forest Predictions: X2 only matters when X1=1") + 
+ggplot(predictions, aes(x=factor(X2), y=RfPrediction)) + 
+  geom_line(aes(color=factor(X1), group=X1)) +  
+  geom_text(aes(label="(previously unseen)"), vjust=-1, data=subset(predictions, Unseen)) +
+  ggtitle("RF Model Predictions: X2 only matters when X1=1") + 
   xlab("X2") +
   scale_color_discrete(name = "X1")
+
 ```
 
-It's easy to understand from the trees why this happened. In this simple example, all of the trees are the same, so it's just as if we had one decision tree:
+It's easy to understand from the trees why this happened. In this simple example, all of the trees are the same, so it's just as if we had one decision tree. `$X_1$` is the most important variable, so first we split on that. Then only the right side splits again on `$X_2$` (since the left side has no training set variation in `$X_2$`):
 
 ![tree](images/posts/tree.png)
 
 
-You'll notice I set `mtry=2`. This tells the random forest to consider both variables at each split (normally you consider only a randomly chosen subset of the variables for each split). This choice makes the example clearer. I don't consider that "cheating" because with the default settings, the random forest fails to replicate even the training data (where there should be no question what predictions are correct).
+Aside: You'll notice when I trained the random forest, I set `mtry=2`. This tells the random forest to consider both variables at each split (normally you consider only a randomly chosen subset of the variables for each split). This choice makes the example clearer. I don't consider that "cheating" because with the default settings, the random forest fails to replicate even the training data (where there should be no question what predictions are correct).
 
 ## Linear Regression with Regularized Interaction Term
 
-We can add an interaction term (with a prior pushing it toward zero). The model is:
+Going back to the linear regression, we can add an interaction term to let the model consider interactions. The model is:
 
 `$$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_{23} X_2 X_3 + N(0,\sigma).$$`
 
-In this version all parameters except `$\beta_{23}$` have improper flat priors while `$$\beta_{23} \sim N(0,3).$$`
+Without regularization this would be too many free parameters, so I'll put a prior on `$\beta_{23}$` pushing it toward zero). All parameters except `$\beta_{23}$` have improper flat priors while `$$\beta_{23} \sim N(0,2).$$`
 
 Such a simple model doesn't need a flexible tool like Stan, but I like how clear and explicit a model is when you write it down in the Stan language. Stan fits Bayesian models using Markov Chain Monte Carlo (MCMC), so the output is a set of parameter samples from the posterior distribution.
 
@@ -126,23 +132,27 @@ library(rstan)
 
 stanModel1 <- "
 data {
-  int<lower=0> N;
-  vector[N] X1;
-  vector[N] X2;
-  vector[N] Y;
+int<lower=0> N;
+vector[N] X1;
+vector[N] X2;
+vector[N] Y;
 }
 parameters {
-  real beta0;
-  real beta1;
-  real beta2;
-  real beta12;
-  real<lower=0> sigma;
+real beta0;
+real beta1;
+real beta2;
+real beta12;
+real<lower=0> sigma;
 }
 model {
-  beta12 ~ normal(0, 2);
-  Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
+beta12 ~ normal(0, 2);
+Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
 }
 "
+```
+
+
+```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
 
 stanData <- c(as.list(train), N=nrow(train))
 stanFit1 <- stan(model_code=stanModel1, data=stanData, chains=1)
@@ -164,54 +174,57 @@ ggplot(stan1Predictions) +
   scale_color_discrete(name = "X1")
 ```
 
-There's no variation in the predictions for points in feature space that we saw in the training data, but the predicted effect of `$X_2$` varies a lot when `$X_1 = 0$`.
+The posterior has very little variation in the predictions for points in feature space that we saw in the training data, which is good. But there is a lot of uncertainty about the predicted effect of `$X_2$` varies a lot when `$X_1 = 0$`.
 
-The posterior for the interaction term is actually the same as the prior, which makes sense because the data don't tell you anything about whether there's an interaction:
+The posterior for the interaction term `$\beta_{23}$` is actually the same as the prior, which makes sense because the data don't tell you anything about whether there's an interaction:
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 qplot(beta12, data=samples1) + ggtitle("Posterior samples for interaction parameter")
 ```
 
 Looking at histograms of posterior samples for predictions, we again see basically no variation at the points where we have training data:
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 ggplot(stan1Predictions %>% transform(X1 = factor(X1, levels = c("0","1")), X2 = factor(X2, levels=c("1","0")))) + 
   geom_histogram(aes(x=SamplePredictedY)) + 
   facet_grid(X2 ~ X1, scales="free_y", labeller=function(variable, value) sprintf("%s = %s", variable, value)) + 
-  ggitle("Posterior Samples for Predictions")
+  ggtitle("Posterior Samples for Predictions")
 ```
 
 Looking closer at the posterior samples at `$X_1 = 0$, $X_2 = 1$`, we see that the predictions are centered on $7$ (the prediction from our model with no interaction), but has substantial variation in both directions:
 
-```{r echo=FALSE}
-ggplot(subset(stan1Predictions, X1==0 & X2==1)) + geom_histogram(aes(x=SamplePredictedY))
+```{r echo=FALSE, warning=FALSE}
+ggplot(subset(stan1Predictions, X1==0 & X2==1)) + 
+  geom_histogram(aes(x=SamplePredictedY)) +
+  ggtitle("Posterior predictions at X1=0, X2=1")
 
 ```
 
-When the interaction term `$\beta_{12}$` is high, `$\beta_2$` makes up for it by being low (and vice versa):
-```{r}
+The interaction term can be positive or negative. When the interaction term `$\beta_{12}$` is high, `$\beta_2$` makes up for it by being low (and vice versa):
+
+```{r warning=FALSE}
 qplot(beta2, beta12, data=samples1)
 ````
 
+Note that if we were to regularize the main effects as well as the interaction term, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. Imagine a prior on `$\beta_2$` centered on $0$ as well as the prior we already have on `$\beta_{12}$`. In that case, parameters choices with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for forcing `$\beta_2$` higher than it otherwise had to be.
 
-
-## Linear Regression with Interaction Term and Main Effects Regularized
-
-I won't walk through this situation in detail, but note if we put a prior centered on $0$ on `$\beta_2$` as well as `$\beta_{12}$`, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. In that case, parameters choices with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for pushing `$\beta_2$` higher than it otherwise had to be.
+In summary, the Bayesian linear regression (with an interaction term) is appropriately uncertain about predictions in the unseen region of feature space. The particular details of the posterior would depend on how you feel about main effects as compared with to interaction terms: If only the interaction term is pushed toward 0, the predictions are centered around the "no interaction" case. If main effects are pushed toward zero as well, predictions are shifted toward the "positive interaction" case.
 
 ## BART
 
-BART is a Bayesian model that's fit using MCMC, so just like with the previous example, we'll get samples from a posterior. The BART model consists of a sum of trees, where we have a prior distribution over the depth of the splits, the values at the leaf nodes, and so on. Have a look at [the vignette](http://cran.r-project.org/web/packages/bartMachine/vignettes/bartMachine.pdf) for the `bartMachine` R package.
+BART is a Bayesian model that's fit using MCMC, so just like with the previous example, we'll get samples from a posterior. The BART model consists of a sum of trees, where we have a prior distribution over the depth of the splits, the values at the leaf nodes, and so on. For more detail, have a look at [the vignette](http://cran.r-project.org/web/packages/bartMachine/vignettes/bartMachine.pdf) for the `bartMachine` R package.
 
-For now, the important thing about BART is that it's a *sum of trees*, where each tree is fitted in the context of the rest (unlike random forests, which are an average of independent trees). This allows BART to better capture additive effects. If the trees all had just one split, we would *only* capture additive effects. For example, the linear model above (with no interaction) would be the same as a model that comes from two trees, each with one split: one splitting on `$X_1$` and the other on `$X_2$`.
+For now, the important thing about BART is that it's a *sum of trees*, where each tree is fitted in the context of the rest (unlike random forests, which are an average of independent trees). This allows BART to better capture additive effects. If the trees all had just one split, we would *only* capture additive effects. 
 
-(picture of two trees as linear model?)
+For example, the linear model above (with no interaction) would be the same as a model that comes from two trees, each with one split: one splitting on `$X_1$` and the other on `$X_2$`.
 
-Trees that are deeper than one split allow BART to introduce interactions.
+![two-trees](images/posts/two-trees.png)
+
+Trees that are deeper than one split would allow BART to introduce interactions.
 
 ```{r message=FALSE, warning=FALSE, results='hide'}
 library(bartMachine)
-nIterAfterBurnIn <- 50000
+nIterAfterBurnIn <- 100000
 bartFit <- bartMachine(train[c("X1","X2")], train$Y, 
                        num_burn_in=50000, 
                        num_trees=10, 
@@ -221,70 +234,23 @@ bartFit <- bartMachine(train[c("X1","X2")], train$Y,
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 library(reshape2)
-bartPredictions <- bartMachine::bart_machine_get_posterior(bartFit, predictionFeatures) %>%
+bartPredictions <- bartMachine::bart_machine_get_posterior(bartFit, predictionFeatures[c("X1", "X2")]) %>%
   data.frame %>%
   cbind(predictionFeatures) %>%
   melt(id=c("X1", "X2"), value.name="BartSample") %>%
   transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
-
-ggplot(bartPredictions) + geom_histogram(aes(x=BartSample)) + facet_grid(X2 ~ X1)
-
-
-
-# bartMachine:::get_tree_depths(bartFit)
-destroy_bart_machine(bartFit)
-
-
 ```
 
-```{r}
-# library(reshape2)
-# nIterAfterBurnIn <- 10000
-# bartFit <- bartMachine(train[c("X1","X2")], train$Y, 
-#                        num_burn_in=5000, 
-#                        num_trees=20, 
-#                        #                        alpha = .5,
-# #                        beta = 5,
-#                        num_iterations_after_burn_in=nIterAfterBurnIn)
-# predict(bartFit, predictionFeatures)
-# 
-# bartPredictions <- 
-#   bartMachine::bart_machine_get_posterior(bartFit, predictionFeatures)$y_hat_posterior_samples %>%
-#   data.frame %>%
-#   setNames(paste0("Sample", 1:(nIterAfterBurnIn))) %>%
-#   cbind(predictionFeatures) %>%
-#   melt(id=c("X1", "X2"), value.name="BartSample") %>%
-#   transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
-# 
-# ggplot(bartPredictions) + geom_histogram(aes(x=BartSample)) + facet_grid(X2 ~ X1)
-# 
-# 
-# depths <- bartMachine:::get_tree_depths(bartFit)
-# onlyAdditive <- apply(depths, 1, max)==1
-# exactlyOneTreeDepth2 <- apply(depths, 1, function(depths) sum(depths==2)==1)==1
-# atLeast2TreesDepth2 <- apply(depths, 1, function(depths) sum(depths==2)>1)==1
-# 
-# preds <- bartMachine::bart_machine_get_posterior(bartFit, predictionFeatures)
-# 
-# PlotForSubset <- function(subsetIndices) {
-#   bartPredictions <- 
-#     preds$y_hat_posterior_samples[,subsetIndices] %>%
-#     data.frame %>%
-#     setNames(paste0("Sample", 1:(sum(subsetIndices)))) %>%
-#     cbind(predictionFeatures) %>%
-#     melt(id=c("X1", "X2"), value.name="BartSample") %>%
-#     transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
-#   
-#   p <- ggplot(bartPredictions) + geom_histogram(aes(x=BartSample)) + facet_grid(X2 ~ X1)
-#   print(p)  
-# }
-# 
-# PlotForSubset(onlyAdditive)
-# PlotForSubset(exactlyOneTreeDepth2)
-# PlotForSubset(atLeast2TreesDepth2)
-# 
-# destroy_bart_machine(bartFit)
-# 
 
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(bartPredictions) + 
+  geom_histogram(aes(x=BartSample)) + facet_grid(X2 ~ X1, labeller=function(variable, value) sprintf("%s = %s", variable, value))  +
+  ggtitle("Samples of Posterior BART Predictions")
 ```
+
+As with all of the previous examples, the model has very little uncertainty in the regions where we have training examples.
+
+The predictions in the new region of feature space are similar to the situation we had with the Bayesian linear model with a prior on the interaction term. There's a fair amount of uncertainty, with the posterior distribution centered near  the no-interaction case (corresponding to predictions of $7$) but allowing positive or negative interactions.
+
+## Implications for Model Selection
 
