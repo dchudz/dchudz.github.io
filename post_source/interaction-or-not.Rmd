@@ -16,6 +16,7 @@ Whenever possible, I recommend using models like BART that explicitly allow for 
 Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_2 = 1$` (where we don't have any training data).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+set.seed(0)
 library(ggplot2)
 library(knitr)
 library(dplyr)

@@ -24,3 +24,13 @@ $(PRES_INTERACTION_OR_NOT_NO_BART): presentations/interaction-or-not-no-bart.Rmd
 	library(knitr); \
 	knit('presentations/interaction-or-not-no-bart.Rmd', output='../slides/pres-interaction-or-not-no-bart.md'); \
 	system(paste('pandoc -s -S -i -t slidy --mathjax', '../slides/pres-interaction-or-not-no-bart.md', '-o', '../slides/pres-interaction-or-not-no-bart.html'))"
+
+PRES_INTERACTION_OR_NOT_WITH_BART := ../slides/pres-interaction-or-not-with-bart.html
+$(PRES_INTERACTION_OR_NOT_WITH_BART): presentations/interaction-or-not-with-bart.Rmd
+	Rscript -e " \
+	library(knitr); \
+	knit('presentations/interaction-or-not-with-bart.Rmd', output='../slides/pres-interaction-or-not-with-bart.md'); \
+	system(paste('pandoc -s -S -i -t slidy --mathjax', '../slides/pres-interaction-or-not-with-bart.md', '-o', '../slides/pres-interaction-or-not-with-bart.html'))"
+
+
+interaction-or-not-slides: $(PRES_INTERACTION_OR_NOT_NO_BART) $(PRES_INTERACTION_OR_NOT_WITH_BART)
