@@ -5,7 +5,7 @@
 ![](../slides/interaction-or-with-bart/unnamed-chunk-2.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Fri Jan 23 10:04:33 2015 -->
+<!-- Fri Jan 23 11:02:39 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + small noise </TD> <TD align="center"> 52 </TD> </TR>
@@ -48,6 +48,17 @@ rfFit <- randomForest(Y ~ X1 + X2, data = train, mtry=2)
 
 ![](/images/posts/interaction-or-not-trees/tree.png)
 
+
+
+```
+##   X1 X2 Unseen LmPrediction RfPrediction
+## 1  0  0  FALSE        5.013        5.012
+## 2  1  0  FALSE       14.980       14.980
+## 3  0  1   TRUE        8.988        5.012
+## 4  1  1  FALSE       18.955       18.956
+```
+
+
 ## Linear Regression with Regularized Interaction Term
 
 $$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_{12} X_1 X_2 + N(0,\sigma)$$
@@ -62,21 +73,21 @@ library(rstan)
 
 stanModel1 <- "
 data {
-int<lower=0> N;
-vector[N] X1;
-vector[N] X2;
-vector[N] Y;
+  int<lower=0> N;
+  vector[N] X1;
+  vector[N] X2;
+  vector[N] Y;
 }
 parameters {
-real beta0;
-real beta1;
-real beta2;
-real beta12;
-real<lower=0> sigma;
+  real beta0;
+  real beta1;
+  real beta2;
+  real beta12;
+  real<lower=0> sigma;
 }
 model {
-beta12 ~ normal(0, 2);
-Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
+  beta12 ~ normal(0, 2);
+  Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
 }
 "
 ```
@@ -86,21 +97,21 @@ Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
 
 ## Posterior Samples Instead of One Prediction 
 
-![](../slides/interaction-or-with-bart/unnamed-chunk-13.png) 
+![](../slides/interaction-or-with-bart/unnamed-chunk-14.png) 
 
 ## Posterior Distribution of Interaction Parameter
 
-![](../slides/interaction-or-with-bart/unnamed-chunk-14.png) 
+![](../slides/interaction-or-with-bart/unnamed-chunk-15.png) 
 
 ## More Directly Look at Distribution of Predictions
 
-![](../slides/interaction-or-with-bart/unnamed-chunk-15.png) 
-
 ![](../slides/interaction-or-with-bart/unnamed-chunk-16.png) 
+
+![](../slides/interaction-or-with-bart/unnamed-chunk-17.png) 
 
 ## When $\beta_{12}$ is High, $\beta_2$ is Low (and vice versa)
 
-![](../slides/interaction-or-with-bart/unnamed-chunk-17.png) 
+![](../slides/interaction-or-with-bart/unnamed-chunk-18.png) 
 
 What if we were to regularize the main effects as well as the interaction term?
 
@@ -125,7 +136,7 @@ bartFit <- bartMachine(train[c("X1","X2")], train$Y,
 
 
 
-![](../slides/interaction-or-with-bart/unnamed-chunk-20.png) 
+![](../slides/interaction-or-with-bart/unnamed-chunk-21.png) 
 
 ## Advantages of BART:
 

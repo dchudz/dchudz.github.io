@@ -40,7 +40,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <img src="../slides/interaction-or-with-bart/unnamed-chunk-2.png" />
 </div>
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Fri Jan 23 10:04:33 2015 -->
+<!-- Fri Jan 23 11:02:39 2015 -->
 <TABLE border=1>
 <TR> <TH> 
 X1
@@ -115,6 +115,11 @@ Y = 19 + small noise
 <div class="figure">
 <img src="/images/posts/interaction-or-not-trees/tree.png" />
 </div>
+<pre><code>##   X1 X2 Unseen LmPrediction RfPrediction
+## 1  0  0  FALSE        5.013        5.012
+## 2  1  0  FALSE       14.980       14.980
+## 3  0  1   TRUE        8.988        5.012
+## 4  1  1  FALSE       18.955       18.956</code></pre>
 </div>
 <div id="linear-regression-with-regularized-interaction-term" class="slide section level2">
 <h1>Linear Regression with Regularized Interaction Term</h1>
@@ -125,49 +130,49 @@ Y = 19 + small noise
 
 stanModel1 &lt;-<span class="st"> &quot;</span>
 <span class="st">data {</span>
-<span class="st">int&lt;lower=0&gt; N;</span>
-<span class="st">vector[N] X1;</span>
-<span class="st">vector[N] X2;</span>
-<span class="st">vector[N] Y;</span>
+<span class="st">  int&lt;lower=0&gt; N;</span>
+<span class="st">  vector[N] X1;</span>
+<span class="st">  vector[N] X2;</span>
+<span class="st">  vector[N] Y;</span>
 <span class="st">}</span>
 <span class="st">parameters {</span>
-<span class="st">real beta0;</span>
-<span class="st">real beta1;</span>
-<span class="st">real beta2;</span>
-<span class="st">real beta12;</span>
-<span class="st">real&lt;lower=0&gt; sigma;</span>
+<span class="st">  real beta0;</span>
+<span class="st">  real beta1;</span>
+<span class="st">  real beta2;</span>
+<span class="st">  real beta12;</span>
+<span class="st">  real&lt;lower=0&gt; sigma;</span>
 <span class="st">}</span>
 <span class="st">model {</span>
-<span class="st">beta12 ~ normal(0, 2);</span>
-<span class="st">Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);</span>
+<span class="st">  beta12 ~ normal(0, 2);</span>
+<span class="st">  Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);</span>
 <span class="st">}</span>
 <span class="st">&quot;</span></code></pre>
 </div>
 <div id="posterior-samples-instead-of-one-prediction" class="slide section level2">
 <h1>Posterior Samples Instead of One Prediction</h1>
 <div class="figure">
-<img src="../slides/interaction-or-with-bart/unnamed-chunk-13.png" />
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-14.png" />
 </div>
 </div>
 <div id="posterior-distribution-of-interaction-parameter" class="slide section level2">
 <h1>Posterior Distribution of Interaction Parameter</h1>
 <div class="figure">
-<img src="../slides/interaction-or-with-bart/unnamed-chunk-14.png" />
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-15.png" />
 </div>
 </div>
 <div id="more-directly-look-at-distribution-of-predictions" class="slide section level2">
 <h1>More Directly Look at Distribution of Predictions</h1>
 <div class="figure">
-<img src="../slides/interaction-or-with-bart/unnamed-chunk-15.png" />
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-16.png" />
 </div>
 <div class="figure">
-<img src="../slides/interaction-or-with-bart/unnamed-chunk-16.png" />
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-17.png" />
 </div>
 </div>
 <div id="when-beta_12-is-high-beta_2-is-low-and-vice-versa" class="slide section level2">
 <h1>When <span class="math">\(\beta_{12}\)</span> is High, <span class="math">\(\beta_2\)</span> is Low (and vice versa)</h1>
 <div class="figure">
-<img src="../slides/interaction-or-with-bart/unnamed-chunk-17.png" />
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-18.png" />
 </div>
 <p>What if we were to regularize the main effects as well as the interaction term?</p>
 </div>
@@ -187,7 +192,7 @@ bartFit &lt;-<span class="st"> </span><span class="kw">bartMachine</span>(train[
 <div id="bart-predictions-are-appropriately-uncertain" class="slide section level2">
 <h1>BART Predictions are Appropriately Uncertain</h1>
 <div class="figure">
-<img src="../slides/interaction-or-with-bart/unnamed-chunk-20.png" />
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-21.png" />
 </div>
 </div>
 <div id="advantages-of-bart" class="slide section level2">

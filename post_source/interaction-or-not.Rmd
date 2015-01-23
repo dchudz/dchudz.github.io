@@ -150,21 +150,21 @@ library(rstan)
 
 stanModel1 <- "
 data {
-int<lower=0> N;
-vector[N] X1;
-vector[N] X2;
-vector[N] Y;
+  int<lower=0> N;
+  vector[N] X1;
+  vector[N] X2;
+  vector[N] Y;
 }
 parameters {
-real beta0;
-real beta1;
-real beta2;
-real beta12;
-real<lower=0> sigma;
+  real beta0;
+  real beta1;
+  real beta2;
+  real beta12;
+  real<lower=0> sigma;
 }
 model {
-beta12 ~ normal(0, 2);
-Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
+  beta12 ~ normal(0, 2);
+  Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
 }
 "
 ```
