@@ -1,0 +1,242 @@
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(knitr)
+library(dplyr)
+
+ColorScale <- function(...) {
+  return(scale_color_gradientn(colours = c('#3288bd','#99d594','#e6f598', '#fee08b', '#fc8d59', '#d53e4f'), na.value="lightgrey", ...))
+  }
+
+
+opts_chunk$set(cache=TRUE,
+               fig.path='../slides/interaction-or-with-bart/',
+               fig.cap="",
+               fig.width=2*opts_chunk$get("fig.width"),
+               fig.height=.9*opts_chunk$get("fig.height")
+               )
+
+```
+
+## Training Data
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+set.seed(0)
+nTrain <- 100
+X1 <- sample(c(0, 1), size=nTrain, replace=TRUE)
+X2 <- ifelse(X1 == 0, 0, sample(c(0, 1), size=nTrain, replace=TRUE))
+train <- data.frame(X1, X2, stringsAsFactors=TRUE)
+
+beta0 <- 5
+beta1 <- 10
+beta2 <- 4
+
+train$Y <-  beta0 + beta1*X1 + beta2*X2
+
+uniques <- train %>% group_by(X1, X2) %>% summarise(Y = mean(Y), NumTrain = n())
+train$Y <- train$Y + rnorm(n=nTrain, sd=.2)
+uniques$Y <- sprintf("Y = %d + small noise", uniques$Y)
+uniquesWithQuestionMark <- rbind(uniques, data.frame(X1 = 0, X2 = 1, Y = "?", NumTrain = 0)) %>% rename("N Training Rows:" = NumTrain) %>% 
+  data.frame(check.names=FALSE)
+
+uniquesForLabelingPlot <- transform(uniques, X1 = X1 + 1.1, X2 = X2 + 1.1)
+
+ggplot(train) + 
+  geom_point(aes(x=factor(X1), y=factor(X2), color=Y), position=position_jitter(.03, .03)) + 
+  geom_text(aes(x=factor(0), y=factor(1), label=I("?")), size=30) +
+  geom_text(aes(x=X1, y=X2, label=Y), data=uniquesForLabelingPlot) +
+  ColorScale() + 
+  ggtitle("The Region of Feature Space Marked '?' Has No Training Data") + 
+  xlab("X1") + ylab("X2")
+
+```
+
+```{r results='asis', echo=FALSE}
+library(xtable)
+print(xtable(uniquesWithQuestionMark, digits=rep(0,5), align=rep("c", 5)), type="html", include.rownames=FALSE)
+```
+
+## Another view of the training data:
+
+```{r echo=FALSE}
+ggplot(train) +
+  geom_point(aes(x=factor(X2), y=Y, color=factor(X1))) +
+  xlab("X2") +
+  scale_color_discrete(name = "X1") +
+  ggtitle("Training Data -- What's Your Prediction at X1=0, X1=1?")
+```
+
+## A Linear Model
+
+```{r}
+lmFit <- lm(Y ~ X1 + X2, data = train)
+```
+
+Model: $$\mathbb{E}[Y] = \beta_0 + \beta_1 X_1 + \beta_2 X_2$$
+
+```{r echo=FALSE}
+backtick <- ''
+```
+
+You find:
+
+`r sprintf("%s$$\\mathbb{E}[Y] = %d + %d X_1 + %d X_2.$$%s", backtick, beta0, beta1, beta2, backtick)`
+
+```{r results='asis', echo=FALSE}
+predictionFeatures <- expand.grid(X1 = 0:1,  X2 = 0:1)
+predictionFeatures$Unseen <- with(predictionFeatures, X1==0 & X2 == 1)
+predictions <- transform(predictionFeatures, LmPrediction = predict(lmFit, predictionFeatures))
+
+ggplot(predictions, aes(x=factor(X2), y=LmPrediction)) + 
+  geom_line(aes(color=factor(X1), group=X1)) +  
+  geom_text(aes(label="(previously unseen)"), vjust=-1, data=subset(predictions, Unseen)) +  
+  ggtitle("Linear Model Predictions: Effect of X2 Does Not Depend on X1") + 
+  xlab("X2") +
+  scale_color_discrete(name = "X1")
+
+```
+
+## Random Forest (and decision trees)
+
+```{r echo=FALSE, message=FALSE}
+library(randomForest)
+```
+
+```{r}
+rfFit <- randomForest(Y ~ X1 + X2, data = train, mtry=2)
+```
+
+```{r echo=FALSE}
+predictions$RfPrediction <- predict(rfFit, predictions)
+ggplot(predictions, aes(x=factor(X2), y=RfPrediction)) + 
+  geom_line(aes(color=factor(X1), group=X1)) +  
+  geom_text(aes(label="(previously unseen)"), vjust=-1, data=subset(predictions, Unseen)) +
+  ggtitle("RF Model Predictions: X2 only matters when X1=1") + 
+  xlab("X2") +
+  scale_color_discrete(name = "X1")
+
+```
+
+![](/images/posts/interaction-or-not-trees/tree.png)
+
+## Linear Regression with Regularized Interaction Term
+
+$$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_{12} X_1 X_2 + N(0,\sigma)$$
+
+Too many free parameters - need a prior:
+
+$$\beta_{12} \sim N(0,2)$$
+
+```{r, message=FALSE, results='hide', warning=FALSE}
+library(rstan)
+
+stanModel1 <- "
+data {
+int<lower=0> N;
+vector[N] X1;
+vector[N] X2;
+vector[N] Y;
+}
+parameters {
+real beta0;
+real beta1;
+real beta2;
+real beta12;
+real<lower=0> sigma;
+}
+model {
+beta12 ~ normal(0, 2);
+Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
+}
+"
+```
+
+
+```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
+stanData <- c(as.list(train), N=nrow(train))
+stanFit1 <- stan(model_code=stanModel1, data=stanData, chains=1)
+
+samples1 <- extract(stanFit1) %>% data.frame
+samples1$SampleNumber <- 1:nrow(samples1)
+
+stan1Predictions <- merge(samples1, predictionFeatures) %>% 
+  mutate(SamplePredictedY = beta0 + beta1*X1 + beta2*X2 + beta12*X1*X2)
+```
+
+## Posterior Samples Instead of One Prediction 
+
+```{r warning=FALSE, echo=FALSE}
+ggplot(stan1Predictions) + 
+  geom_line(aes(x=factor(X2), y=SamplePredictedY, color=factor(X1), group=paste(X1, SampleNumber)), alpha=.2) +
+  ggtitle("Posterior Samples") + 
+  xlab("X2") +
+  scale_color_discrete(name = "X1")
+```
+
+## Posterior Distribution of Interaction Parameter
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+qplot(beta12, data=samples1) + ggtitle("Posterior samples for interaction parameter")
+```
+
+## More Directly Look at Distribution of Predictions
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(stan1Predictions %>% transform(X1 = factor(X1, levels = c("0","1")), X2 = factor(X2, levels=c("1","0")))) + 
+  geom_histogram(aes(x=SamplePredictedY)) + 
+  facet_grid(X2 ~ X1, scales="free_y", labeller=function(variable, value) sprintf("%s = %s", variable, value)) + 
+  ggtitle("Posterior Samples for Predictions")
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(subset(stan1Predictions, X1==0 & X2==1)) + 
+  geom_histogram(aes(x=SamplePredictedY)) +
+  ggtitle("Posterior predictions at X1=0, X2=1")
+
+```
+
+## When $\beta_{12}$ is High, $\beta_2$ is Low (and vice versa)
+
+```{r warning=FALSE, echo=FALSE}
+qplot(beta2, beta12, data=samples1)
+````
+
+What if we were to regularize the main effects as well as the interaction term?
+
+## BART
+
+Each BART sample is a sum-of-trees model, e.g.:
+
+![](/images/posts/interaction-or-not-trees/two-trees.png)
+
+```{r message=FALSE, warning=FALSE, results='hide'}
+library(bartMachine)
+nIterAfterBurnIn <- 100000
+bartFit <- bartMachine(train[c("X1","X2")], train$Y, 
+                       num_burn_in=50000, 
+                       num_trees=10, 
+                       num_iterations_after_burn_in=nIterAfterBurnIn)
+```
+
+## BART Predictions are Appropriately Uncertain
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+library(reshape2)
+bartPredictions <- bartMachine::bart_machine_get_posterior(bartFit, predictionFeatures[c("X1", "X2")]) %>%
+  data.frame %>%
+  cbind(predictionFeatures) %>%
+  melt(id=c("X1", "X2"), value.name="BartSample") %>%
+  transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
+```
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(bartPredictions) + 
+  geom_histogram(aes(x=BartSample)) + facet_grid(X2 ~ X1, labeller=function(variable, value) sprintf("%s = %s", variable, value))  +
+  ggtitle("Samples of Posterior BART Predictions")
+```
+
+## Advantages of BART:
+
+- "machine learning style model" (see distinctions in Dan's talk: automatically find interactions, etc.)
+- can be uncertain where appropriate
+- Note: "bootstrapped" confidence intervals would not help the random forest 

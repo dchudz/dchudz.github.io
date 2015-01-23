@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="http://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css" />
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <script src="http://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<div id="training-data" class="slide section level2">
+<h1>Training Data</h1>
+<div class="figure">
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-2.png" />
+</div>
+<!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
+<!-- Fri Jan 23 09:49:23 2015 -->
+<TABLE border=1>
+<TR> <TH> 
+X1
+</TH> <TH> 
+X2
+</TH> <TH> 
+Y
+</TH> <TH> 
+N Training Rows:
+</TH>  </TR>
+  <TR> <TD align="center"> 
+0
+</TD> <TD align="center"> 
+0
+</TD> <TD align="center"> 
+Y = 5 + small noise
+</TD> <TD align="center"> 
+52
+</TD> </TR>
+  <TR> <TD align="center"> 
+1
+</TD> <TD align="center"> 
+0
+</TD> <TD align="center"> 
+Y = 15 + small noise
+</TD> <TD align="center"> 
+23
+</TD> </TR>
+  <TR> <TD align="center"> 
+1
+</TD> <TD align="center"> 
+1
+</TD> <TD align="center"> 
+Y = 19 + small noise
+</TD> <TD align="center"> 
+25
+</TD> </TR>
+  <TR> <TD align="center"> 
+0
+</TD> <TD align="center"> 
+1
+</TD> <TD align="center"> 
+?
+</TD> <TD align="center"> 
+0
+</TD> </TR>
+   </TABLE>
+
+</div>
+<div id="another-view-of-the-training-data" class="slide section level2">
+<h1>Another view of the training data:</h1>
+<div class="figure">
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-4.png" />
+</div>
+</div>
+<div id="a-linear-model" class="slide section level2">
+<h1>A Linear Model</h1>
+<pre class="sourceCode r"><code class="sourceCode r">lmFit &lt;-<span class="st"> </span><span class="kw">lm</span>(Y ~<span class="st"> </span>X1 +<span class="st"> </span>X2, <span class="dt">data =</span> train)</code></pre>
+<p>Model: <span class="math">\[\mathbb{E}[Y] = \beta_0 + \beta_1 X_1 + \beta_2 X_2\]</span></p>
+<p>You find:</p>
+<p><span class="math">\[\mathbb{E}[Y] = 5 + 10 X_1 + 4 X_2.\]</span></p>
+<div class="figure">
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-7.png" />
+</div>
+</div>
+<div id="random-forest-and-decision-trees" class="slide section level2">
+<h1>Random Forest (and decision trees)</h1>
+<pre class="sourceCode r"><code class="sourceCode r">rfFit &lt;-<span class="st"> </span><span class="kw">randomForest</span>(Y ~<span class="st"> </span>X1 +<span class="st"> </span>X2, <span class="dt">data =</span> train, <span class="dt">mtry=</span><span class="dv">2</span>)</code></pre>
+<div class="figure">
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-10.png" />
+</div>
+<div class="figure">
+<img src="/images/posts/interaction-or-not-trees/tree.png" />
+</div>
+</div>
+<div id="linear-regression-with-regularized-interaction-term" class="slide section level2">
+<h1>Linear Regression with Regularized Interaction Term</h1>
+<p><span class="math">\[Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_{12} X_1 X_2 + N(0,\sigma)\]</span></p>
+<p>Too many free parameters - need a prior:</p>
+<p><span class="math">\[\beta_{12} \sim N(0,2)\]</span></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rstan)
+
+stanModel1 &lt;-<span class="st"> &quot;</span>
+<span class="st">data {</span>
+<span class="st">int&lt;lower=0&gt; N;</span>
+<span class="st">vector[N] X1;</span>
+<span class="st">vector[N] X2;</span>
+<span class="st">vector[N] Y;</span>
+<span class="st">}</span>
+<span class="st">parameters {</span>
+<span class="st">real beta0;</span>
+<span class="st">real beta1;</span>
+<span class="st">real beta2;</span>
+<span class="st">real beta12;</span>
+<span class="st">real&lt;lower=0&gt; sigma;</span>
+<span class="st">}</span>
+<span class="st">model {</span>
+<span class="st">beta12 ~ normal(0, 2);</span>
+<span class="st">Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);</span>
+<span class="st">}</span>
+<span class="st">&quot;</span></code></pre>
+</div>
+<div id="posterior-samples-instead-of-one-prediction" class="slide section level2">
+<h1>Posterior Samples Instead of One Prediction</h1>
+<div class="figure">
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-13.png" />
+</div>
+</div>
+<div id="posterior-distribution-of-interaction-parameter" class="slide section level2">
+<h1>Posterior Distribution of Interaction Parameter</h1>
+<div class="figure">
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-14.png" />
+</div>
+</div>
+<div id="more-directly-look-at-distribution-of-predictions" class="slide section level2">
+<h1>More Directly Look at Distribution of Predictions</h1>
+<div class="figure">
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-15.png" />
+</div>
+<div class="figure">
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-16.png" />
+</div>
+</div>
+<div id="when-beta_12-is-high-beta_2-is-low-and-vice-versa" class="slide section level2">
+<h1>When <span class="math">\(\beta_{12}\)</span> is High, <span class="math">\(\beta_2\)</span> is Low (and vice versa)</h1>
+<div class="figure">
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-17.png" />
+</div>
+<p>What if we were to regularize the main effects as well as the interaction term?</p>
+</div>
+<div id="bart" class="slide section level2">
+<h1>BART</h1>
+<p>Each BART sample is a sum-of-trees model, e.g.:</p>
+<div class="figure">
+<img src="/images/posts/interaction-or-not-trees/two-trees.png" />
+</div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bartMachine)
+nIterAfterBurnIn &lt;-<span class="st"> </span><span class="dv">100000</span>
+bartFit &lt;-<span class="st"> </span><span class="kw">bartMachine</span>(train[<span class="kw">c</span>(<span class="st">&quot;X1&quot;</span>,<span class="st">&quot;X2&quot;</span>)], train$Y, 
+                       <span class="dt">num_burn_in=</span><span class="dv">50000</span>, 
+                       <span class="dt">num_trees=</span><span class="dv">10</span>, 
+                       <span class="dt">num_iterations_after_burn_in=</span>nIterAfterBurnIn)</code></pre>
+</div>
+<div id="bart-predictions-are-appropriately-uncertain" class="slide section level2">
+<h1>BART Predictions are Appropriately Uncertain</h1>
+<div class="figure">
+<img src="../slides/interaction-or-with-bart/unnamed-chunk-20.png" />
+</div>
+</div>
+<div id="advantages-of-bart" class="slide section level2">
+<h1>Advantages of BART:</h1>
+<ul class="incremental">
+<li>“machine learning style model” (see distinctions in Dan’s talk: automatically find interactions, etc.)</li>
+<li>can be uncertain where appropriate</li>
+<li>Note: “bootstrapped” confidence intervals would not help the random forest</li>
+</ul>
+</div>
+</body>
+</html>
