@@ -26,12 +26,12 @@ Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_
 ![plot of chunk unnamed-chunk-1](/images/posts/interaction-or-not/unnamed-chunk-1.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Thu Jan 22 16:11:28 2015 -->
+<!-- Thu Jan 22 17:26:29 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
-  <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + small noise </TD> <TD align="center"> 49 </TD> </TR>
-  <TR> <TD align="center"> 1 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 15 + small noise </TD> <TD align="center"> 24 </TD> </TR>
-  <TR> <TD align="center"> 1 </TD> <TD align="center"> 1 </TD> <TD align="center"> Y = 19 + small noise </TD> <TD align="center"> 27 </TD> </TR>
+  <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + small noise </TD> <TD align="center"> 52 </TD> </TR>
+  <TR> <TD align="center"> 1 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 15 + small noise </TD> <TD align="center"> 22 </TD> </TR>
+  <TR> <TD align="center"> 1 </TD> <TD align="center"> 1 </TD> <TD align="center"> Y = 19 + small noise </TD> <TD align="center"> 26 </TD> </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 1 </TD> <TD align="center"> ? </TD> <TD align="center"> 0 </TD> </TR>
    </TABLE>
 
@@ -77,7 +77,7 @@ rfFit <- randomForest(Y ~ X1 + X2, data = train, mtry=2)
 
 It's easy to understand from the trees why this happened. In this simple example, all of the trees are the same, so it's just as if we had one decision tree. `$X_1$` is the most important variable, so first we split on that. Then only the right side splits again on `$X_2$` (since the left side has no training set variation in `$X_2$`):
 
-![tree](/images/posts/tree.png)
+![tree](/images/posts/interaction-or-not-trees/tree.png)
 
 
 Aside: You'll notice when I trained the random forest, I set `mtry=2`. This tells the random forest to consider both variables at each split (normally you consider only a randomly chosen subset of the variables for each split). This choice makes the example clearer. I don't consider that "cheating" because with the default settings, the random forest fails to replicate even the training data (where there should be no question what predictions are correct).
@@ -154,7 +154,7 @@ For now, the important thing about BART is that it's a *sum of trees*, where eac
 
 For example, the linear model above (with no interaction) would be the same as a model that comes from two trees, each with one split: one splitting on `$X_1$` and the other on `$X_2$`.
 
-![two-trees](/images/posts/two-trees.png)
+![two-trees](/images/posts/interaction-or-not-trees/two-trees.png)
 
 Trees that are deeper than one split would allow BART to introduce interactions.
 
