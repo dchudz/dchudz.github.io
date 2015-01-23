@@ -2,7 +2,7 @@
 library(ggplot2)
 library(knitr)
 library(dplyr)
-
+ 
 ColorScale <- function(...) {
   return(scale_color_gradientn(colours = c('#3288bd','#99d594','#e6f598', '#fee08b', '#fc8d59', '#d53e4f'), na.value="lightgrey", ...))
   }

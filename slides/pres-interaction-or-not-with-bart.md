@@ -5,7 +5,7 @@
 ![](../slides/interaction-or-with-bart/unnamed-chunk-2.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Fri Jan 23 09:49:23 2015 -->
+<!-- Fri Jan 23 10:04:33 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + small noise </TD> <TD align="center"> 52 </TD> </TR>
