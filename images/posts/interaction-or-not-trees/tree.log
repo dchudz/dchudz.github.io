@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=latex 2013.5.30)  22 JAN 2015 17:28
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=latex 2013.5.30)  22 JAN 2015 17:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -399,7 +399,7 @@ File: tikzlibrarytopaths.code.tex 2008/06/17 v2.10 (rcs-revision 1.2)
 \child@list=\toks26
 \root@node=\toks27
 ))
-No file tree.aux.
+(../images/posts/interaction-or-not-trees//tree.aux)
 \openout1 = `tree.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.
@@ -414,6 +414,7 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 4.
 LaTeX Font Info:    ... okay on input line 4.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 4.
 LaTeX Font Info:    ... okay on input line 4.
+
 ABD: EveryShipout initializing macros
 (/usr/local/texlive/2013/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -477,8 +478,8 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 {/usr/local/texlive/2013/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 (../images/posts/interaction-or-not-trees//tree.aux) ) 
 Here is how much of TeX's memory you used:
- 10525 strings out of 493316
- 202644 string characters out of 6137930
+ 10527 strings out of 493316
+ 202744 string characters out of 6137930
  246938 words of memory out of 5000000
  13771 multiletter control sequences out of 15000+600000
  3640 words of font info for 14 fonts, out of 8000000 for 9000
@@ -489,7 +490,7 @@ texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2013/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2013/tex
 mf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb>
 Output written on ../images/posts/interaction-or-not-trees//tree.pdf (1 page, 3
-0133 bytes).
+0110 bytes).
 PDF statistics:
  23 PDF objects out of 1000 (max. 8388607)
  16 compressed objects within 1 object stream
