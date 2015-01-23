@@ -1,0 +1,129 @@
+We describe a model as having an "interaction" when the influence of one feature differs depending on the value of another. Interactions are often real and important, but in many contexts we treat "no interaction" (or "small interactions") as a natural default assumption unless there's evidence of an interaction. In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (random forests) make the opposite assumption: they can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
+
+I'll also look at other models, including a neat Bayesian machine learning algorithm, [Bayesian Additive Regression Trees](http://cran.r-project.org/web/packages/bartMachine/vignettes/bartMachine.pdf) (BART). BART has the advantage of being **appropriately uncertain** about the interaction effect while still being a "machine learning" type model that learns interactions, non-linearities, etc. without the user having to decide which terms to include or the particular functional form.
+
+Whenever possible, I recommend using models like BART that explicitly allow for uncertainty.
+
+## The Example
+
+Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_2 = 1$` (where we don't have any training data).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(knitr)
+library(dplyr)
+ColorScale <- function(...) {
+  return(scale_color_gradientn(colours = c('#3288bd','#99d594','#e6f598', '#fee08b', '#fc8d59', '#d53e4f'), na.value="lightgrey", ...))
+  }
+
+
+nTrain <- 100
+X1 <- sample(c(0, 1), size=nTrain, replace=TRUE)
+X2 <- ifelse(X1 == 0, 0, sample(c(0, 1), size=nTrain, replace=TRUE))
+train <- data.frame(X1, X2, stringsAsFactors=TRUE)
+
+beta0 <- 5
+beta1 <- 10
+beta2 <- 4
+
+train$Y <-  beta0 + beta1*X1 + beta2*X2
+
+uniques <- train %>% group_by(X1, X2) %>% summarise(Y = mean(Y), NumTrain = n())
+train$Y <- train$Y + rnorm(n=nTrain, sd=.2)
+uniques$Y <- sprintf("Y = %d + small noise", uniques$Y)
+uniquesWithQuestionMark <- rbind(uniques, data.frame(X1 = 0, X2 = 1, Y = "?", NumTrain = 0)) %>% rename("N Training Rows:" = NumTrain) %>% 
+  data.frame(check.names=FALSE)
+
+uniquesForLabelingPlot <- transform(uniques, X1 = X1 + 1.1, X2 = X2 + 1.1)
+
+ggplot(train) + 
+  geom_point(aes(x=factor(X1), y=factor(X2), color=Y), position=position_jitter(.03, .03)) + 
+  geom_text(aes(x=factor(0), y=factor(1), label=I("?")), size=30) +
+  geom_text(aes(x=X1, y=X2, label=Y), data=uniquesForLabelingPlot) +
+  ColorScale() + 
+  ggtitle("The Region of Feature Space Marked '?' Has No Training Data") + 
+  xlab("X1") + ylab("X2")
+
+```
+
+```{r results='asis', echo=FALSE}
+library(xtable)
+print(xtable(uniquesWithQuestionMark, digits=rep(0,5), align=rep("c", 5)), type="html", include.rownames=FALSE)
+```
+
+Or another view of the training data:
+
+```{r echo=FALSE}
+ggplot(train) +
+  geom_point(aes(x=factor(X2), y=Y, color=factor(X1))) +
+  xlab("X2") +
+  scale_color_discrete(name = "X1") +
+  ggtitle("Training Data -- What's Your Prediction at X1=0, X1=1?")
+```
+
+
+In practice, making an inference at `$X_1 = 0$, $X_2 = 1$` would be pretty hopeless. The training data doesn't help much, so your prediction will depend almost entirely on your priors. But that's exactly why I'm using this example to get at what the biases are in various models. Real problems will have elements in common with this example, so it helps get a handle on how models will behave for those problems.
+
+### A Linear Model
+
+```{r}
+lmFit <- lm(Y ~ X1 + X2, data = train)
+```
+
+If you fit a linear model of the form `$\mathbb{E}[Y] = \beta_0 + \beta_1 X_1 + \beta_2 X_2$`, you find
+
+```{r echo=FALSE}
+backtick <- '`'
+```
+
+`r sprintf("%s$$\\mathbb{E}[Y] = %d + %d X_1 + %d X_2.$$%s", backtick, beta0, beta1, beta2, backtick)`
+
+This fits the training data perfectly and extrapolates to the unseen region of feature space using the assumption that effects are additive.
+
+```{r results='asis', echo=FALSE}
+predictionFeatures <- expand.grid(X1 = 0:1,  X2 = 0:1)
+predictionFeatures$Unseen <- with(predictionFeatures, X1==0 & X2 == 1)
+predictions <- transform(predictionFeatures, LmPrediction = predict(lmFit, predictionFeatures))
+
+ggplot(predictions, aes(x=factor(X2), y=LmPrediction)) + 
+  geom_line(aes(color=factor(X1), group=X1)) +  
+  geom_text(aes(label="(previously unseen)"), vjust=-1, data=subset(predictions, Unseen)) +  
+  ggtitle("Linear Model Predictions: Effect of X2 Does Not Depend on X1") + 
+  xlab("X2") +
+  scale_color_discrete(name = "X1")
+
+```
+
+The line for `$X_1 = 0$` is parallel to the one for `$X_1 = 1$`, meaning that the influence of `$X_2$` is the same (+`r beta2`) regardless of the value of `$X_1$`
+
+
+### Random Forest (and decision trees)
+
+```{r echo=FALSE, message=FALSE}
+library(randomForest)
+```
+
+Fitting a random forest and plotting its predictions, we see that where it has training data, it fits that data perfectly (making the same predictions as the linear model), but has decided that `$X_2$` only matters when `$X_1 = 1$`:
+
+```{r}
+rfFit <- randomForest(Y ~ X1 + X2, data = train, mtry=2)
+```
+
+```{r echo=FALSE}
+predictions$RfPrediction <- predict(rfFit, predictions)
+ggplot(predictions, aes(x=factor(X2), y=RfPrediction)) + 
+  geom_line(aes(color=factor(X1), group=X1)) +  
+  geom_text(aes(label="(previously unseen)"), vjust=-1, data=subset(predictions, Unseen)) +
+  ggtitle("RF Model Predictions: X2 only matters when X1=1") + 
+  xlab("X2") +
+  scale_color_discrete(name = "X1")
+
+```
+
+It's easy to understand from the trees why this happened. In this simple example, all of the trees are the same, so it's just as if we had one decision tree. `$X_1$` is the most important variable, so first we split on that. Then only the right side splits again on `$X_2$` (since the left side has no training set variation in `$X_2$`):
+
+![tree](images/posts/interaction-or-not-trees/tree.png)
+
+
+Aside: You'll notice when I trained the random forest, I set `mtry=2`. This tells the random forest to consider both variables at each split (normally you consider only a randomly chosen subset of the variables for each split). This choice makes the example clearer. I don't consider that "cheating" because with the default settings, the random forest fails to replicate even the training data (where there should be no question what predictions are correct).
+

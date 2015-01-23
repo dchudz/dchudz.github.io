@@ -17,3 +17,10 @@ $(TREES_DIR)/two-trees.png: interaction-or-not/two-trees.tex
 	convert -density 300 $(TREES_DIR)/two-trees.pdf -resize 50% $@
 
 interaction-or-not: $(INTERACTION_OR_NOT) $(TREES_DIR)/tree.png $(TREES_DIR)/two-trees.png
+
+PRES_INTERACTION_OR_NOT_NO_BART := ../slides/pres-interaction-or-not-no-bart.html
+$(PRES_INTERACTION_OR_NOT_NO_BART): presentations/interaction-or-not-no-bart.Rmd
+	Rscript -e " \
+	library(knitr); \
+	knit('presentations/interaction-or-not-no-bart.Rmd', output='../slides/pres-interaction-or-not-no-bart.md'); \
+	system(paste('pandoc -s -S -i -t slidy --mathjax', '../slides/pres-interaction-or-not-no-bart.md', '-o', '../slides/pres-interaction-or-not-no-bart.html'))"
