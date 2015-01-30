@@ -18,7 +18,7 @@ Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_
 ![plot of chunk unnamed-chunk-1](/images/posts/interaction-or-not/unnamed-chunk-1.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Wed Jan 28 14:29:45 2015 -->
+<!-- Thu Jan 29 16:36:07 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + small noise </TD> <TD align="center"> 52 </TD> </TR>
@@ -189,6 +189,6 @@ BART has other settings that it's good to understand and control them as appropr
 
 Decisions trees and random forests aren't additive models, so from their perspective the "interaction" explanation for the train data is simpler than the explanation with no interaction. 
 
-As a separate matter, your forecasts could have lots of uncertainty that you're not thinking about if you just use point estimates. This is true **even if your training error is low** because in applications you might be forecasting for data in new regions of feature space. A high dimensional feature space has a lot of space, so you'll generally be looking at new regions in applications. With 20 binary features, there's 1 million possible inputs. That's fine since goal of modeling is to generalize, but we should be aware there's uncertainty in how we generalize.
+As a separate matter, your forecasts could have lots of uncertainty that you're not thinking about if you just use point estimates. This is true **even if your training error is low** because in applications you might be forecasting for data in new regions of feature space. A high dimensional feature space has a lot of space, so you'll generally be looking at new regions in applications. With 20 binary features, there's 1 million possible inputs. That's fine since the goal of modeling is to generalize. We expect to have to generalize -- but we should be aware there's uncertainty in how we generalize.
 
 So when possible, use models that capture uncertainty rather than just point estimates. The linear models in this example made it relatively straightforward to capture uncertainty and think about the relationship between your prior distribution and the posterior. BART is a "machine learning"-style Bayesian model. In this case it did a good job correctly capturing uncertainty without having to think much about the particulars of the situation.
