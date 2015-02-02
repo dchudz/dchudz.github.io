@@ -26,130 +26,65 @@ Whenever possible, I recommend using models like BART that explicitly allow for 
 
 Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_2 = 1$` (where we don't have any training data).
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-set.seed(0)
-library(ggplot2)
-library(knitr)
-opts_chunk$set(fig.width=8, fig.height=6.2)
-# opts_chunk$set(cache=TRUE)
-library(dplyr)
-ColorScale <- function(...) {
-  return(scale_color_gradientn(colours = c('#3288bd','#99d594','#e6f598', '#fee08b', '#fc8d59', '#d53e4f'), na.value="lightgrey", ...))
-  }
 
-# theme_set(theme_minimal(base_size=18))
-theme_set(theme_gray(base_size=18))
-```
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+![plot of chunk unnamed-chunk-2](/images/posts/interaction-or-not/unnamed-chunk-2.png) 
 
-nTrain <- 100
-X1 <- sample(c(0, 1), size=nTrain, replace=TRUE)
-X2 <- ifelse(X1 == 0, 0, sample(c(0, 1), size=nTrain, replace=TRUE))
-train <- data.frame(X1, X2, stringsAsFactors=TRUE)
-
-beta0 <- 5
-beta1 <- 10
-beta2 <- 4
-
-train$Y <-  beta0 + beta1*X1 + beta2*X2
-
-uniques <- train %>% group_by(X1, X2) %>% summarise(Y = mean(Y), NumTrain = n())
-train$Y <- train$Y + rnorm(n=nTrain, sd=.2)
-uniques$Y <- sprintf("Y = %d + noise", uniques$Y)
-uniquesWithQuestionMark <- rbind(uniques, data.frame(X1 = 0, X2 = 1, Y = "?", NumTrain = 0)) %>% rename("N Training Rows:" = NumTrain) %>% 
-  data.frame(check.names=FALSE)
-
-uniquesForLabelingPlot <- transform(uniques, X1 = X1 + 1.1, X2 = X2 + 1.1)
-
-ggplot(train) + 
-  geom_point(aes(x=factor(X1), y=factor(X2), color=Y), position=position_jitter(.03, .03)) + 
-  geom_text(aes(x=factor(0), y=factor(1), label=I("?")), size=30) +
-  geom_text(aes(x=X1, y=X2, label=Y), data=uniquesForLabelingPlot) +
-  ColorScale() + 
-  ggtitle("Region '?' Has No Training Data") + 
-  xlab("X1") + ylab("X2")
-
-```
-
-```{r results='asis', echo=FALSE}
-library(xtable)
-print(xtable(uniquesWithQuestionMark, digits=rep(0,5), align=rep("c", 5)), type="html", include.rownames=FALSE)
-```
+<!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
+<!-- Mon Feb  2 10:23:42 2015 -->
+<TABLE border=1>
+<TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
+  <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + noise </TD> <TD align="center"> 52 </TD> </TR>
+  <TR> <TD align="center"> 1 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 15 + noise </TD> <TD align="center"> 23 </TD> </TR>
+  <TR> <TD align="center"> 1 </TD> <TD align="center"> 1 </TD> <TD align="center"> Y = 19 + noise </TD> <TD align="center"> 25 </TD> </TR>
+  <TR> <TD align="center"> 0 </TD> <TD align="center"> 1 </TD> <TD align="center"> ? </TD> <TD align="center"> 0 </TD> </TR>
+   </TABLE>
 
 Or another view of the training data:
 
-```{r echo=FALSE}
-ggplot(train) +
-  geom_point(aes(x=factor(X2), y=Y, color=factor(X1))) +
-  xlab("X2") +
-  scale_color_discrete(name = "X1") +
-  ggtitle("Training Data")
-```
+![plot of chunk unnamed-chunk-4](/images/posts/interaction-or-not/unnamed-chunk-4.png) 
 
 
 In practice, making an inference at `$X_1 = 0$, $X_2 = 1$` would be pretty hopeless. The training data doesn't help much, so your prediction will depend almost entirely on your priors. But that's exactly why I'm using this example to get at what the biases are in various models. Real problems will have elements in common with this example, so it helps get a handle on how models will behave for those problems.
 
 # A Linear Model
 
-```{r}
+
+```r
 lmFit <- lm(Y ~ X1 + X2, data = train)
 ```
 
 If you fit a linear model of the form `$\mathbb{E}[Y] = \beta_0 + \beta_1 X_1 + \beta_2 X_2$`, you find
 
-```{r echo=FALSE}
-backtick <- '`'
-```
 
-`r sprintf("%s$$\\mathbb{E}[Y] = %d + %d X_1 + %d X_2.$$%s", backtick, beta0, beta1, beta2, backtick)`
+
+`$$\mathbb{E}[Y] = 5 + 10 X_1 + 4 X_2.$$`
 
 This fits the training data perfectly and extrapolates to the unseen region of feature space using the assumption that effects are additive.
 
-```{r results='asis', echo=FALSE}
-predictionFeatures <- expand.grid(X1 = 0:1,  X2 = 0:1)
-predictionFeatures$Unseen <- with(predictionFeatures, X1==0 & X2 == 1)
-lmPredictions <- transform(predictionFeatures, Prediction = predict(lmFit, predictionFeatures))
+![plot of chunk unnamed-chunk-7](/images/posts/interaction-or-not/unnamed-chunk-7.png) 
 
-PlotPointEstimates <- function(predictionData, title) {
-  ggplot(predictionData, aes(x=factor(X2), y=Prediction, color=factor(X1), group=X1)) + 
-    geom_line(aes(linetype="Predictions")) +  
-    geom_text(aes(label="(unseen in train)"), vjust=-1, size=4, data=subset(predictionData, Unseen), show_guide  = F) +  
-    ggtitle(title) + 
-    xlab("X2") +
-    ylab("Y (predicted and actual)") +
-    geom_point(aes(y=Y, shape="Training Data"), data=train, position=position_jitter(.03), size=1) +
-    guides(color=guide_legend("X1", order =1), linetype=guide_legend(""), shape=guide_legend(""))
-  }
-
-PlotPointEstimates(lmPredictions, "Linear Model: Impact from X2 is Insensitive to X1")
-```
-
-The line for `$X_1 = 0$` is parallel to the one for `$X_1 = 1$`, meaning that the influence of `$X_2$` is the same (+`r beta2`) regardless of the value of `$X_1$`
+The line for `$X_1 = 0$` is parallel to the one for `$X_1 = 1$`, meaning that the influence of `$X_2$` is the same (+4) regardless of the value of `$X_1$`
 
 
 # Decision Trees (and Random Forest)
 
-```{r echo=FALSE, message=FALSE}
-library(randomForest)
-```
+
 
 Random forests are build from decision trees using an ensembling technique called *bagging*, which averages a number of independent decision trees. To make the trees different, different trees use different random subsets of the training data. (Additional randomness is usually introduced by allowing each tree to consider a random subset of the features at each split.)
 
 Fitting a random forest and plotting its predictions, we see that where it has training data, it fits that data perfectly (making the same predictions as the linear model), but has decided that `$X_2$` only matters when `$X_1 = 1$`:
 
-```{r}
+
+```r
 rfFit <- randomForest(Y ~ X1 + X2, data = train, mtry=2)
 ```
 
-```{r echo=FALSE}
-rfPredictions <- transform(predictionFeatures, Prediction = predict(rfFit, predictionFeatures))
-PlotPointEstimates(rfPredictions, "RF Model: X2 only matters when X1=1")
-```
+![plot of chunk unnamed-chunk-10](/images/posts/interaction-or-not/unnamed-chunk-10.png) 
 
 It's easy to understand from the trees why this happened. In this simple example, all of the trees are the same, so it's just as if we had one decision tree. `$X_1$` is the most important variable, so first we split on that. Then only the right side splits again on `$X_2$` (since the left side has no training set variation in `$X_2$`):
 
-![tree](images/posts/interaction-or-not-trees/tree.png)
+![tree](/images/posts/interaction-or-not-trees/tree.png)
 
 Aside: You'll notice when I trained the random forest, I set `mtry=2`. This tells the random forest to consider both variables at each split (normally you consider only a randomly chosen subset of the variables for each split). This choice makes the example clearer, but I'm not really "cheating" because in this example, `mtry=2` would be the parameter you choose as optimal based on the training data (e.g. through cross-validation). With the default settings, the random forest would fail to replicate even the training data (where there should be no question which predictions are correct).
 
@@ -159,47 +94,41 @@ Aside: You'll notice when I trained the random forest, I set `mtry=2`. This tell
 
 It's possible to represent a well-fitting model as a sum of only two depth-1 trees (this is the same as the linear model):
 
-![two-trees](images/posts/interaction-or-not-trees/two-trees.png)
+![two-trees](/images/posts/interaction-or-not-trees/two-trees.png)
 
 But the `gbm` can't get to this answer with only two trees, because first tree (with a split on `$X_1$`) would attribute too much of the effect to `$X_1$` ($12$ instead of $10$), and the second tree (with a split on `$X_2$`) has no way to correct that. We'd get these trees, which make bad predictions:
 
-![two-trees](images/posts/interaction-or-not-trees/two-trees-wrong.png)
+![two-trees](/images/posts/interaction-or-not-trees/two-trees-wrong.png)
 
 
-```{r message=FALSE}
+
+```r
 library(gbm)
 gbmFit1 <- gbm(Y ~ X1 + X2, data = train, n.trees=2, shrinkage = 1, distribution = "gaussian")
 ```
 
-```{r echo=FALSE, message=FALSE}
-gbmPredictions1 <- transform(predictionFeatures, Prediction = predict(gbmFit1, predictionFeatures, length(gbmFit1$trees)))
-PlotPointEstimates(gbmPredictions1, "GBM: 2 Trees, No Shrinkage\n(gives X1 too much influence)")
-```
+![plot of chunk unnamed-chunk-12](/images/posts/interaction-or-not/unnamed-chunk-12.png) 
 
 Instead, boosting generally fits only a small amount of the signal at each stage, making only very small adjustments in the direction of fitting the residuals. This works much better:
 
-```{r message=FALSE}
+
+```r
 library(gbm)
 gbmFit2 <- gbm(Y ~ X1 + X2, data = train, n.trees=10000, shrinkage = .01, distribution = "gaussian")
 ```
 
-```{r echo=FALSE, message=FALSE}
-gbmPredictions2 <- transform(predictionFeatures, Prediction = predict(gbmFit2, predictionFeatures, length(gbmFit2$trees)))
-PlotPointEstimates(gbmPredictions2, "GBM: Many Trees\n(equivalent to linear model)")
-```
+![plot of chunk unnamed-chunk-14](/images/posts/interaction-or-not/unnamed-chunk-14.png) 
 
 But this is using the default `interaction.depth=1`, which forces the model to be linear. If we set `interaction.depth=2`, the results are similar to what we would get with only one decision tree:
 
 
-```{r message=FALSE}
+
+```r
 library(gbm)
 gbmFit3 <- gbm(Y ~ X1 + X2, data = train, n.trees=10000, shrinkage = .01, distribution = "gaussian", interaction.depth = 2)
 ```
 
-```{r echo=FALSE, message=FALSE}
-gbmPredictions3 <- transform(predictionFeatures, Prediction = predict(gbmFit3, predictionFeatures, length(gbmFit2$trees)))
-PlotPointEstimates(gbmPredictions3, "GBM (interaction.depth = 2) - Many Identical Trees")
-```
+![plot of chunk unnamed-chunk-16](/images/posts/interaction-or-not/unnamed-chunk-16.png) 
 
 Is it possible for `gbm` to result in a middle ground between the linear model and the one-tree model? Yes! Two parameters we can tweak for this are: 
 
@@ -208,23 +137,7 @@ Is it possible for `gbm` to result in a middle ground between the linear model a
 
 To get the second (deeper) split, we need at least `n.minobsinnode` in each of the smaller groups (`$X_1 = 1$, $X_2 = 0$` or  `$X_1 = 1$, $X_2 = 1$`). As we increase `n.minobsinnode`, we decrease the number of trees that meet the threshold for a second split:
 
-```{r echo=FALSE, message=FALSE, fig.width=12}
-set.seed(0)
-minNodeSizes <- 10:13
-gbmPredictionsList <- Map(function(minNodeSize) {
-  
-  gbmFit <- gbm(Y ~ X1 + X2, data = train, n.trees=10000, shrinkage = .01, distribution = "gaussian", interaction.depth = 2, n.minobsinnode = minNodeSize)
-
-  transform(predictionFeatures, 
-            Prediction = predict(gbmFit, predictionFeatures, length(gbmFit$trees)),
-            n.minobsinnode = minNodeSize)
-  
-  },
-  minNodeSizes)
-
-PlotPointEstimates(as.data.frame(do.call(rbind, gbmPredictionsList)), "`n.minobsinnode` Determines How Many Trees Split Twice") + 
-  facet_grid(. ~ n.minobsinnode, labeller = function(variable, value) sprintf("%s = %d", variable, value))
-```
+![plot of chunk unnamed-chunk-17](/images/posts/interaction-or-not/unnamed-chunk-17.png) 
 
 Varying `bag.fraction` would have a similar effect.
 
@@ -240,7 +153,8 @@ Such a simple model doesn't need a flexible tool like Stan, but I like how clear
 
 Here's what the model looks like in Stan:
 
-```{r, message=FALSE, results='hide', warning=FALSE}
+
+```r
 library(rstan)
 
 stanModel1 <- "
@@ -265,59 +179,44 @@ Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
 ```
 
 
-```{r, echo=FALSE, message=FALSE, results='hide', warning=FALSE, eval=FALSE}
 
-stanData <- c(as.list(train), N=nrow(train))
-stanFit1 <- stan(model_code=stanModel1, data=stanData, chains=1)
-
-samples1 <- extract(stanFit1) %>% data.frame
-samples1$SampleNumber <- 1:nrow(samples1)
-
-stan1Predictions <- merge(samples1, predictionFeatures) %>% 
-  mutate(SamplePredictedY = beta0 + beta1*X1 + beta2*X2 + beta12*X1*X2)
-```
 
 Now instead of one prediction for each point in feature space, we have a set of posterior samples. Each line represents the predictions for one posterior sample, at either `$X_1=0$` or `$X_1=1$`:
 
-```{r warning=FALSE, echo=FALSE}
-ggplot(stan1Predictions) + 
-  geom_line(aes(x=factor(X2), y=SamplePredictedY, color=factor(X1), group=paste(X1, SampleNumber)), alpha=.2) +
-  ggtitle("Posterior Samples") + 
-  xlab("X2") +
-  scale_color_discrete(name = "X1")
+
+```
+## Error: object 'stan1Predictions' not found
 ```
 
 For points like the ones we saw in the training data, there is very little uncertainty. But there is a lot of uncertainty about the predicted effect of `$X_2$` when `$X_1 = 0$`.
 
 The posterior for the interaction term `$\beta_{12}$` is actually the same as the prior, which makes sense because the data don't tell you anything about whether there's an interaction:
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-qplot(beta12, data=samples1) + ggtitle("Posterior samples for interaction parameter")
+
+```
+## Error: object 'samples1' not found
 ```
 
 Looking at histograms of posterior samples for predictions is another way to see that there's basically no variation at the points where we have training data:
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-ggplot(stan1Predictions %>% transform(X1 = factor(X1, levels = c("0","1")), X2 = factor(X2, levels=c("1","0")))) + 
-  geom_histogram(aes(x=SamplePredictedY)) + 
-  facet_grid(X2 ~ X1, scales="free_y", labeller=function(variable, value) sprintf("%s = %s", variable, value)) + 
-  ggtitle("Posterior Samples for Predictions")
+
+```
+## Error: object 'stan1Predictions' not found
 ```
 
-Looking closer at the posterior samples for `$X_1 = 0$, $X_2 = 1$`, we see that the predictions are centered on `r beta0 + beta2` (the prediction from our model with no interaction), but has substantial variation in both directions:
+Looking closer at the posterior samples for `$X_1 = 0$, $X_2 = 1$`, we see that the predictions are centered on 9 (the prediction from our model with no interaction), but has substantial variation in both directions:
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-ggplot(subset(stan1Predictions, X1==0 & X2==1)) + 
-  geom_histogram(aes(x=SamplePredictedY)) +
-  ggtitle("Posterior predictions at X1=0, X2=1")
 
+```
+## Error: object 'stan1Predictions' not found
 ```
 
 The interaction term can be positive or negative. When the interaction term `$\beta_{12}$` is high, `$\beta_2$` makes up for it by being low (and vice versa):
 
-```{r warning=FALSE, echo=FALSE}
-qplot(beta2, beta12, data=samples1)
-````
+
+```
+## Error: object 'samples1' not found
+```
 
 Note that if we were to regularize the main effects as well as the interaction term, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. Imagine a prior on `$\beta_2$` centered on $0$ as well as the prior we already have on `$\beta_{12}$`. In that case, parameters choices with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for forcing `$\beta_2$` higher than it otherwise had to be.
 
@@ -334,7 +233,8 @@ For example, the linear model above (with no interaction) would be the same as a
 
 Trees that are deeper than one split would allow BART to introduce interactions.
 
-```{r message=FALSE, warning=FALSE, results='hide', eval=FALSE}
+
+```r
 library(bartMachine)
 nIterAfterBurnIn <- 100000
 bartFit <- bartMachine(train[c("X1","X2")], train$Y, 
@@ -344,25 +244,20 @@ bartFit <- bartMachine(train[c("X1","X2")], train$Y,
 ```
 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
-library(reshape2)
-bartPredictions <- bartMachine::bart_machine_get_posterior(bartFit, predictionFeatures[c("X1", "X2")]) %>%
-  data.frame %>%
-  cbind(predictionFeatures) %>%
-  melt(id=c("X1", "X2"), value.name="BartSample") %>%
-  transform(X1 = factor(X1, levels = 0:1), X2 = factor(X2, levels=1:0))
+
+```
+## Error: No running JVM detected. Maybe .jinit() would help.
 ```
 
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-ggplot(bartPredictions) + 
-  geom_histogram(aes(x=BartSample)) + facet_grid(X2 ~ X1, labeller=function(variable, value) sprintf("%s = %s", variable, value))  +
-  ggtitle("Samples of Posterior BART Predictions")
+
+```
+## Error: object 'bartPredictions' not found
 ```
 
 As with all of the previous examples, the model is both correct and confident in the regions where we have training examples.
 
-The predictions in the new region of feature space are similar to the situation we had with the Bayesian linear model with a prior on the interaction term. There's a fair amount of uncertainty, with the posterior distribution centered near  the no-interaction case (corresponding to predictions of `r beta0 + beta2`) but allowing positive or negative interactions.
+The predictions in the new region of feature space are similar to the situation we had with the Bayesian linear model with a prior on the interaction term. There's a fair amount of uncertainty, with the posterior distribution centered near  the no-interaction case (corresponding to predictions of 9) but allowing positive or negative interactions.
 
 # Controlling BART's Settings
 

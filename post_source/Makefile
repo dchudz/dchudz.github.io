@@ -16,7 +16,12 @@ $(TREES_DIR)/two-trees.png: interaction-or-not/two-trees.tex
 	latex -output-format='pdf' -output-dir=../images/posts/interaction-or-not-trees/ $^
 	convert -density 300 $(TREES_DIR)/two-trees.pdf -resize 50% $@
 
-interaction-or-not: $(INTERACTION_OR_NOT) $(TREES_DIR)/tree.png $(TREES_DIR)/two-trees.png
+$(TREES_DIR)/two-trees-wrong.png: interaction-or-not/two-trees-wrong.tex
+	latex -output-format='pdf' -output-dir=../images/posts/interaction-or-not-trees/ $^
+	convert -density 300 $(TREES_DIR)/two-trees-wrong.pdf -resize 50% $@
+
+
+interaction-or-not: $(INTERACTION_OR_NOT) $(TREES_DIR)/tree.png $(TREES_DIR)/two-trees.png $(TREES_DIR)/two-trees-wrong.png
 
 PRES_INTERACTION_OR_NOT_NO_BART := ../slides/pres-interaction-or-not-no-bart.html
 $(PRES_INTERACTION_OR_NOT_NO_BART): presentations/interaction-or-not-no-bart.Rmd
