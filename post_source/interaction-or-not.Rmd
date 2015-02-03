@@ -5,6 +5,8 @@ category: posts
 draft: true
 ---
 
+(draft)
+
 We describe a model as having an "interaction" when the influence of one feature differs depending on the value of another. Interactions are often real and important, but in many contexts we treat interaction effects as likely to small without evidence otherwise. In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (random forests) can make the opposite assumption: they can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
 
 I'll look at point estimates from:
@@ -384,10 +386,3 @@ BART has other settings that it's good to understand and control them as appropr
 This example demonstrates **the limits of bootstrapping as an approach to uncertainty**. Bootstrapping is a way to get at how your estimates would vary under new samples of the training data. It's especially convenient for bagged estimators, since [if you're bagging, you've already done much of the computational work for bootstrapping](http://arxiv.org/abs/1311.4555). But the random forest (and the boosted trees, depending on the parameter settings) doesn't vary with new samples of the training data. This shows that your uncertainty about the truth could be very different from the variation in your model under replicated samples of the training data.
 
 **When possible, use methods that explicitly capture uncertainty.** I demonstrated adding an interaction term (with an informative prior distribution) to the linear model, as well Bayesian Additive Regression Trees. The former exemplifies a parametric approach where you carefully think about each parameter in the model. The latter is meant to support more "automated" model-building.
-
-Decisions trees and random forests aren't additive models, so from their perspective the "interaction" explanation for the training data is simpler than the explanation with no interaction. (The results do depend on parameter settings like `mtry`, the number of variables to consider at each split. But in this post I'm only considering )
-
-As a separate matter, your forecasts could have lots of uncertainty that you're not thinking about if you just use point estimates. This is true **even if your training error is low** because in applications you might be forecasting for data in new regions of feature space. A high dimensional feature space has a lot of space, so you'll generally be looking at new regions in applications. With 20 binary features, there's 1 million possible inputs. That's fine since the goal of modeling is to generalize. We expect to have to generalize -- but we should be aware there's uncertainty in how we generalize.
-
-So when possible, use models that capture uncertainty rather than just point estimates. The linear models in this example made it relatively straightforward to capture uncertainty and think about the relationship between your prior distribution and the posterior. BART is a "machine learning"-style Bayesian model. In this case it did a good job correctly capturing uncertainty without having to think much about the particulars of the situation.
-
