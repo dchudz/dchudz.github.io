@@ -31,7 +31,7 @@ Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_
 ![plot of chunk unnamed-chunk-2](/images/posts/interaction-or-not/unnamed-chunk-2.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Mon Feb  2 10:23:42 2015 -->
+<!-- Tue Feb  3 08:09:53 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + noise </TD> <TD align="center"> 52 </TD> </TR>
@@ -109,7 +109,7 @@ gbmFit1 <- gbm(Y ~ X1 + X2, data = train, n.trees=2, shrinkage = 1, distribution
 
 ![plot of chunk unnamed-chunk-12](/images/posts/interaction-or-not/unnamed-chunk-12.png) 
 
-Instead, boosting generally fits only a small amount of the signal at each stage, making only very small adjustments in the direction of fitting the residuals. This works much better:
+Instead, boosting generally fits just a small amount of the signal at each stage, making only very small adjustments in the direction of fitting the residuals. This works much better:
 
 
 ```r
@@ -141,13 +141,13 @@ To get the second (deeper) split, we need at least `n.minobsinnode` in each of t
 
 Varying `bag.fraction` would have a similar effect.
 
-# Linear Regression with Regularized Interaction Term
+# Models with Uncertainty: Linear Regression with Interaction Term
 
-Going back to the linear regression, we can add an interaction term to let the model consider interactions. The model is:
+All of the above models deliver point estimates. But really, we should admit to uncertainty about the predictions. Going back to the linear regression, we can add an interaction term to let the model consider interactions. The model is:
 
 `$$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_{12} X_1 X_2 + N(0,\sigma).$$`
 
-Without regularization this would be too many free parameters, so I'll put a prior on `$\beta_{12}$` (pushing it toward zero). All parameters except `$\beta_{12}$` have improper flat priors while `$$\beta_{12} \sim N(0,2).$$`
+Without an informative prior distribution, this would be too many free parameters. But I'll put a prior on `$\beta_{12}$` (pushing it toward zero). All parameters except `$\beta_{12}$` have improper flat priors while `$$\beta_{12} \sim N(0,2).$$`
 
 Such a simple model doesn't need a flexible tool like Stan, but I like how clear and explicit a model is when you write it down in the Stan language. Stan fits Bayesian models using Markov Chain Monte Carlo (MCMC), so the output is a set of parameter samples from the posterior distribution.
 
@@ -183,40 +183,25 @@ Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
 
 Now instead of one prediction for each point in feature space, we have a set of posterior samples. Each line represents the predictions for one posterior sample, at either `$X_1=0$` or `$X_1=1$`:
 
-
-```
-## Error: object 'stan1Predictions' not found
-```
+![plot of chunk unnamed-chunk-20](/images/posts/interaction-or-not/unnamed-chunk-20.png) 
 
 For points like the ones we saw in the training data, there is very little uncertainty. But there is a lot of uncertainty about the predicted effect of `$X_2$` when `$X_1 = 0$`.
 
 The posterior for the interaction term `$\beta_{12}$` is actually the same as the prior, which makes sense because the data don't tell you anything about whether there's an interaction:
 
-
-```
-## Error: object 'samples1' not found
-```
+![plot of chunk unnamed-chunk-21](/images/posts/interaction-or-not/unnamed-chunk-21.png) 
 
 Looking at histograms of posterior samples for predictions is another way to see that there's basically no variation at the points where we have training data:
 
-
-```
-## Error: object 'stan1Predictions' not found
-```
+![plot of chunk unnamed-chunk-22](/images/posts/interaction-or-not/unnamed-chunk-22.png) 
 
 Looking closer at the posterior samples for `$X_1 = 0$, $X_2 = 1$`, we see that the predictions are centered on 9 (the prediction from our model with no interaction), but has substantial variation in both directions:
 
-
-```
-## Error: object 'stan1Predictions' not found
-```
+![plot of chunk unnamed-chunk-23](/images/posts/interaction-or-not/unnamed-chunk-23.png) 
 
 The interaction term can be positive or negative. When the interaction term `$\beta_{12}$` is high, `$\beta_2$` makes up for it by being low (and vice versa):
 
-
-```
-## Error: object 'samples1' not found
-```
+![plot of chunk unnamed-chunk-24](/images/posts/interaction-or-not/unnamed-chunk-24.png) 
 
 Note that if we were to regularize the main effects as well as the interaction term, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. Imagine a prior on `$\beta_2$` centered on $0$ as well as the prior we already have on `$\beta_{12}$`. In that case, parameters choices with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for forcing `$\beta_2$` higher than it otherwise had to be.
 
@@ -245,21 +230,15 @@ bartFit <- bartMachine(train[c("X1","X2")], train$Y,
 
 
 
-```
-## Error: No running JVM detected. Maybe .jinit() would help.
-```
 
 
-
-```
-## Error: object 'bartPredictions' not found
-```
+![plot of chunk unnamed-chunk-27](/images/posts/interaction-or-not/unnamed-chunk-27.png) 
 
 As with all of the previous examples, the model is both correct and confident in the regions where we have training examples.
 
 The predictions in the new region of feature space are similar to the situation we had with the Bayesian linear model with a prior on the interaction term. There's a fair amount of uncertainty, with the posterior distribution centered near  the no-interaction case (corresponding to predictions of 9) but allowing positive or negative interactions.
 
-# Controlling BART's Settings
+## Controlling BART's Settings
 
 To get a sense for how BART's settings affect the inference, consider that the tree depths are controlled by the prior probability of a split occurring at any given node, which is 
 
@@ -274,7 +253,13 @@ BART has other settings that it's good to understand and control them as appropr
 
 # Implications for Choosing a Model
 
-Decisions trees and random forests aren't additive models, so from their perspective the "interaction" explanation for the train data is simpler than the explanation with no interaction. 
+**It helps to be aware of what tendencies your algorithms have.** I used a trivial example to demonstrate some tendencies of bagged decision trees (random forests) and boosted decision trees.
+
+This example demonstrates **the limits of bootstrapping as an approach to uncertainty**. Bootstrapping is a way to get at how your estimates would vary under new samples of the training data. It's especially convenient for bagged estimators, since [if you're bagging, you've already done much of the computational work for bootstrapping](http://arxiv.org/abs/1311.4555). But the random forest (and the boosted trees, depending on the parameter settings) doesn't vary with new samples of the training data. This shows that your uncertainty about the truth could be very different from the variation in your model under replicated samples of the training data.
+
+**When possible, use methods that explicitly capture uncertainty.** I demonstrated adding an interaction term (with an informative prior distribution) to the linear model, as well Bayesian Additive Regression Trees. The former exemplifies a parametric approach where you carefully think about each parameter in the model. The latter is meant to support more "automated" model-building.
+
+Decisions trees and random forests aren't additive models, so from their perspective the "interaction" explanation for the training data is simpler than the explanation with no interaction. (The results do depend on parameter settings like `mtry`, the number of variables to consider at each split. But in this post I'm only considering )
 
 As a separate matter, your forecasts could have lots of uncertainty that you're not thinking about if you just use point estimates. This is true **even if your training error is low** because in applications you might be forecasting for data in new regions of feature space. A high dimensional feature space has a lot of space, so you'll generally be looking at new regions in applications. With 20 binary features, there's 1 million possible inputs. That's fine since the goal of modeling is to generalize. We expect to have to generalize -- but we should be aware there's uncertainty in how we generalize.
 
