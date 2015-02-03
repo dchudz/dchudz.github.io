@@ -226,7 +226,7 @@ gbmPredictionsList <- Map(function(minNodeSize) {
   },
   minNodeSizes)
 
-PlotPointEstimates(as.data.frame(do.call(rbind, gbmPredictionsList)), "`n.minobsinnode` Determines How Many Trees Split Twice") + 
+PlotPointEstimates(as.data.frame(do.call(rbind, gbmPredictionsList)), "GBM: `n.minobsinnode` Determines How Many Trees Split Twice") + 
   facet_grid(. ~ n.minobsinnode, labeller = function(variable, value) sprintf("%s = %d", variable, value))
 ```
 
