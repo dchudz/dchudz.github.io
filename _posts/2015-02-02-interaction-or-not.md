@@ -7,6 +7,8 @@ draft: true
 
 (draft)
 
+*Source code for this post is [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/interaction-or-not.Rmd).*
+
 We describe a model as having an "interaction" when the influence of one feature differs depending on the value of another. Interactions are often real and important, but in many contexts we treat interaction effects as likely to small without evidence otherwise. In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (random forests) can make the opposite assumption: they can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
 
 I'll look at point estimates from:
