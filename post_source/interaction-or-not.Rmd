@@ -1,5 +1,5 @@
 ---
-title: "Understanding Five Different Algorithms Using One Toy Example"
+title: "Understanding the Assumptions a Few ML Algorithms Use to Generalize to New Data"
 layout: post
 category: posts
 draft: true
@@ -9,14 +9,16 @@ draft: true
 
 Todo:
 
-- intro (based on Chris' comments)
 - is there any way to replace `$X_1$`, `$X_2$`, `$Y$` with meaningful (still fake) variables?
 - proofread for sloppiness about what's '"literally" (ie mathematically) true and when they are "almost" (ie usually, with high probability, computationally, etc) true'
 - clean up explanation (or more detail) on GBM with `shrinkage=1`
+- change URL to better reflect title
 
 *Source code for this post is [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/interaction-or-not.Rmd).*
 
-We describe a model as having an "interaction" when the influence of one feature differs depending on the value of another. Interactions are often real and important, but in many contexts we treat interaction effects as likely to small without evidence otherwise. In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (random forests) can make the opposite assumption: they can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
+This post examines how a few statistical and machine learning models respond to a simple toy example where they're asked to predict new regions of feature space. The key question the models will answer differently is whether there's an "interaction" between two features. We describe a machine learning model as having an "interaction" when the influence of one feature differs depending on the value of another. 
+
+In this case, the data won't provide information about whether there's an interaction or not. Interactions are often real and important, but in many contexts we treat interaction effects as likely to be small (without evidence otherwise). I'll walk through why decision trees and bagged ensembles of decision trees (random forests) can make the opposite assumption: they can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
 
 I'll look at point estimates from:
 
