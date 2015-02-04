@@ -7,6 +7,13 @@ draft: true
 
 (draft)
 
+Todo:
+
+- intro (based on Chris' comments)
+- is there any way to replace `$X_1$`, `$X_2$`, `$Y$` with meaningful (still fake) variables?
+- proofread for sloppiness about what's '"literally" (ie mathematically) true and when they are "almost" (ie usually, with high probability, computationally, etc) true'
+- clean up explanation (or more detail) on GBM with `shrinkage=1`
+
 *Source code for this post is [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/interaction-or-not.Rmd).*
 
 We describe a model as having an "interaction" when the influence of one feature differs depending on the value of another. Interactions are often real and important, but in many contexts we treat interaction effects as likely to small without evidence otherwise. In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (random forests) can make the opposite assumption: they can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
@@ -44,11 +51,6 @@ Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 1 </TD> <TD align="center"> ? </TD> <TD align="center"> 0 </TD> </TR>
    </TABLE>
 
-Or another view of the training data:
-
-![plot of chunk unnamed-chunk-4](/images/posts/interaction-or-not/unnamed-chunk-4.png) 
-
-
 In practice, making an inference at `$X_1 = 0$, $X_2 = 1$` would be pretty hopeless. The training data doesn't help much, so your prediction will depend almost entirely on your priors. But that's exactly why I'm using this example to get at what the biases are in various models. Real problems will have elements in common with this example, so it helps get a handle on how models will behave for those problems.
 
 # A Linear Model
@@ -66,7 +68,7 @@ If you fit a linear model of the form `$\mathbb{E}[Y] = \beta_0 + \beta_1 X_1 + 
 
 This fits the training data perfectly and extrapolates to the unseen region of feature space using the assumption that effects are additive.
 
-![plot of chunk unnamed-chunk-7](/images/posts/interaction-or-not/unnamed-chunk-7.png) 
+![plot of chunk unnamed-chunk-6](/images/posts/interaction-or-not/unnamed-chunk-6.png) 
 
 The line for `$X_1 = 0$` is parallel to the one for `$X_1 = 1$`, meaning that the influence of `$X_2$` is the same (+4) regardless of the value of `$X_1$`
 
@@ -75,7 +77,7 @@ The line for `$X_1 = 0$` is parallel to the one for `$X_1 = 1$`, meaning that th
 
 
 
-Random forests are build from decision trees using an ensembling technique called *bagging*, which averages a number of independent decision trees. To make the trees different, different trees use different random subsets of the training data. (Additional randomness is usually introduced by allowing each tree to consider a random subset of the features at each split.)
+Random forests are built from decision trees using an ensembling technique called *bagging*, which averages a number of independent decision trees. To make the trees different, different trees use different random subsets of the training data. (Additional randomness is usually introduced by allowing each tree to consider a random subset of the features at each split.)
 
 Fitting a random forest and plotting its predictions, we see that where it has training data, it fits that data perfectly (making the same predictions as the linear model), but has decided that `$X_2$` only matters when `$X_1 = 1$`:
 
@@ -84,7 +86,7 @@ Fitting a random forest and plotting its predictions, we see that where it has t
 rfFit <- randomForest(Y ~ X1 + X2, data = train, mtry=2)
 ```
 
-![plot of chunk unnamed-chunk-10](/images/posts/interaction-or-not/unnamed-chunk-10.png) 
+![plot of chunk unnamed-chunk-9](/images/posts/interaction-or-not/unnamed-chunk-9.png) 
 
 It's easy to understand from the trees why this happened. In this simple example, all of the trees are the same, so it's just as if we had one decision tree. `$X_1$` is the most important variable, so first we split on that. Then only the right side splits again on `$X_2$` (since the left side has no training set variation in `$X_2$`):
 
@@ -111,7 +113,7 @@ library(gbm)
 gbmFit1 <- gbm(Y ~ X1 + X2, data = train, n.trees=2, shrinkage = 1, distribution = "gaussian")
 ```
 
-![plot of chunk unnamed-chunk-12](/images/posts/interaction-or-not/unnamed-chunk-12.png) 
+![plot of chunk unnamed-chunk-11](/images/posts/interaction-or-not/unnamed-chunk-11.png) 
 
 Instead, boosting generally fits just a small amount of the signal at each stage, making only very small adjustments in the direction of fitting the residuals. This works much better:
 
@@ -121,7 +123,7 @@ library(gbm)
 gbmFit2 <- gbm(Y ~ X1 + X2, data = train, n.trees=10000, shrinkage = .01, distribution = "gaussian")
 ```
 
-![plot of chunk unnamed-chunk-14](/images/posts/interaction-or-not/unnamed-chunk-14.png) 
+![plot of chunk unnamed-chunk-13](/images/posts/interaction-or-not/unnamed-chunk-13.png) 
 
 But this is using the default `interaction.depth=1`, which forces the model to be linear. If we set `interaction.depth=2`, the results are similar to what we would get with only one decision tree:
 
@@ -132,7 +134,7 @@ library(gbm)
 gbmFit3 <- gbm(Y ~ X1 + X2, data = train, n.trees=10000, shrinkage = .01, distribution = "gaussian", interaction.depth = 2)
 ```
 
-![plot of chunk unnamed-chunk-16](/images/posts/interaction-or-not/unnamed-chunk-16.png) 
+![plot of chunk unnamed-chunk-15](/images/posts/interaction-or-not/unnamed-chunk-15.png) 
 
 Is it possible for `gbm` to result in a middle ground between the linear model and the one-tree model? Yes! Two parameters we can tweak for this are: 
 
@@ -141,7 +143,7 @@ Is it possible for `gbm` to result in a middle ground between the linear model a
 
 To get the second (deeper) split, we need at least `n.minobsinnode` in each of the smaller groups (`$X_1 = 1$, $X_2 = 0$` or  `$X_1 = 1$, $X_2 = 1$`). As we increase `n.minobsinnode`, we decrease the number of trees that meet the threshold for a second split:
 
-![plot of chunk unnamed-chunk-17](/images/posts/interaction-or-not/unnamed-chunk-17.png) 
+![plot of chunk unnamed-chunk-16](/images/posts/interaction-or-not/unnamed-chunk-16.png) 
 
 Varying `bag.fraction` would have a similar effect.
 
@@ -187,25 +189,25 @@ Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
 
 Now instead of one prediction for each point in feature space, we have a set of posterior samples. Each line represents the predictions for one posterior sample, at either `$X_1=0$` or `$X_1=1$`:
 
-![plot of chunk unnamed-chunk-20](/images/posts/interaction-or-not/unnamed-chunk-20.png) 
+![plot of chunk unnamed-chunk-19](/images/posts/interaction-or-not/unnamed-chunk-19.png) 
 
 For points like the ones we saw in the training data, there is very little uncertainty. But there is a lot of uncertainty about the predicted effect of `$X_2$` when `$X_1 = 0$`.
 
-The posterior for the interaction term `$\beta_{12}$` is actually the same as the prior, which makes sense because the data don't tell you anything about whether there's an interaction:
+The posterior for the interaction term `$\beta_{12}$` is actually very close to the prior (they would be identical with infinite data or no noise in Y), which makes sense because the data don't tell you anything about whether there's an interaction:
 
-![plot of chunk unnamed-chunk-21](/images/posts/interaction-or-not/unnamed-chunk-21.png) 
+![plot of chunk unnamed-chunk-20](/images/posts/interaction-or-not/unnamed-chunk-20.png) 
 
 Looking at histograms of posterior samples for predictions is another way to see that there's basically no variation at the points where we have training data:
 
-![plot of chunk unnamed-chunk-22](/images/posts/interaction-or-not/unnamed-chunk-22.png) 
+![plot of chunk unnamed-chunk-21](/images/posts/interaction-or-not/unnamed-chunk-21.png) 
 
 Looking closer at the posterior samples for `$X_1 = 0$, $X_2 = 1$`, we see that the predictions are centered on 9 (the prediction from our model with no interaction), but has substantial variation in both directions:
 
-![plot of chunk unnamed-chunk-23](/images/posts/interaction-or-not/unnamed-chunk-23.png) 
+![plot of chunk unnamed-chunk-22](/images/posts/interaction-or-not/unnamed-chunk-22.png) 
 
 The interaction term can be positive or negative. When the interaction term `$\beta_{12}$` is high, `$\beta_2$` makes up for it by being low (and vice versa):
 
-![plot of chunk unnamed-chunk-24](/images/posts/interaction-or-not/unnamed-chunk-24.png) 
+![plot of chunk unnamed-chunk-23](/images/posts/interaction-or-not/unnamed-chunk-23.png) 
 
 Note that if we were to regularize the main effects as well as the interaction term, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. Imagine a prior on `$\beta_2$` centered on $0$ as well as the prior we already have on `$\beta_{12}$`. In that case, parameters choices with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for forcing `$\beta_2$` higher than it otherwise had to be.
 
@@ -236,7 +238,7 @@ bartFit <- bartMachine(train[c("X1","X2")], train$Y,
 
 
 
-![plot of chunk unnamed-chunk-27](/images/posts/interaction-or-not/unnamed-chunk-27.png) 
+![plot of chunk unnamed-chunk-26](/images/posts/interaction-or-not/unnamed-chunk-26.png) 
 
 As with all of the previous examples, the model is both correct and confident in the regions where we have training examples.
 

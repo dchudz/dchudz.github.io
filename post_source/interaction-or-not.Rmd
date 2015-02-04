@@ -7,6 +7,13 @@ draft: true
 
 (draft)
 
+Todo:
+
+- intro (based on Chris' comments)
+- is there any way to replace `$X_1$`, `$X_2$`, `$Y$` with meaningful (still fake) variables?
+- proofread for sloppiness about what's '"literally" (ie mathematically) true and when they are "almost" (ie usually, with high probability, computationally, etc) true'
+- clean up explanation (or more detail) on GBM with `shrinkage=1`
+
 *Source code for this post is [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/interaction-or-not.Rmd).*
 
 We describe a model as having an "interaction" when the influence of one feature differs depending on the value of another. Interactions are often real and important, but in many contexts we treat interaction effects as likely to small without evidence otherwise. In this post, I'll use a simple toy example to walk through why decision trees and ensembles of decision trees (random forests) can make the opposite assumption: they can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
@@ -43,6 +50,10 @@ ColorScale <- function(...) {
 
 # theme_set(theme_minimal(base_size=18))
 theme_set(theme_gray(base_size=18))
+
+positionAdjustment <- position_identity
+noiseSD <- .3
+pointSize <- 1
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -59,7 +70,7 @@ beta2 <- 4
 train$Y <-  beta0 + beta1*X1 + beta2*X2
 
 uniques <- train %>% group_by(X1, X2) %>% summarise(Y = mean(Y), NumTrain = n())
-train$Y <- train$Y + rnorm(n=nTrain, sd=.2)
+train$Y <- train$Y + rnorm(n=nTrain, sd=noiseSD)
 uniques$Y <- sprintf("Y = %d + noise", uniques$Y)
 uniquesWithQuestionMark <- rbind(uniques, data.frame(X1 = 0, X2 = 1, Y = "?", NumTrain = 0)) %>% rename("N Training Rows:" = NumTrain) %>% 
   data.frame(check.names=FALSE)
@@ -67,7 +78,7 @@ uniquesWithQuestionMark <- rbind(uniques, data.frame(X1 = 0, X2 = 1, Y = "?", Nu
 uniquesForLabelingPlot <- transform(uniques, X1 = X1 + 1.1, X2 = X2 + 1.1)
 
 ggplot(train) + 
-  geom_point(aes(x=factor(X1), y=factor(X2), color=Y), position=position_jitter(.03, .03)) + 
+  geom_point(aes(x=factor(X1), y=factor(X2), color=Y), size=6, position=positionAdjustment()) + 
   geom_text(aes(x=factor(0), y=factor(1), label=I("?")), size=30) +
   geom_text(aes(x=X1, y=X2, label=Y), data=uniquesForLabelingPlot) +
   ColorScale() + 
@@ -80,17 +91,6 @@ ggplot(train) +
 library(xtable)
 print(xtable(uniquesWithQuestionMark, digits=rep(0,5), align=rep("c", 5)), type="html", include.rownames=FALSE)
 ```
-
-Or another view of the training data:
-
-```{r echo=FALSE}
-ggplot(train) +
-  geom_point(aes(x=factor(X2), y=Y, color=factor(X1))) +
-  xlab("X2") +
-  scale_color_discrete(name = "X1") +
-  ggtitle("Training Data")
-```
-
 
 In practice, making an inference at `$X_1 = 0$, $X_2 = 1$` would be pretty hopeless. The training data doesn't help much, so your prediction will depend almost entirely on your priors. But that's exactly why I'm using this example to get at what the biases are in various models. Real problems will have elements in common with this example, so it helps get a handle on how models will behave for those problems.
 
@@ -122,7 +122,7 @@ PlotPointEstimates <- function(predictionData, title) {
     ggtitle(title) + 
     xlab("X2") +
     ylab("Y (predicted and actual)") +
-    geom_point(aes(y=Y, shape="Training Data"), data=train, position=position_jitter(.03), size=1) +
+    geom_point(aes(y=Y, shape="Training Data"), data=train, position=positionAdjustment(), size=pointSize) +
     guides(color=guide_legend("X1", order =1), linetype=guide_legend(""), shape=guide_legend(""))
   }
 
@@ -138,7 +138,7 @@ The line for `$X_1 = 0$` is parallel to the one for `$X_1 = 1$`, meaning that th
 library(randomForest)
 ```
 
-Random forests are build from decision trees using an ensembling technique called *bagging*, which averages a number of independent decision trees. To make the trees different, different trees use different random subsets of the training data. (Additional randomness is usually introduced by allowing each tree to consider a random subset of the features at each split.)
+Random forests are built from decision trees using an ensembling technique called *bagging*, which averages a number of independent decision trees. To make the trees different, different trees use different random subsets of the training data. (Additional randomness is usually introduced by allowing each tree to consider a random subset of the features at each split.)
 
 Fitting a random forest and plotting its predictions, we see that where it has training data, it fits that data perfectly (making the same predictions as the linear model), but has decided that `$X_2$` only matters when `$X_1 = 1$`:
 
@@ -202,7 +202,7 @@ gbmFit3 <- gbm(Y ~ X1 + X2, data = train, n.trees=10000, shrinkage = .01, distri
 
 ```{r echo=FALSE, message=FALSE}
 gbmPredictions3 <- transform(predictionFeatures, Prediction = predict(gbmFit3, predictionFeatures, length(gbmFit2$trees)))
-PlotPointEstimates(gbmPredictions3, "GBM (interaction.depth = 2) - Many Identical Trees")
+PlotPointEstimates(gbmPredictions3, "GBM (interaction.depth = 2): Many Identical Trees")
 ```
 
 Is it possible for `gbm` to result in a middle ground between the linear model and the one-tree model? Yes! Two parameters we can tweak for this are: 
@@ -293,7 +293,7 @@ ggplot(stan1Predictions) +
 
 For points like the ones we saw in the training data, there is very little uncertainty. But there is a lot of uncertainty about the predicted effect of `$X_2$` when `$X_1 = 0$`.
 
-The posterior for the interaction term `$\beta_{12}$` is actually the same as the prior, which makes sense because the data don't tell you anything about whether there's an interaction:
+The posterior for the interaction term `$\beta_{12}$` is actually very close to the prior (they would be identical with infinite data or no noise in Y), which makes sense because the data don't tell you anything about whether there's an interaction:
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 qplot(beta12, data=samples1) + ggtitle("Posterior samples for interaction parameter")
