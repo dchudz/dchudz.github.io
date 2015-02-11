@@ -16,7 +16,7 @@ Todo:
 
 *Source code for this post is [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/interaction-or-not.Rmd).*
 
-This post examines how a few statistical and machine learning models respond to a simple toy example where they're asked to predict new regions of feature space. The key question the models will answer differently is whether there's an "interaction" between two features. We describe a machine learning model as having an "interaction" when the influence of one feature differs depending on the value of another. 
+This post examines how a few statistical and machine learning models respond to a simple toy example where they're asked to predict new regions of feature space. The key question the models will answer differently is whether there's an "interaction" between two features: does the influence of one feature differs depending on the value of another. 
 
 In this case, the data won't provide information about whether there's an interaction or not. Interactions are often real and important, but in many contexts we treat interaction effects as likely to be small (without evidence otherwise). I'll walk through why decision trees and bagged ensembles of decision trees (random forests) can make the opposite assumption: they can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
 
@@ -37,7 +37,7 @@ Whenever possible, I recommend using models like BART that explicitly allow for 
 
 # The Example
 
-Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_2 = 1$` (where we don't have any training data).
+Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_2 = 1$` (where there isn't any training data).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 set.seed(0)
@@ -142,7 +142,7 @@ library(randomForest)
 
 Random forests are built from decision trees using an ensembling technique called *bagging*, which averages a number of independent decision trees. To make the trees different, different trees use different random subsets of the training data. (Additional randomness is usually introduced by allowing each tree to consider a random subset of the features at each split.)
 
-Fitting a random forest and plotting its predictions, we see that where it has training data, it fits that data perfectly (making the same predictions as the linear model), but has decided that `$X_2$` only matters when `$X_1 = 1$`:
+I've fit a random forest and plotted its predictions and the training data. Where there is training data, the model fits that data perfectly (making the same predictions as the linear model), but has decided that `$X_2$` only matters when `$X_1 = 1$`:
 
 ```{r}
 rfFit <- randomForest(Y ~ X1 + X2, data = train, mtry=2)
@@ -153,11 +153,14 @@ rfPredictions <- transform(predictionFeatures, Prediction = predict(rfFit, predi
 PlotPointEstimates(rfPredictions, "RF Model: X2 only matters when X1=1")
 ```
 
-It's easy to understand from the trees why this happened. In this simple example, all of the trees are the same, so it's just as if we had one decision tree. `$X_1$` is the most important variable, so first we split on that. Then only the right side splits again on `$X_2$` (since the left side has no training set variation in `$X_2$`):
+It's easy to understand from the trees why this happened. In this simple example, all of the trees are the same, so it's just as if there were one decision tree. `$X_1$` is the most important variable, so first the tree splits on that. Then only the right side splits again on `$X_2$` (since the left side has no training set variation in `$X_2$`):
 
 ![tree](images/posts/interaction-or-not-trees/tree.png)
 
-Aside: You'll notice when I trained the random forest, I set `mtry=2`. This tells the random forest to consider both variables at each split (normally you consider only a randomly chosen subset of the variables for each split). This choice makes the example clearer, but I'm not really "cheating" because in this example, `mtry=2` would be the parameter you choose as optimal based on the training data (e.g. through cross-validation). With the default settings, the random forest would fail to replicate even the training data (where there should be no question which predictions are correct).
+A couple important settings are:
+
+-  `mtry=2` means both variables are considered at each split. This choice makes the example clearer, but it also makes sense here because `mtry=2` would be the parameter you choose as optimal based on the training data (e.g. through cross-validation). With the default settings, the random forest would fail to replicate even the training data (where there should be no question which predictions are correct).
+- I'm using the default minimum node size (for regression problems) of 1. If the minimum node size were smaller, it would sometimes happen that a tree doesn't have enough data from one region of feature space to support a split. Even with a minimum size of 1, you would (very rarely) end up working with a random subset of the rows that doesn't represent one region of feature space at all.
 
 # Boosted Decision Trees
 
@@ -194,7 +197,7 @@ gbmPredictions2 <- transform(predictionFeatures, Prediction = predict(gbmFit2, p
 PlotPointEstimates(gbmPredictions2, "GBM: Many Trees\n(equivalent to linear model)")
 ```
 
-But this is using the default `interaction.depth=1`, which forces the model to be linear. If we set `interaction.depth=2`, the results are similar to what we would get with only one decision tree:
+But this is using the default `interaction.depth=1`, which forces the model to be linear. If `interaction.depth=2`, the results are similar to if there were only one decision tree:
 
 
 ```{r message=FALSE}
@@ -212,7 +215,7 @@ Is it possible for `gbm` to result in a middle ground between the linear model a
 - `n.minobsinnode` (default: $10$), the minimum number of observations for a leaf node.
 - `bag.fraction` (default: $0.5$), the number of randomly selected training observations to use for each tree
 
-To get the second (deeper) split, we need at least `n.minobsinnode` in each of the smaller groups (`$X_1 = 1$, $X_2 = 0$` or  `$X_1 = 1$, $X_2 = 1$`). As we increase `n.minobsinnode`, we decrease the number of trees that meet the threshold for a second split:
+To get the second (deeper) split, there must be at least `n.minobsinnode` in each of the smaller groups (`$X_1 = 1$, $X_2 = 0$` or  `$X_1 = 1$, $X_2 = 1$`). Increasing `n.minobsinnode` decreases the number of trees that meet the threshold for a second split:
 
 ```{r echo=FALSE, message=FALSE, fig.width=12}
 set.seed(0)
@@ -293,7 +296,7 @@ ggplot(stan1Predictions) +
   scale_color_discrete(name = "X1")
 ```
 
-For points like the ones we saw in the training data, there is very little uncertainty. But there is a lot of uncertainty about the predicted effect of `$X_2$` when `$X_1 = 0$`.
+For points like the ones seen in the training data, there is very little uncertainty. But there is a lot of uncertainty about the predicted effect of `$X_2$` when `$X_1 = 0$`.
 
 The posterior for the interaction term `$\beta_{12}$` is actually very close to the prior (they would be identical with infinite data or no noise in Y), which makes sense because the data don't tell you anything about whether there's an interaction:
 
@@ -310,7 +313,7 @@ ggplot(stan1Predictions %>% transform(X1 = factor(X1, levels = c("0","1")), X2 =
   ggtitle("Posterior Samples for Predictions")
 ```
 
-Looking closer at the posterior samples for `$X_1 = 0$, $X_2 = 1$`, we see that the predictions are centered on `r beta0 + beta2` (the prediction from our model with no interaction), but has substantial variation in both directions:
+Looking closer at the posterior samples for `$X_1 = 0$, $X_2 = 1$`, the predictions are centered on `r beta0 + beta2` (the prediction from our model with no interaction), but has substantial variation in both directions:
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 ggplot(subset(stan1Predictions, X1==0 & X2==1)) + 
@@ -325,7 +328,7 @@ The interaction term can be positive or negative. When the interaction term `$\b
 qplot(beta2, beta12, data=samples1)
 ````
 
-Note that if we were to regularize the main effects as well as the interaction term, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. Imagine a prior on `$\beta_2$` centered on $0$ as well as the prior we already have on `$\beta_{12}$`. In that case, parameters choices with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for forcing `$\beta_2$` higher than it otherwise had to be.
+Note that if we were to regularize the main effects as well as the interaction term, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. Imagine a prior on `$\beta_2$` centered on $0$ as well as the prior already on `$\beta_{12}$`. In that case, parameters choices with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for forcing `$\beta_2$` higher than it otherwise had to be.
 
 In summary, the Bayesian linear regression (with an interaction term) is appropriately uncertain about predictions in the unseen region of feature space. The particular details of the posterior would depend on how you feel about main effects as compared with to interaction terms: If only the interaction term is pushed toward 0, the predictions are centered around the "no interaction" case. If main effects are pushed toward zero as well, predictions are shifted toward the "positive interaction" case.
 
@@ -366,7 +369,7 @@ ggplot(bartPredictions) +
   ggtitle("Samples of Posterior BART Predictions")
 ```
 
-As with all of the previous examples, the model is both correct and confident in the regions where we have training examples.
+As with all of the previous examples, the model is both correct and confident in the regions where there are training examples.
 
 The predictions in the new region of feature space are similar to the situation we had with the Bayesian linear model with a prior on the interaction term. There's a fair amount of uncertainty, with the posterior distribution centered near  the no-interaction case (corresponding to predictions of `r beta0 + beta2`) but allowing positive or negative interactions.
 
@@ -378,7 +381,7 @@ To get a sense for how BART's settings affect the inference, consider that the t
 
 The default settings are $\alpha=.95$ and $\beta=2$. This means that BART can allow very deep trees, but deep trees need to overcome this prior against splitting when a node is already deep and so are less common unless the data require them.
 
-In this case, as we increase $\beta$ we tend to get more trees with only one split (especially since more splits aren't necessary to explain the training data), leading to a posterior that's more like the no-interaction situation.
+In this case, $\beta$ increases, there tend to be more trees with only one split (especially since more splits aren't necessary to explain the training data), leading to a posterior that's more like the no-interaction situation.
 
 BART has other settings that it's good to understand and control them as appropriate, but it can also be used out-of-the-box without thinking too much about those at first.
 
