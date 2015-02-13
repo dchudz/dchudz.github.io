@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=latex 2013.5.30)  2 FEB 2015 08:44
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=latex 2013.5.30)  13 FEB 2015 08:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -399,7 +399,7 @@ File: tikzlibrarytopaths.code.tex 2008/06/17 v2.10 (rcs-revision 1.2)
 \child@list=\toks26
 \root@node=\toks27
 ))
-No file two-trees-wrong.aux.
+(../images/posts/interaction-or-not-trees//two-trees-wrong.aux)
 \openout1 = `two-trees-wrong.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.
@@ -414,6 +414,7 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 4.
 LaTeX Font Info:    ... okay on input line 4.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 4.
 LaTeX Font Info:    ... okay on input line 4.
+
 ABD: EveryShipout initializing macros
 (/usr/local/texlive/2013/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -477,10 +478,10 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 {/usr/local/texlive/2013/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 (../images/posts/interaction-or-not-trees//two-trees-wrong.aux) ) 
 Here is how much of TeX's memory you used:
- 10477 strings out of 493316
- 201916 string characters out of 6137930
+ 10482 strings out of 493316
+ 202100 string characters out of 6137930
  244938 words of memory out of 5000000
- 13722 multiletter control sequences out of 15000+600000
+ 13725 multiletter control sequences out of 15000+600000
  3939 words of font info for 15 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  63i,13n,61p,449b,767s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -488,12 +489,13 @@ Here is how much of TeX's memory you used:
 xlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/tex
 live/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texli
 ve/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive
-/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb>
+/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/20
+13/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
 Output written on ../images/posts/interaction-or-not-trees//two-trees-wrong.pdf
- (1 page, 34033 bytes).
+ (1 page, 41575 bytes).
 PDF statistics:
- 27 PDF objects out of 1000 (max. 8388607)
- 19 compressed objects within 1 object stream
+ 31 PDF objects out of 1000 (max. 8388607)
+ 22 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

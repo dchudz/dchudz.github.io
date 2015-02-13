@@ -9,9 +9,6 @@ draft: true
 
 Todo:
 
-- is there any way to replace `$X_1$`, `$X_2$`, `$Y$` with meaningful (still fake) variables?
-- proofread for sloppiness about what's '"literally" (ie mathematically) true and when they are "almost" (ie usually, with high probability, computationally, etc) true'
-- clean up explanation (or more detail) on GBM with `shrinkage=1`
 - change URL to better reflect title
 
 *Source code for this post is [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/interaction-or-not.Rmd).*
@@ -44,7 +41,7 @@ Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_
 ![plot of chunk unnamed-chunk-2](/images/posts/interaction-or-not/unnamed-chunk-2.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Tue Feb  3 08:09:53 2015 -->
+<!-- Fri Feb 13 09:09:52 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + noise </TD> <TD align="center"> 52 </TD> </TR>
@@ -107,10 +104,7 @@ It's possible to represent a well-fitting model as a sum of only two depth-1 tre
 
 ![two-trees](/images/posts/interaction-or-not-trees/two-trees.png)
 
-But the `gbm` can't get to this answer with only two trees, because first tree (with a split on `$X_1$`) would attribute too much of the effect to `$X_1$` ($12$ instead of $10$), and the second tree (with a split on `$X_2$`) has no way to correct that. We'd get these trees, which make bad predictions:
-
-![two-trees](/images/posts/interaction-or-not-trees/two-trees-wrong.png)
-
+But the `gbm` can't get to this answer with only two depth-1 trees. 
 
 
 ```r
@@ -118,7 +112,26 @@ library(gbm)
 gbmFit1 <- gbm(Y ~ X1 + X2, data = train, n.trees=2, shrinkage = 1, distribution = "gaussian")
 ```
 
-![plot of chunk unnamed-chunk-11](/images/posts/interaction-or-not/unnamed-chunk-11.png) 
+These are the trees we get:
+
+![two-trees](/images/posts/interaction-or-not-trees/two-trees-wrong.png)
+
+
+
+<!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
+<!-- Fri Feb 13 09:09:53 2015 -->
+<TABLE border=1>
+<TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y (mean) </TH> <TH> N Training Rows </TH> <TH> First Tree Predictions </TH> <TH> First Tree Residual </TH>  </TR>
+  <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> 5 </TD> <TD align="center"> 52 </TD> <TD align="center"> 5 </TD> <TD align="center"> 0 </TD> </TR>
+  <TR> <TD align="center"> 1 </TD> <TD align="center"> 0 </TD> <TD align="center"> 15 </TD> <TD align="center"> 23 </TD> <TD align="center"> 17 </TD> <TD align="center"> -2 </TD> </TR>
+  <TR> <TD align="center"> 1 </TD> <TD align="center"> 1 </TD> <TD align="center"> 19 </TD> <TD align="center"> 25 </TD> <TD align="center"> 17 </TD> <TD align="center"> 2 </TD> </TR>
+   </TABLE>
+
+The first tree (with a split on `$X_1$`) would attributes too much of the effect to `$X_1$` (effect size of $12$ instead of $10$). Then the second tree's split on `$X_2$` is based on the residuals from the first (shown in the table above). The residual on the `$X_2=0$` averages to roughly `$-\frac{2}{3}$`, while the residual on the `$X_2=1$` side is roughly $2$.
+
+The second tree has no way to the fact that too much signal went into `$X_1$`. We've fit the two parameters for linear model in two iterations rather than simultaneously.
+
+![plot of chunk unnamed-chunk-13](/images/posts/interaction-or-not/unnamed-chunk-13.png) 
 
 Instead, boosting generally fits just a small amount of the signal at each stage, making only very small adjustments in the direction of fitting the residuals. This works much better:
 
@@ -128,7 +141,7 @@ library(gbm)
 gbmFit2 <- gbm(Y ~ X1 + X2, data = train, n.trees=10000, shrinkage = .01, distribution = "gaussian")
 ```
 
-![plot of chunk unnamed-chunk-13](/images/posts/interaction-or-not/unnamed-chunk-13.png) 
+![plot of chunk unnamed-chunk-15](/images/posts/interaction-or-not/unnamed-chunk-15.png) 
 
 But this is using the default `interaction.depth=1`, which forces the model to be linear. If `interaction.depth=2`, the results are similar to if there were only one decision tree:
 
@@ -139,7 +152,7 @@ library(gbm)
 gbmFit3 <- gbm(Y ~ X1 + X2, data = train, n.trees=10000, shrinkage = .01, distribution = "gaussian", interaction.depth = 2)
 ```
 
-![plot of chunk unnamed-chunk-15](/images/posts/interaction-or-not/unnamed-chunk-15.png) 
+![plot of chunk unnamed-chunk-17](/images/posts/interaction-or-not/unnamed-chunk-17.png) 
 
 Is it possible for `gbm` to result in a middle ground between the linear model and the one-tree model? Yes! Two parameters we can tweak for this are: 
 
@@ -148,7 +161,7 @@ Is it possible for `gbm` to result in a middle ground between the linear model a
 
 To get the second (deeper) split, there must be at least `n.minobsinnode` in each of the smaller groups (`$X_1 = 1$, $X_2 = 0$` or  `$X_1 = 1$, $X_2 = 1$`). Increasing `n.minobsinnode` decreases the number of trees that meet the threshold for a second split:
 
-![plot of chunk unnamed-chunk-16](/images/posts/interaction-or-not/unnamed-chunk-16.png) 
+![plot of chunk unnamed-chunk-18](/images/posts/interaction-or-not/unnamed-chunk-18.png) 
 
 Varying `bag.fraction` would have a similar effect.
 
@@ -194,25 +207,25 @@ Y ~ normal(beta0 + beta1*X1 + beta2*X2 + beta12*X1 .* X2, sigma);
 
 Now instead of one prediction for each point in feature space, we have a set of posterior samples. Each line represents the predictions for one posterior sample, at either `$X_1=0$` or `$X_1=1$`:
 
-![plot of chunk unnamed-chunk-19](/images/posts/interaction-or-not/unnamed-chunk-19.png) 
+![plot of chunk unnamed-chunk-21](/images/posts/interaction-or-not/unnamed-chunk-21.png) 
 
 For points like the ones seen in the training data, there is very little uncertainty. But there is a lot of uncertainty about the predicted effect of `$X_2$` when `$X_1 = 0$`.
 
 The posterior for the interaction term `$\beta_{12}$` is actually very close to the prior (they would be identical with infinite data or no noise in Y), which makes sense because the data don't tell you anything about whether there's an interaction:
 
-![plot of chunk unnamed-chunk-20](/images/posts/interaction-or-not/unnamed-chunk-20.png) 
+![plot of chunk unnamed-chunk-22](/images/posts/interaction-or-not/unnamed-chunk-22.png) 
 
 Looking at histograms of posterior samples for predictions is another way to see that there's basically no variation at the points where we have training data:
 
-![plot of chunk unnamed-chunk-21](/images/posts/interaction-or-not/unnamed-chunk-21.png) 
+![plot of chunk unnamed-chunk-23](/images/posts/interaction-or-not/unnamed-chunk-23.png) 
 
 Looking closer at the posterior samples for `$X_1 = 0$, $X_2 = 1$`, the predictions are centered on 9 (the prediction from our model with no interaction), but has substantial variation in both directions:
 
-![plot of chunk unnamed-chunk-22](/images/posts/interaction-or-not/unnamed-chunk-22.png) 
+![plot of chunk unnamed-chunk-24](/images/posts/interaction-or-not/unnamed-chunk-24.png) 
 
 The interaction term can be positive or negative. When the interaction term `$\beta_{12}$` is high, `$\beta_2$` makes up for it by being low (and vice versa):
 
-![plot of chunk unnamed-chunk-23](/images/posts/interaction-or-not/unnamed-chunk-23.png) 
+![plot of chunk unnamed-chunk-25](/images/posts/interaction-or-not/unnamed-chunk-25.png) 
 
 Note that if we were to regularize the main effects as well as the interaction term, the predictions at `$X_1 = 0$, $X_2 = 1$` would shift to the left. Imagine a prior on `$\beta_2$` centered on $0$ as well as the prior already on `$\beta_{12}$`. In that case, parameters choices with a negative interaction term would be penalized twice: once for the negative `$\beta_{12}$`, and again for forcing `$\beta_2$` higher than it otherwise had to be.
 
@@ -243,7 +256,7 @@ bartFit <- bartMachine(train[c("X1","X2")], train$Y,
 
 
 
-![plot of chunk unnamed-chunk-26](/images/posts/interaction-or-not/unnamed-chunk-26.png) 
+![plot of chunk unnamed-chunk-28](/images/posts/interaction-or-not/unnamed-chunk-28.png) 
 
 As with all of the previous examples, the model is both correct and confident in the regions where there are training examples.
 
