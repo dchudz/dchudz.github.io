@@ -5,15 +5,9 @@ category: posts
 draft: true
 ---
 
-(draft)
-
-Todo:
-
-- change URL to better reflect title
-
 *Source code for this post is [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/interaction-or-not.Rmd).*
 
-This post examines how a few statistical and machine learning models respond to a simple toy example where they're asked to predict new regions of feature space. The key question the models will answer differently is whether there's an "interaction" between two features: does the influence of one feature differs depending on the value of another. 
+This post examines how a few statistical and machine learning models respond to a simple toy example where they're asked to make predictions on new regions of feature space. The key question the models will answer differently is whether there's an "interaction" between two features: does the influence of one feature differs depending on the value of another. 
 
 In this case, the data won't provide information about whether there's an interaction or not. Interactions are often real and important, but in many contexts we treat interaction effects as likely to be small (without evidence otherwise). I'll walk through why decision trees and bagged ensembles of decision trees (random forests) can make the opposite assumption: they can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
 
@@ -34,7 +28,7 @@ Whenever possible, I recommend using models like BART that explicitly allow for 
 
 # The Example
 
-Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_2 = 1$` (where there isn't any training data).
+Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_2 = 1$` (where there isn't any training data):
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 set.seed(0)
@@ -177,7 +171,7 @@ library(gbm)
 gbmFit1 <- gbm(Y ~ X1 + X2, data = train, n.trees=2, shrinkage = 1, distribution = "gaussian")
 ```
 
-These are the trees we get:
+These are (approximately) the trees we get:
 
 ![two-trees](images/posts/interaction-or-not-trees/two-trees-wrong.png)
 
@@ -197,9 +191,9 @@ gbmPredictionsOneTree <- gbmPredictionsOneTree %>%
 print(xtable(gbmPredictionsOneTree, digits=rep(0,7), align=rep("c", 7)), type="html", include.rownames=FALSE)
 ```
 
-The first tree (with a split on `$X_1$`) would attributes too much of the effect to `$X_1$` (effect size of $12$ instead of $10$). Then the second tree's split on `$X_2$` is based on the residuals from the first (shown in the table above). The residual on the `$X_2=0$` averages to roughly `$-\frac{2}{3}$`, while the residual on the `$X_2=1$` side is roughly $2$.
+Related to the correlation between `$X_1$` and `$X_2$` in the training data, the first tree (with a split on `$X_1$`) assigns too much of the effect to `$X_1$` (effect size of $12$ instead of $10$). Then the second tree's split on `$X_2$` is based on the residuals from the first (shown in the table above). The residuals for `$X_2=0$` (-2 and 0, with roughly twice as much weight on the latter) average to roughly `$-\frac{2}{3}$`, while the residual on the `$X_2=1$` side is roughly $2$.
 
-The second tree has no way to the fact that too much signal went into `$X_1$`. We've fit the two parameters for linear model in two iterations rather than simultaneously.
+The second tree has no way to correct the fact that too much signal went into `$X_1$` in the first tree. We've fit the two parameters for linear model in two iterations rather than simultaneously.
 
 ```{r echo=FALSE, message=FALSE}
 gbmPredictions1 <- transform(predictionFeatures, Prediction = predict(gbmFit1, predictionFeatures, length(gbmFit1$trees)))
