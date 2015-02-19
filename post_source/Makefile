@@ -1,3 +1,12 @@
+# Steps to include an iPython notebook as a blog post:
+# 1) Create notebook
+# 2) run: ipython nbconvert --to=html --template basic  --ExecutePreprocessor.enabled=True (notebook)
+# - is there some way to avoid having line numbers appear in the python?
+# 2) add the yaml 
+# 3) replace "{{" with "{ {" due to some bug in jekyll (I updated jekyll, still a problem)
+# 
+
+
 
 INTERACTION_OR_NOT_DATE := 2015-02-02
 INTERACTION_OR_NOT_NAME := interaction-or-not
@@ -39,3 +48,4 @@ $(PRES_INTERACTION_OR_NOT_WITH_BART): presentations/interaction-or-not-with-bart
 
 
 interaction-or-not-slides: $(PRES_INTERACTION_OR_NOT_NO_BART) $(PRES_INTERACTION_OR_NOT_WITH_BART)
+
