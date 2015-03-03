@@ -4,7 +4,7 @@
 # - is there some way to avoid having line numbers appear in the python?
 # 2) add the yaml 
 # 3) replace "{{" with "{ {" due to some bug in jekyll (I updated jekyll, still a problem)
-# 
+# also look at this: http://mail.scipy.org/pipermail/ipython-dev/2014-June/014120.html
 
 
 
