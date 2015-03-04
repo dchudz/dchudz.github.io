@@ -7,7 +7,7 @@ draft: false
 
 *Source code for this post is [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/interaction-or-not.Rmd).*
 
-This post examines how a few statistical and machine learning models respond to a simple toy example where they're asked to make predictions on new regions of feature space. The key question the models will answer differently is whether there's an "interaction" between two features: does the influence of one feature differs depending on the value of another. 
+This post examines how a few statistical and machine learning models respond to a simple toy example where they're asked to make predictions on new regions of feature space. The key question the models will answer differently is whether there's an "interaction" between two features: does the influence of one feature differ depending on the value of another. 
 
 In this case, the data won't provide information about whether there's an interaction or not. Interactions are often real and important, but in many contexts we treat interaction effects as likely to be small (without evidence otherwise). I'll walk through why decision trees and bagged ensembles of decision trees (random forests) can make the opposite assumption: they can strongly prefer an interaction, even when the evidence is equally consistent with including or not including an interaction.
 
@@ -35,7 +35,7 @@ Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_
 ![plot of chunk unnamed-chunk-2](/images/posts/interaction-or-not/unnamed-chunk-2.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Wed Mar  4 08:43:33 2015 -->
+<!-- Wed Mar  4 11:12:37 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + noise </TD> <TD align="center"> 52 </TD> </TR>
@@ -115,7 +115,7 @@ These are (approximately) the trees we get:
 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Wed Mar  4 08:43:34 2015 -->
+<!-- Wed Mar  4 11:12:39 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y (mean) </TH> <TH> N Training Rows </TH> <TH> First Tree Predictions </TH> <TH> First Tree Residual </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> 5 </TD> <TD align="center"> 52 </TD> <TD align="center"> 5 </TD> <TD align="center"> 0 </TD> </TR>
