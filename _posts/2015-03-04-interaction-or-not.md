@@ -35,7 +35,7 @@ Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_
 ![plot of chunk unnamed-chunk-2](/images/posts/interaction-or-not/unnamed-chunk-2.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Wed Mar  4 07:46:31 2015 -->
+<!-- Wed Mar  4 08:43:33 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + noise </TD> <TD align="center"> 52 </TD> </TR>
@@ -115,7 +115,7 @@ These are (approximately) the trees we get:
 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Wed Mar  4 07:46:33 2015 -->
+<!-- Wed Mar  4 08:43:34 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y (mean) </TH> <TH> N Training Rows </TH> <TH> First Tree Predictions </TH> <TH> First Tree Residual </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> 5 </TD> <TD align="center"> 52 </TD> <TD align="center"> 5 </TD> <TD align="center"> 0 </TD> </TR>
@@ -278,3 +278,5 @@ BART has other settings that it's good to understand and control them as appropr
 This example demonstrates **the limits of bootstrapping as an approach to uncertainty**. Bootstrapping is a way to get at how your estimates would vary under new samples of the training data. It's especially convenient for bagged estimators, since [if you're bagging, you've already done much of the computational work for bootstrapping](http://arxiv.org/abs/1311.4555). But the random forest (and the boosted trees, depending on the parameter settings) doesn't vary with new samples of the training data. This shows that your uncertainty about the truth could be very different from the variation in your model under replicated samples of the training data.
 
 **When possible, use methods that explicitly capture uncertainty.** I demonstrated adding an interaction term (with an informative prior distribution) to the linear model, as well Bayesian Additive Regression Trees. The former exemplifies a parametric approach where you carefully think about each parameter in the model. The latter is meant to support more "automated" model-building.
+
+*Thanks to [Dan Becker](https://github.com/dansbecker) for pushing me to include GBMs, and to [Naftali Harris](http://www.naftaliharris.com/) and [Chris Clark](http://blog.untrod.com/) for feedback on a draft.*
