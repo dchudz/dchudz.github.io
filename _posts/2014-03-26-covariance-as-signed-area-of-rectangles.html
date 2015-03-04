@@ -4141,7 +4141,11 @@ return module;
 
 
 <h2 id="formal-explanation">Formal Explanation</h2>
-<p>The formal way to speak about multiple draws from a distribution is with a set of independent and identically distributed (i.i.d.) random variables. If we have a random variable <span class="math"><em>X</em></span>, saying that <span class="math"><em>X</em><sub>1</sub>, <em>X</em><sub>2</sub>, …</span> are i.i.d means that they are all independent, but follow the same distribution.</p>
+<p>The formal way to speak about multiple draws from a distribution is with a set of independent and identically distributed (i.i.d.) random variables. If we have a random variable <span class="math"><em>X</em></span>, saying that <span class="math"><em>X</em><sub>1</sub>, <em>X</em><sub>2</sub>, …</span> are i.i.d means that they are all independent, but follow the same distribution.
+
+<!--more-->
+
+</p>
 <p>To consider covariance and these rectangles, we need to think of a random variable which is the ordered pair of random variables <span class="math">(<em>X</em>, <em>Y</em>)</span>. Suppose that <span class="math">{(<em>X</em><sub>1</sub>, <em>Y</em><sub>1</sub>), (<em>X</em><sub>2</sub>, <em>Y</em><sub>2</sub>), …, (<em>X</em><sub><em>n</em></sub>, <em>Y</em><sub><em>n</em></sub>)}</span> are i.i.d. random variables (each of which consists of a pair of random variables that are <em>not</em> assumed to be independent). The (signed) area corresponding to the two corner points <span class="math">(<em>X</em><sub><em>i</em></sub>, <em>Y</em><sub><em>i</em></sub>)</span> and <span class="math">(<em>X</em><sub><em>j</em></sub>, <em>Y</em><sub><em>j</em></sub>)</span> is:</p>
 <p><span class="math">(<em>X</em><sub><em>j</em></sub> − <em>X</em><sub><em>i</em></sub>)(<em>Y</em><sub><em>j</em></sub> − <em>Y</em><sub><em>i</em></sub>)</span></p>
 <p>Before considering the sum of areas, let's examine the expected value of the signed area for just one rectangle, given just two different (i.e. <span class="math"><em>i</em> ≠ <em>j</em></span>) i.i.d. draws:</p>

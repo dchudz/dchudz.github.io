@@ -1,8 +1,8 @@
 ---
-title: "Understanding the Assumptions a Few ML Algorithms Use to Generalize to New Data"
+title: "An Interaction or Not? How a few ML Models Generalize to New Data"
 layout: post
 category: posts
-draft: true
+draft: false
 ---
 
 *Source code for this post is [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/interaction-or-not.Rmd).*
@@ -87,6 +87,8 @@ ggplot(train) +
 library(xtable)
 print(xtable(uniquesWithQuestionMark, digits=rep(0,5), align=rep("c", 5)), type="html", include.rownames=FALSE)
 ```
+
+<!--more-->
 
 In practice, making an inference at `$X_1 = 0$, $X_2 = 1$` would be pretty hopeless. The training data doesn't help much, so your prediction will depend almost entirely on your priors. But that's exactly why I'm using this example to get at what the biases are in various models. Real problems will have elements in common with this example, so it helps get a handle on how models will behave for those problems.
 

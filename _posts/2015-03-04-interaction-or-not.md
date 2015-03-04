@@ -1,8 +1,8 @@
 ---
-title: "Understanding the Assumptions a Few ML Algorithms Use to Generalize to New Data"
+title: "An Interaction or Not? How a few ML Models Generalize to New Data"
 layout: post
 category: posts
-draft: true
+draft: false
 ---
 
 *Source code for this post is [here](https://github.com/dchudz/dchudz.github.io/blob/master/post_source/interaction-or-not.Rmd).*
@@ -35,7 +35,7 @@ Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_
 ![plot of chunk unnamed-chunk-2](/images/posts/interaction-or-not/unnamed-chunk-2.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Mon Feb 16 16:49:07 2015 -->
+<!-- Wed Mar  4 07:46:31 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + noise </TD> <TD align="center"> 52 </TD> </TR>
@@ -43,6 +43,8 @@ Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_
   <TR> <TD align="center"> 1 </TD> <TD align="center"> 1 </TD> <TD align="center"> Y = 19 + noise </TD> <TD align="center"> 25 </TD> </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 1 </TD> <TD align="center"> ? </TD> <TD align="center"> 0 </TD> </TR>
    </TABLE>
+
+<!--more-->
 
 In practice, making an inference at `$X_1 = 0$, $X_2 = 1$` would be pretty hopeless. The training data doesn't help much, so your prediction will depend almost entirely on your priors. But that's exactly why I'm using this example to get at what the biases are in various models. Real problems will have elements in common with this example, so it helps get a handle on how models will behave for those problems.
 
@@ -113,7 +115,7 @@ These are (approximately) the trees we get:
 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Mon Feb 16 16:49:08 2015 -->
+<!-- Wed Mar  4 07:46:33 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y (mean) </TH> <TH> N Training Rows </TH> <TH> First Tree Predictions </TH> <TH> First Tree Residual </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> 5 </TD> <TD align="center"> 52 </TD> <TD align="center"> 5 </TD> <TD align="center"> 0 </TD> </TR>
