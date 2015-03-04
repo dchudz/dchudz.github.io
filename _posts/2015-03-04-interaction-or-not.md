@@ -35,7 +35,7 @@ Suppose you're given this data and asked to make a prediction at `$X_1 = 0$, $X_
 ![plot of chunk unnamed-chunk-2](/images/posts/interaction-or-not/unnamed-chunk-2.png) 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Tue Mar  3 08:57:42 2015 -->
+<!-- Wed Mar  4 07:46:31 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y </TH> <TH> N Training Rows: </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> Y = 5 + noise </TD> <TD align="center"> 52 </TD> </TR>
@@ -115,7 +115,7 @@ These are (approximately) the trees we get:
 
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Tue Mar  3 08:57:43 2015 -->
+<!-- Wed Mar  4 07:46:33 2015 -->
 <TABLE border=1>
 <TR> <TH> X1 </TH> <TH> X2 </TH> <TH> Y (mean) </TH> <TH> N Training Rows </TH> <TH> First Tree Predictions </TH> <TH> First Tree Residual </TH>  </TR>
   <TR> <TD align="center"> 0 </TD> <TD align="center"> 0 </TD> <TD align="center"> 5 </TD> <TD align="center"> 52 </TD> <TD align="center"> 5 </TD> <TD align="center"> 0 </TD> </TR>
