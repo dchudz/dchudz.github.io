@@ -4,8 +4,8 @@ permalink: /posts/:title
 rdiscount:
   extensions: [smart]
 name: David Chudzicki
-url: dchudz.github.io
-description: Blog draft
+url: www.davidchudzicki.com
+description: David Chudzicki
 github_user: dchudz
 gravatar_url: https://secure.gravatar.com/avatar/63bcfcfcdf0fb75e508151e5fd944092
 exclude: [src]
