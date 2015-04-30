@@ -29,6 +29,7 @@ title: ""
 <h3>x-frequency: <input id="xFrequency" type="number" name="quantity" min=".1" max="10" step=.1 value="1"></h3>
 <h3>y-frequency: <input id="yFrequency" type="number" name="quantity" min=".1" max="10" step=.1 value="2"></h3>
 <h3>adjust phase: <input id="phaseDifference" type="number" name="quantity" min="-100" max="100" step=.1 value="0"></h3>
+<h3>damping: <input id="damping" type="number" name="quantity" min="-100" max="100" step=.1 value="0"></h3>
 
 <div id="lissijous"></div>
 
@@ -74,8 +75,9 @@ function drawNewPoint(tx, ty, point) {
     }; // need copy of old point for drawing line
     var xfreq = 1 * $("#xFrequency").val();
     var yfreq = 1 * $("#yFrequency").val();
-    point.x = Math.sin(tx);
-    point.y = Math.sin(ty + yfreq * $("#phaseDifference").val());
+    damping = Math.exp($("#damping").val()*t)
+    point.x = Math.sin(tx)*damping;
+    point.y = Math.sin(ty + yfreq * $("#phaseDifference").val())*damping;
 
     setTimeout(function () {
         drawNewPoint(tx += epsilon * xfreq, ty += epsilon * yfreq, point);
@@ -100,4 +102,4 @@ function drawNewPoint(tx, ty, point) {
 }
 drawNewPoint(0, 0, point);
 
-</script
+</script>
