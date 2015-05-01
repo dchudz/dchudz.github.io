@@ -15,13 +15,20 @@ Outline
 	- Add step for partial plots (starting interactively)
 	- Show how to reuse partial plot makefile code
 	- Navigating so many results is hard - using Shiny app
-6. Combatting brittleness:
+6. Combatting brittleness by surfacing errors: 
 	- Helper functions to make assertions about input types
 	- Assertions about expected results
 	- CI server
 	- use of hipchat w/ CI server
 
 ----
+
+Data Workflows to Iterate More Easily and Quickly
+
+There are so many points of failure... we could mess one up so easily! All this stuff we're doing by hand, wasting our time, getting it wrong... happens automatically! correctly!
+
+
+
 
 <h2>
 	Data Workflows for:
@@ -38,7 +45,7 @@ Outline
 		<a href="http://twitter.com/dchudz">@dchudz</a>
 	</small>
 </p>
-                
+
 Note:
 
 For other data scientists to improve, build on, or even just trust your analysis, they need to be able to reproduce it. Even if you have shared code and data, reproducing your analysis may be difficult: which code was executed against which data in what order? And even if the steps are clear, rerunning downstream steps to see your new results after changes upstream can be a tedious process.
