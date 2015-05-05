@@ -1,0 +1,27 @@
+Hardware Overview:
+
+  Model Name:	iMac
+
+  Model Identifier:	iMac7,1
+
+  Processor Name:	Intel Core 2 Duo
+
+  Processor Speed:	2.4 GHz
+
+  Number Of Processors:	1
+
+  Total Number Of Cores:	2
+
+  L2 Cache:	4 MB
+
+  Memory:	2 GB
+
+  Bus Speed:	800 MHz
+
+  Boot ROM Version:	IM71.007A.B03
+
+  SMC Version (system):	1.20f4
+
+  Serial Number (system):	QP74405VX88
+
+  Hardware UUID:	00000000-0000-1000-8000-001B63A31269
