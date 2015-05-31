@@ -766,4 +766,8 @@ Notifications in team chat room
 
 ----
 
-## Slides & Example
+Repo for slides and the example: https://github.com/dchudz/odsc-2015-workflow
+
+View slides: http://www.davidchudzicki.com/slides/odsc-2015-workflow/
+
+pipelinehelpers package: https://github.com/Kaggle/pipelinehelpers
