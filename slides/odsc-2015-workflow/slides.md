@@ -6,9 +6,15 @@
 		<li>Reproducibility</li>
 	</ul>
 </h2>
-<p>
+<h4>
 (Open Data Science Conference)
+	</h4>
+	<p>
+[github.com/dchudz/odsc-2015-workflow](https://github.com/dchudz/odsc-2015-workflow)
+</p>
 <p>
+	(Press "s" to see speaker notes)
+	</p>
 <p>
 	<small>
 		<a href="http://davidchudzicki.com.com">David Chudzicki (Kaggle)</a>
@@ -247,11 +253,10 @@ This is a problem software engineers have worked on!
 
 ```makefile
 intermediate_output: input/input1 input/input2
-	echo "We made an intermediate output" > intermediate_output
+	(command to produce `intermediate_output` from `input/input1` and `input/input2`)
 
 final_output: intermediate_output
-	cp intermediate_output final_output
-	echo "...and then we made the final output." >> final_output
+	(command to produce `final_output` from `intermediate_output`)
 ```
 
 ![](output/whats_make.png)
@@ -265,13 +270,6 @@ make final_output
 ```
 
 ![](output/whats_make.png)
-
-`final_output`:
-
-```text
-We made an intermediate output
-...and then we made the final output.
-```
 
 ----
 
@@ -397,7 +395,7 @@ output_file <- args[3]
 .
 .
 
-ggsave(filename = output_file, plot = actual_predicted_plot)
+ggsave(filename = output_path, plot = actual_predicted_plot)
 ```
 --
 
@@ -574,8 +572,8 @@ In `model.R`, replace this:
 .
 .
 
-train       <- read_csv(args[1])
-test        <- read_csv(args[2])
+train_path <- pipeline_input_file(args[1])
+test_path <- pipeline_input_file(args[2])
 output_file <- args[3]
 
 .
@@ -599,8 +597,8 @@ rf <- randomForest(train[feature_names], train$SalePrice, ntree=10)
 .
 .
 .
-train       <- read_csv(args[1])
-test        <- read_csv(args[2])
+train_path <- pipeline_input_file(args[1])
+test_path <- pipeline_input_file(args[2])
 model_name  <- args[3]
 output_file <- ensure_parent_directory_exists(args[4])
 
@@ -763,11 +761,26 @@ Notifications in team chat room
 
 <img src="images/chat.png" height="300px">
 
+----
+
+## More topics
+
+Make tricks
+
+- `make .VARIABLE_NAME`
+- `make print-VARIABLE_NAME`
+
+Depending on code can create hassles
+
+Other build tools
+
+
 
 ----
 
-Repo for slides and the example: https://github.com/dchudz/odsc-2015-workflow
-
-View slides: http://www.davidchudzicki.com/slides/odsc-2015-workflow/
-
-pipelinehelpers package: https://github.com/Kaggle/pipelinehelpers
+- Repo for slides and the example: 
+	- https://github.com/dchudz/odsc-2015-workflow
+- View slides: 
+	- http://www.davidchudzicki.com/slides/odsc-2015-workflow/
+- pipelinehelpers package: 
+	- https://github.com/Kaggle/pipelinehelpers
