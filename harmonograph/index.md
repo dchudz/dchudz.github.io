@@ -51,6 +51,8 @@ layout: default
 
 # About this Harmonograph
 
+([source code](https://github.com/dchudz/dchudz.github.io/blob/master/harmonograph/harmonograph.js))
+
 After looking at some pictures of harmonographs ([1](https://anitachowdry.wordpress.com/2014/07/11/iron-genie-at-the-museum-of-the-history-of-science-oxford/), [2](http://www.karlsims.com/harmonograph/)), it seems to me the two pendula attached to the pen can be approximated as two (probably orthogonal) vectors `$v_1$` and `$v_2$` that combine additively. The third pendulum adds an offset to the paper, so its effect is also additive.
 
 So the position of the pen (relative to the paper) at time $t$ is:
