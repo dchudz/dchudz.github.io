@@ -94,7 +94,7 @@ function drawPoint(oldPoint, newPoint) {
 	.attr("cx", x(newPoint[0]))
 	.attr("cy", y(newPoint[1]))
 	.attr("r", 2)
-	.transition().duration(fadeRate).style("opacity", 0).remove();
+	.transition().duration(.5*TIME_STEP_DELAY*1000).style("opacity", 0).remove();
 }
 
 nextStep(0, [0,0]);
