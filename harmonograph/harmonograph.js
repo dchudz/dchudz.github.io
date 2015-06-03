@@ -1,10 +1,10 @@
 var WIDTH = 500;
-var HEIGHT = 500;
+var HEIGHT = 400;
 var SPACE_STEP_SIZE = .1;
 var TIME_STEP_DELAY = .05;
 var DIRECTION_0 = $V([0,1])
 var DIRECTION_1 = $V([1,0])
-var DIRECTION_2 = $V([1,2]).multiply(1/Math.sqrt(2))
+var DIRECTION_2 = $V([1,1]).multiply(1/Math.sqrt(2))
 
 var lineFunction = d3.svg.line()
 .x(function (d) {
@@ -16,15 +16,15 @@ var lineFunction = d3.svg.line()
 .interpolate("linear");
 
 var x = d3.scale.linear()
-.domain([-2, 2])
+.domain([-3, 3])
 .range([0, WIDTH]);
 
 var y = d3.scale.linear()
-.domain([-2, 2])
+.domain([-3, 3])
 .range([HEIGHT, 0]);
 
 //Create SVG element
-var svg = d3.select("#lissijous")
+var svg = d3.select("#harmonograph")
 .append("svg")
 .attr("width", WIDTH)
 .attr("height", HEIGHT);
@@ -53,8 +53,7 @@ function nextStep(t, oldPoint) {
 
 	var V0 = DIRECTION_0.multiply(Math.sin((t+phaseShifts[0])*freqs[0]))
 	var V1 = DIRECTION_1.multiply(Math.sin((t+phaseShifts[1])*freqs[1]))
-	var V2 = DIRECTION_1.multiply(Math.sin((t+phaseShifts[2])*freqs[2]))
-
+	var V2 = DIRECTION_2.multiply(Math.sin((t+phaseShifts[2])*freqs[2]))
 	newVector = V0.add(V1).add(V2)
 	newPoint = newVector.elements
 
