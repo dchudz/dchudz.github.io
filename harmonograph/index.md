@@ -43,6 +43,7 @@ layout: default
     &Phi;<sub>1</sub>: <input id="phaseshift1" onchange="clear();" type="number" step=.1 value="0">
     &Phi;<sub>2</sub>: <input id="phaseshift2" onchange="clear();" type="number" step=.1 value="0">
   </p>
+  Fade out old points? <input type="checkbox" id="fade"></p>
 
 </div>
 

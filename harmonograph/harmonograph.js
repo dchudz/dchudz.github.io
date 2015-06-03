@@ -31,18 +31,18 @@ var svg = d3.select("#harmonograph")
 
 function getFreqs() {
 	return [
-			1 * $("#frequency0").val(), 
-			1 * $("#frequency1").val(),
-			1 * $("#frequency2").val()
-			];
+	1 * $("#frequency0").val(), 
+	1 * $("#frequency1").val(),
+	1 * $("#frequency2").val()
+	];
 }
 
 function getPhaseShifts() {
 	return [
-			1 * $("#phaseshift0").val(), 
-			1 * $("#phaseshift1").val(),
-			1 * $("#phaseshift2").val()
-			];
+	1 * $("#phaseshift0").val(), 
+	1 * $("#phaseshift1").val(),
+	1 * $("#phaseshift2").val()
+	];
 }
 
 
@@ -76,7 +76,12 @@ $(":input").bind('keyup mouseup', function () {
 
 
 function drawPoint(oldPoint, newPoint) {
-	fadeRate = Infinity
+	if ($("#fade").is(':checked')) {
+		fadeRate = 8000;
+	} else {
+		fadeRate = Infinity;
+	}
+	
 	svg.append("path")
 	.attr("d", lineFunction([oldPoint, newPoint]))
 
