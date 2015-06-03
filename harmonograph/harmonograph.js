@@ -16,11 +16,11 @@ var lineFunction = d3.svg.line()
 .interpolate("linear");
 
 var x = d3.scale.linear()
-.domain([-3, 3])
+.domain([-2, 2])
 .range([0, WIDTH]);
 
 var y = d3.scale.linear()
-.domain([-3, 3])
+.domain([-2, 2])
 .range([HEIGHT, 0]);
 
 //Create SVG element
