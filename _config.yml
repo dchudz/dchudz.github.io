@@ -9,3 +9,4 @@ description: David Chudzicki
 github_user: dchudz
 gravatar_url: https://secure.gravatar.com/avatar/63bcfcfcdf0fb75e508151e5fd944092
 exclude: [src]
+markdown_ext: "markdown,mkdown,mkdn,mkd,md"
