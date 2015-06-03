@@ -65,6 +65,14 @@ function nextStep(t, oldPoint) {
 
 }
 
+function clear() {
+	svg.selectAll("*").remove()
+}
+
+$(":input").bind('keyup mouseup', function () {
+	clear();
+});
+
 function drawPoint(oldPoint, newPoint) {
 	svg.append("path")
 	.attr("d", lineFunction([oldPoint, newPoint]))

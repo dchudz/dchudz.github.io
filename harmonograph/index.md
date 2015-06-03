@@ -33,15 +33,15 @@ layout: default
     <h2>Settings</h2>
     Frequencies:
     <p>
-    f<sub>0</sub>: <input id="frequency0" type="number" name="quantity" min=".1" max="10" step=.1 value="3">
-    f<sub>1</sub>: <input id="frequency1" type="number" name="quantity" min=".1" max="10" step=.1 value="2">
-    f<sub>2</sub>: <input id="frequency2" type="number" name="quantity" min=".1" max="10" step=.1 value="3">
+    f<sub>0</sub>: <input id="frequency0" onchange="clear();" type="number" name="quantity0" min=".1" max="10" step=.1 value="3">
+    f<sub>1</sub>: <input id="frequency1" onchange="clear();" type="number" name="quantity1" min=".1" max="10" step=.1 value="2">
+    f<sub>2</sub>: <input id="frequency2" onchange="clear();" type="number" name="quantity2" min=".1" max="10" step=.1 value="3">
   </p>
     Phases:
     <p>
-    &Phi;<sub>0</sub>: <input id="phaseshift0" type="number" name="quantity" min=".1" max="10" step=.1 value="0">
-    &Phi;<sub>1</sub>: <input id="phaseshift1" type="number" name="quantity" min=".1" max="10" step=.1 value="0">
-    &Phi;<sub>2</sub>: <input id="phaseshift2" type="number" name="quantity" min=".1" max="10" step=.1 value="0">
+    &Phi;<sub>0</sub>: <input id="phaseshift0" onchange="clear();" type="number" name="quantity3" min=".1" max="10" step=.1 value="0">
+    &Phi;<sub>1</sub>: <input id="phaseshift1" onchange="clear();" type="number" name="quantity4" min=".1" max="10" step=.1 value="0">
+    &Phi;<sub>2</sub>: <input id="phaseshift2" onchange="clear();" type="number" name="quantity5" min=".1" max="10" step=.1 value="0">
   </p>
 
 </div>
