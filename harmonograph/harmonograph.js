@@ -73,20 +73,23 @@ $(":input").bind('keyup mouseup', function () {
 	clear();
 });
 
+
+
 function drawPoint(oldPoint, newPoint) {
+	fadeRate = Infinity
 	svg.append("path")
 	.attr("d", lineFunction([oldPoint, newPoint]))
 
 	.attr("stroke", "red")
 	.attr("stroke-WIDTH", 2)
 	.attr("fill", "none")
-	.transition().duration(8000).style("opacity", 0).remove();
+	.transition().duration(fadeRate).style("opacity", 0).remove();
 
 	svg.append("circle")
 	.attr("cx", x(newPoint[0]))
 	.attr("cy", y(newPoint[1]))
 	.attr("r", 2)
-	.transition().duration(8000).style("opacity", 0).remove();
+	.transition().duration(fadeRate).style("opacity", 0).remove();
 }
 
 nextStep(0, [0,0]);
