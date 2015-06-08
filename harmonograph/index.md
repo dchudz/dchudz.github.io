@@ -3,8 +3,15 @@ title: Harmonograph
 layout: default
 ---
 
+<link href="/libraries/nouislider/jquery.nouislider.min.css" rel="stylesheet">
+
+<script src="/libraries/nouislider/jquery.nouislider.all.min.js"></script>
+
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="sylvester.js" charset="utf-8"></script>
+
+
+
 
 
 <style>
@@ -28,21 +35,23 @@ layout: default
 }  
 </style>
 
+<script>
+function clear() {
+  svg.selectAll("*").remove()
+}
+</script>
+
+
 <div>
     <div id="harmonograph"></div>
     <h2>Settings</h2>
     Frequencies:
-    <p>
-    f<sub>0</sub>: <input id="frequency0" onchange="clear();" type="number" step=.1 value="3">
-    f<sub>1</sub>: <input id="frequency1" onchange="clear();" type="number" step=.1 value="2">
-    f<sub>2</sub>: <input id="frequency2" onchange="clear();" type="number" step=.1 value="3.01">
-  </p>
+    <div id="frequency_text_inputs"></div>
+    <div id="frequency_inputs"></div>
     Phases:
-    <p>
-    &Phi;<sub>0</sub>: <input id="phaseshift0" onchange="clear();" type="number" step=.1 value="0">
-    &Phi;<sub>1</sub>: <input id="phaseshift1" onchange="clear();" type="number" step=.1 value="0">
-    &Phi;<sub>2</sub>: <input id="phaseshift2" onchange="clear();" type="number" step=.1 value="0">
-  </p>
+        <div id="phase_text_inputs"></div>
+    <div id="phase_inputs"></div>
+
   Fade out old points? <input type="checkbox" id="fade"></p>
 
 </div>
@@ -62,7 +71,7 @@ So the position of the pen (relative to the paper) at time $t$ is:
 
 where 
 
-`$$v_i = \sin(f_i(t+\Phi_i))$$`
+`$$v_i = \sin(f_it + \Phi_i)$$`
 
 where `$f_i$` is the frequency of pendulum `$i$` and `$\Phi_i$` is an adjustment to the phase.
 
