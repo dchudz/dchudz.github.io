@@ -49,8 +49,11 @@ function clear() {
     <div id="frequency_text_inputs"></div>
     <div id="frequency_inputs"></div>
     Phases:
-        <div id="phase_text_inputs"></div>
+    <div id="phase_text_inputs"></div>
     <div id="phase_inputs"></div>
+    Amplitudes:
+    <div id="amplitude_text_inputs"></div>
+    <div id="amplitude_inputs"></div>
 
   Fade out old points? <input type="checkbox" id="fade"></p>
 

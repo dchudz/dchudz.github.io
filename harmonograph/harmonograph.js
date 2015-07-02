@@ -60,6 +60,34 @@ function appendPhaseSlider(i, initial) {
 });
 }
 
+function appendAmpSlider(i, initial) {
+	var amplitudeInputsDiv = $("#amplitude_inputs")
+	var amplitudeTextInputsDiv = $("#amplitude_text_inputs")
+	
+	amplitudeTextInputsDiv.append('f<sub>' + i + '</sub><input type="text" id="textinput_amplitude' + i + '">')
+	amplitudeInputsDiv.append('<div width="50" id="amplitude' + i + '"></div>')
+
+
+	var slider = $("#amplitude" + i);
+	var input = $('#textinput_amplitude' + i);
+
+	slider.noUiSlider({
+		step: .01,
+		range: {
+			'min': 0,
+			'max': 1
+		},
+		start: [initial]
+	});
+
+	slider.Link('lower').to(input);
+
+	slider.on({
+	change: function(){
+		clear();
+	}
+});
+}
 
 appendFrequencySlider(0, 3);
 appendFrequencySlider(1, 2);
@@ -68,6 +96,11 @@ appendFrequencySlider(2, 3.01);
 appendPhaseSlider(0,0);
 appendPhaseSlider(1,0);
 appendPhaseSlider(2,0);
+
+appendAmpSlider(0,1);
+appendAmpSlider(1,1);
+appendAmpSlider(2,1);
+
 
 // A select element can't show any decimals
 $('#html5').Link('lower').to($('#input-select'), null, wNumb({
@@ -123,6 +156,14 @@ function getPhaseShifts() {
 	];
 }
 
+function getAmplitudes() {
+	return [
+	1 * $("#amplitude0").val(), 
+	1 * $("#amplitude1").val(),
+	1 * $("#amplitude2").val()
+	];
+}
+
 var t=0;
 
 function nextStep(oldPoint) {
@@ -130,10 +171,11 @@ function nextStep(oldPoint) {
 	var freqs = getFreqs();
 	$("#frequency0_value").val(freqs[0]);
 	var phaseShifts = getPhaseShifts();
+	var amps = getAmplitudes();
 
-	var V0 = DIRECTION_0.multiply(Math.sin(t*freqs[0] + phaseShifts[0]))
-	var V1 = DIRECTION_1.multiply(Math.sin(t*freqs[1] + phaseShifts[1]))
-	var V2 = DIRECTION_2.multiply(Math.sin(t*freqs[2] + phaseShifts[2]))
+	var V0 = DIRECTION_0.multiply(amps[0]*Math.sin(t*freqs[0] + phaseShifts[0]))
+	var V1 = DIRECTION_1.multiply(amps[1]*Math.sin(t*freqs[1] + phaseShifts[1]))
+	var V2 = DIRECTION_2.multiply(amps[2]*Math.sin(t*freqs[2] + phaseShifts[2]))
 	newVector = V0.add(V1).add(V2)
 	newPoint = newVector.elements
 
@@ -179,4 +221,7 @@ function drawPoint(oldPoint, newPoint) {
 	.transition().duration(.5*TIME_STEP_DELAY*1000).style("opacity", 0).remove();
 }
 
-nextStep(0, [0,0]);
+
+$( document ).ready(function() {
+    nextStep([0,0]);
+});
