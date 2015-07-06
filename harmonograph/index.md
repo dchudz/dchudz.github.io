@@ -66,7 +66,7 @@ function clear() {
 
 ([source code](https://github.com/dchudz/dchudz.github.io/blob/master/harmonograph/harmonograph.js))
 
-After looking at some pictures of harmonographs ([1](https://anitachowdry.wordpress.com/2014/07/11/iron-genie-at-the-museum-of-the-history-of-science-oxford/), [2](http://www.karlsims.com/harmonograph/)), it seems to me the two pendula attached to the pen can be approximated as two (probably orthogonal) vectors `$v_1$` and `$v_2$` that combine additively. The third pendulum adds an offset to the paper, so its effect is also additive.
+After talking with John Baez and looking at some pictures of harmonographs ([1](https://anitachowdry.wordpress.com/2014/07/11/iron-genie-at-the-museum-of-the-history-of-science-oxford/), [2](http://www.karlsims.com/harmonograph/)), it seems to me the two pendula attached to the pen can be approximated as two (probably orthogonal) vectors `$v_1$` and `$v_2$` that combine additively. The third pendulum adds an offset to the paper, so its effect is also additive.
 
 So the position of the pen (relative to the paper) at time $t$ is:
 
@@ -74,14 +74,10 @@ So the position of the pen (relative to the paper) at time $t$ is:
 
 where 
 
-`$$v_i = \sin(f_it + \Phi_i)$$`
+`$$v_i = A_i\sin(f_it + \Phi_i)$$`
 
-where `$f_i$` is the frequency of pendulum `$i$` and `$\Phi_i$` is an adjustment to the phase.
+where:
 
-Assuming I'm thinking about this correctly so far, some things we could do next are:
-
-- it would be nice if the path is still smooth even when you change the settings (currently it jumps)
-  + (note: the [Lissijous curves](http://www.davidchudzicki.com/lissijous.html) achieve this)
-- add a display showing where each of the pendulums is at each point in time?
-- allow the user to change the direction of one of the pendulums?
-- add friction
+- `$f_i$` is the frequency of pendulum `$i$`,
+-  `$\Phi_i$` is an adjustment to the phase,
+-  `$A_i$` is the amplitude
