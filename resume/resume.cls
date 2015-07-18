@@ -65,6 +65,7 @@
 \newcommand{\@citystatezip}{}
 \newcommand{\@phone}{}
 \newcommand{\@webpage}{}
+\newcommand{\@github}{}
 
 
 \renewcommand{\author}[1]{\renewcommand{\@authorname}{#1}}
@@ -72,6 +73,7 @@
 \newcommand{\streetaddress}[1]{\renewcommand{\@streetaddress}{#1}}
 \newcommand{\citystatezip}[1]{\renewcommand{\@citystatezip}{#1}}
 \newcommand{\phone}[1]{\renewcommand{\@phone}{#1}}
+\newcommand{\github}[1]{\renewcommand{\@github}{\href{#1}{#1}}}
 \newcommand{\webpage}[1]{\renewcommand{\@webpage}{\href{#1}{#1}}}
 
 \renewcommand{\maketitle}{{%
@@ -111,8 +113,8 @@
         }{%
 %
           \begin{tabular*}{\linewidth}{l@{\extracolsep{\fill}}r}%
-            \@streetaddress & \@citystatezip \\%
-            &                        \@webpage
+            \@streetaddress &  \@webpage\\ %
+            \@citystatezip &                        \@github
           \end{tabular*}%
         }}%
      \ifthenelse{\equal{\@email}{}}{}{%
