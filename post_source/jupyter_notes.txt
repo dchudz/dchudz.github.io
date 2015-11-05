@@ -1,0 +1,48 @@
+Notes for blog post on using ipython notebooks with jekyll / github pages:
+
+1. Set Jupyter Notebook to strip results from the notebook before saving. This isn't strictly necessary, but I much prefer it whenever I'm checking notebooks in to version control (which is always!).
+
+https://jupyter-notebook.readthedocs.org/en/latest/extending/savehooks.html
+
+jupyter notebook --generate-config
+
+def scrub_output_pre_save(model, **kwargs):
+    """scrub output before saving notebooks"""
+    # only run on notebooks
+    if model['type'] != 'notebook':
+        return
+    # only run on nbformat v4
+    if model['content']['nbformat'] != 4:
+        return
+
+    for cell in model['content']['cells']:
+        if cell['cell_type'] != 'code':
+            continue
+        cell['outputs'] = []
+        cell['execution_count'] = None
+
+c.FileContentsManager.pre_save_hook = scrub_output_pre_save
+
+2. Create notebook and header file in post_source
+
+---
+title: "Ggplot2 in Python"
+layout: post
+category: posts
+draft: true
+---
+
+3. Generate html in _posts (I use makefile):
+
+	rm -f ../_posts/*-$(PYTHON_GGPLOT2_NAME).md
+	cp $(PYTHON_GGPLOT2_NAME).header $@
+	jupyter nbconvert --to=html --template basic  --ExecutePreprocessor.enabled=True python-ggplot2.ipynb --stdout >> $@
+
+
+4. customize css (css/base.css).
+
+/* (to customize jupyter notebook output) */
+a.anchor-link {
+  display: none;
+}
+div.prompt {display:none}

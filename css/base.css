@@ -1,4 +1,10 @@
 
+/* (to customize jupyter notebook output) */
+a.anchor-link {
+  display: none;
+}
+div.prompt {display:none}
+
 @charset "UTF-8";
 body {
   font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;

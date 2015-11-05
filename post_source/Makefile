@@ -49,3 +49,12 @@ $(PRES_INTERACTION_OR_NOT_WITH_BART): presentations/interaction-or-not-with-bart
 
 interaction-or-not-slides: $(PRES_INTERACTION_OR_NOT_NO_BART) $(PRES_INTERACTION_OR_NOT_WITH_BART)
 
+
+PYTHON_GGPLOT2_DATE := 2015-11-06
+PYTHON_GGPLOT2_NAME := python-ggplot2
+PYTHON_GGPLOT2 = ../_posts/$(PYTHON_GGPLOT2_DATE)-$(PYTHON_GGPLOT2_NAME).html
+python-ggplot2: $(PYTHON_GGPLOT2)
+$(PYTHON_GGPLOT2): $(PYTHON_GGPLOT2_NAME).ipynb $(PYTHON_GGPLOT2_NAME).header
+	rm -f ../_posts/*-$(PYTHON_GGPLOT2_NAME).md
+	cp $(PYTHON_GGPLOT2_NAME).header $@
+	jupyter nbconvert --to=html --template basic  --ExecutePreprocessor.enabled=True python-ggplot2.ipynb --stdout >> $@
