@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=latex 2013.5.30)  19 JUL 2015 17:56
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=latex 2013.5.30)  6 NOV 2015 20:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -558,15 +558,15 @@ LaTeX Info: Redefining \nameref on input line 12.
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(92.14519pt, 430.00462pt, 92.14519pt)
-* v-part:(T,H,B)=(7.22743pt, 787.74255pt, 0.0pt)
+* h-part:(L,W,R)=(65.04256pt, 484.20988pt, 65.04256pt)
+* v-part:(T,H,B)=(0.0pt, 794.96999pt, 0.0pt)
 * \paperwidth=614.295pt
 * \paperheight=794.96999pt
-* \textwidth=430.00462pt
-* \textheight=787.74255pt
-* \oddsidemargin=19.8752pt
-* \evensidemargin=19.8752pt
-* \topmargin=-102.04256pt
+* \textwidth=484.20988pt
+* \textheight=794.96999pt
+* \oddsidemargin=-7.22743pt
+* \evensidemargin=-7.22743pt
+* \topmargin=-109.26999pt
 * \headheight=12.0pt
 * \headsep=25.0pt
 * \topskip=10.0pt
@@ -605,44 +605,38 @@ File: omsptm.fd
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 24.
 
-Underfull \hbox (badness 10000) in paragraph at lines 34--35
+Underfull \hbox (badness 10000) in paragraph at lines 44--45
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 59--60
+Underfull \hbox (badness 10000) in paragraph at lines 69--70
 
  []
 
 
-Overfull \hbox (11.91043pt too wide) in paragraph at lines 67--68
+Overfull \hbox (2.61479pt too wide) in paragraph at lines 77--78
 []\T1/ptm/b/n/10 Simulated Knit-ting ([]http://blog.davidchudzicki.com/2011/11/
-simulated-knitting.html[])\T1/ptm/m/n/10 : Rep-re-sented
+simulated-knitting.html[])\T1/ptm/m/n/10 : Rep-re-sented knit-ted ob-
  []
 
-
-Overfull \hbox (2.9607pt too wide) in paragraph at lines 78--82
-\T1/ptm/m/n/10 learn-ing meth-ods for high-dimensional (esp. semi-supervised) s
-et-tings that ex-ploit a lower-dimensional
- []
-
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 126.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 136.
 [1
 
 {/usr/local/texlive/2013/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 126.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 136.
 
 (./resume.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 126.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 126.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 136.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 136.
 Package rerunfilecheck Info: File `resume.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 126.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 136.
  ) 
 Here is how much of TeX's memory you used:
  12604 strings out of 493316
  217233 string characters out of 6137930
- 298250 words of memory out of 5000000
+ 299271 words of memory out of 5000000
  15826 multiletter control sequences out of 15000+600000
  33503 words of font info for 37 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
@@ -652,10 +646,10 @@ exlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
 xlive/2013/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2013
 /texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013/texmf-dis
 t/fonts/type1/urw/times/utmri8a.pfb>
-Output written on resume.pdf (1 page, 63293 bytes).
+Output written on resume.pdf (1 page, 63525 bytes).
 PDF statistics:
- 57 PDF objects out of 1000 (max. 8388607)
- 41 compressed objects within 1 object stream
+ 56 PDF objects out of 1000 (max. 8388607)
+ 40 compressed objects within 1 object stream
  2 named destinations out of 1000 (max. 500000)
  61 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -27,7 +27,7 @@
 \RequirePackage{times}
 \RequirePackage[T1]{fontenc}
 
-\RequirePackage[tmargin=.1in,bmargin=0in]{geometry}
+\RequirePackage[margin=.9in, tmargin=0in,bmargin=0in]{geometry}
 
 \definecolor{rulestartcolor}{rgb}{0,0,0}
 \definecolor{ruleendcolor}{rgb}{0.4,0.4,0.4}
