@@ -33,7 +33,7 @@
 \definecolor{ruleendcolor}{rgb}{0.4,0.4,0.4}
 
 \newlength{\headerbuffer}
-\setlength{\headerbuffer}{1pt}
+\setlength{\headerbuffer}{2pt}
 \newlength{\secskip}
 \setlength{\secskip}{6pt}
 
