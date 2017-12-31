@@ -1,6 +1,6 @@
 markdown: redcarpet
 highlighter: true
-permalink: /posts/:title
+permalink: /posts/:title/
 rdiscount:
 extensions: [smart]
 name: David Chudzicki
