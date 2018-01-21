@@ -1,4 +1,6 @@
 markdown: redcarpet
+redcarpet:
+  extensions: ["footnotes"]
 highlighter: true
 permalink: /posts/:title/
 rdiscount:
