@@ -50,7 +50,7 @@ I think we can use Ethereum to achieve these incentives. This procedure will req
 
 ## Contract
 
-This is pretty rough, but here's a basic idea of the kinds of functions the constract would have to support this flow:
+This is pretty rough, but here's a basic idea of the kinds of functions the [Ethereum constract](https://www.ethereum.org/greeter) would need:
 
 - (constructor) - should store the addresses of the secret-holders and secret-sharer; the contract should be created with enough funds to pay the secret-holders for their participation
 - `store_hash($p_i$)` - each `$p_i$` calls this with the `hash($s_i$)`, which is stored.
