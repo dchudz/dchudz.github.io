@@ -60,11 +60,11 @@ This is pretty rough, but here's a basic idea of the kinds of functions the [Eth
 - `release($s_i$)` - (only callable after `should_release()` is true) `$p_i$` sends `s_i`, we confirm that its hash matches the stored hash, and `$p_i$` receives their deposit payment, plus their payment for participating
 
 
-## How to Add[^2]
+## How to Add
 
-[^2]: This isn't original to me.
+[^2]: Adding this way isn't original to me. I'm not sure where I came across this, but there's a large literature on this kind of thing.
 
-How do we compute the sum `S = $\sum_{i=0}^n s_i$` without revealing anyone's `$s_i$`? Here's one way:
+How do we compute the sum `S = $\sum_{i=0}^n s_i$` without revealing anyone's `$s_i$`? Here's one way[^2]:
 
 1. Each `$p_i$` generates a random `$r_{ij}$` to send to each `$p_j$`.
 2. Each `$p_i$` now knows `$r_{ij}$` and `$r_{ji}$` for all other players `$j$`.
