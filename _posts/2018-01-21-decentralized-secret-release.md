@@ -1,13 +1,13 @@
 ---
 layout: post
 category: posts
-draft: true
+draft: false
 title: Decentralized Triggered Secret Release
 ---
 
 ## Intro
 
-Have you ever had to confront a villain with your discoveries, knowing that unless you take precautions first they might just kill you? Or gone on a dangerous adventure, wanting to keep the details secret until you come back (or unless you don't)? Or wanted your passwords to be shared with a friend if you became long-term unavailable?
+Have you ever had to confront a villain with your discoveries, knowing that unless you take precautions they might just kill you? Or gone on a dangerous adventure, wanting to keep the details secret until you come back (or unless you don't)? Or wanted your passwords to be shared with a friend if you became long-term unavailable?
 
 I haven't either, but who knows.
 
@@ -101,3 +101,7 @@ The scheme requires the secret to be released within some fixed time period, bec
 Alternatively, we could set things up so that the secret-sharing has the option to pay the holders for each additional time period during which they don't release the secret. As with the originl payment, the continuing would have to be at least a bit higher than the interest the secret-holders could receive on their deposit if they hadn't made it.
 
 The secret-holders would not have the option to withdraw their deposit unless the secret-sharer stops paying.
+
+## Thanks
+
+Thanks to my friend Jeff Kaufman for earlier conversations about this.
