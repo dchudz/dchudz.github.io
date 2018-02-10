@@ -1,22 +1,24 @@
 ---
 layout: post
 category: posts
-draft: false
+draft: true
 title: Git First-Parent-- Have your messy history and eat it too
 ---
+
+(Draft)
 
 ## Intro
 
 The 1st thing I encountered learning about git: there's a lot of conflict about whether it's important to keep a "clean" git history by squashing, rebasing instead of merging, etc.
 
-For cleanliness[^1]:
+In favor of 'cleanliness' [^1]:
 
 - `git log` shows the higher-level history most people will care more about
 - the one-to-one relationship between code-reviewed changes and commits
 - it's quicker to identify where problems were introduced
 - it's safer to revert (and easier to use tools like `git bisect`) because every commit on `master` should be good (often very important when quickly fixing production problems)
 
-Against squashing:
+Against:
 
 - just committing often and merging normally is much easier for newbies, and somewhat easier for everyone
 - messing with history complicates everything
@@ -25,8 +27,7 @@ Against squashing:
 - code review, what changed
 - squashing complicates various operations (like branching off a branch that's under review to work on something new that depends on it)[^2]
 
-
-The 2nd was a blog post (sorry, can't find it now) arguing that this disagreement is stupid and git is stupid because the clean-history group is having a problem with *data display*, not *data collection*. The problem isn't the extra information (messy commits): it's that the information isn't displayed in a way that shows them what they're interested in (larger changes that are code-reviewed, pass the tests, etc.).
+Around then, I came across a blog post (sorry, can't find it now) arguing that this disagreement is stupid and git is stupid because the clean-history group is having a problem with *data display*, not *data collection*. The problem isn't the extra information (messy commits): it's that the information isn't displayed in a way that shows them what they're interested in (larger changes that are code-reviewed, pass the tests, etc.).
 
 The post struck a chord with me, but didn't suggest any solution so I got grumpy and otherwise ignored it.
 
@@ -36,14 +37,16 @@ Now I know about `--first-parent` (because my last company used it) which gets y
 
 When `git log` encounters a merge commit, it normally follows the history backwards through both parents. 
 
+For example, 
 
-- `git ... --first-parent` 
-
+[^3]]
 
 # 
 
+So then [^4]
+
 ```
-> git log --format=oneline
+> git log
 7e066dba825c1d69afba3f85224d0b1105cf6f6d Merge branch 'feature-branch'
 29061db581422e881da5da82e240c81fdd1b621e 2nd commit on master
 04bb2b70e652e180147478159a265c13f5e34205 2nd commit on feature
@@ -117,5 +120,27 @@ against:
 https://github.com/AgileVentures/AgileVentures/issues/7
 
 
-[^1]: hi
-[^2]: hihi
+[^1]: If it weren't for the `--first-parent` option discussed in this post, I would find these considerations decisive.
+
+[^2]: If you make changes to the 1st branch (based on code review feedback) and squash them into the previous commit, it can be tricky to merge those changes into your 2nd feature branch.
+
+[^3]:
+```
+git init
+touch hi
+git add hi
+git commit -m '1st commit on master'
+git checkout -b feature-branch
+echo "cats" > feature
+git add feature
+git commit -m '1st commit on feature'
+echo 'dogs' >> feature
+git add feature
+git commit -m '2nd commit on feature'
+git checkout master
+echo "hello" >> "hi"
+git commit -am "2nd commit on master"
+git merge feature-branch
+```
+
+[^4]: My log is showing up consisely formatted because I did `git config format.pretty "format:%h%x09%an%x09%ad%x09%s"`
