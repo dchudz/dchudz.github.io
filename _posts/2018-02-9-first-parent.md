@@ -75,7 +75,13 @@ You can also use `--first-parent` with other git commands, like `blame` and `rev
 
 ## Don't fast forward
 
-By default, git uses a "fast-forward" when the two branches haven't diverged at all so you don't really need a merge at all. The new commits are just applied as-is with no merge. If you're hoping to get a clean history from `--first-parent`, you should avoid that because then the individual commits from your feature branch would show up in `git log --first parent`. You should only merge with the  `--no-ff` option, which is Github's default merge strategy. 
+By default, git uses a "fast-forward" when the two branches haven't diverged at all so you don't really need a merge at all. The new commits are just applied as-is with no merge. If you're hoping to get a clean history from `--first-parent`, you should avoid that because then the individual commits from your feature branch would show up in `git log --first parent`. You should only merge with the  `--no-ff` option, which is Github's default merge strategy.
+
+You can turn fast-forward off (for a particular local repository) by running:
+
+```
+git config --global --add merge.ff false
+```
 
 ## Give your merge commits a good top-line message
 
@@ -86,6 +92,11 @@ If you're using Github, it will by default put the the pull request title in the
 At the company where I was introduced to `--first-parent`, I think we used a custom script that made more useful topline merge commit messages based on pull request titles. But I don't expect everyone to do that, so I'm not sure what to suggest. Unfortunately, this alone might be enough reason to use the squash option instead, if you're using Github for your merges.
 
 Where I work now, if you merge using our (internal) code review tool, the default commit message for the merge will have its top line be the title of your pull request. That's great for this workflow, because a good commit message for posterity is the same as a good title for reviewers. Just by looking at the title of your request, reviewers are reviewing the commit message.
+
+## `--first-parent` is useful in feature branches too
+
+Let's say you're in a feature branch and have merged changes from `master` a few times. Then using `--first-parent` here in your feature branch has the same benefits, but in reverse: You can see the history of your work on this feature, but with merges from `master` grouped into a single commit.
+
 
 ## I hope tooling gets better
 
