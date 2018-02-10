@@ -1,3 +1,25 @@
+---
+layout: post
+category: posts
+draft: false
+title: Git First-Parent: Have your messy history and eat it too
+---
+
+The 1st thing I encountered learning about git: some people care a lot about a "clean git history" and other people can't be bothered to "squash" commits, rebase-instead-of-merge, etc. (and don't like "changing history").
+
+The 2nd was a blog post (sorry, can't find it now) arguing that this disagreement is stupid and git is stupid because the clean-history group is having a problem with *data display*, not *data collection*. The problem isn't the extra information (messy commits): it's that the information isn't displayed in a way that shows them what they're interested in (larger changes that are code-reviewed, pass the tests, etc.).
+
+The post struck a chord with me, but didn't suggest any solution so I got grumpy and otherwise ignored it.
+
+Now I know about `--first-parent` (because my last company used it) which gets you the best of all worlds:
+
+When `git log` encounters a merge commit, it normally follows the history backwards through both 
+
+
+- `git ... --first-parent` 
+
+
+# 
 
 
 
