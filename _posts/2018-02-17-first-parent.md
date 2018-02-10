@@ -2,7 +2,7 @@
 layout: post
 category: posts
 draft: false
-title: Git First-Parent: Have your messy history and eat it too
+title: Git First-Parent-- Have your messy history and eat it too
 ---
 
 ## Intro
