@@ -102,10 +102,10 @@ Let's say you're in a feature branch and have merged changes from `master` a few
 
 The workflow I've described here seems good enough that I would suggest it for my team. But not all tools will nicely support `--first-parent`. For example:
 
-- most code reviewers (e.g. Github's, or my current company's internal one) will show you a list of commits on a branch, but won't let you filter that by `--first-parent`
+- most online code viewing tools (e.g. Github's, or my current company's internal one) will show you a list of commits on a branch, but won't let you filter that by `--first-parent`
 - some editors (e.g. PyCharm) will annotate lines with git history (like `git blame`), but often won't let you customize this by giving option like `--first-parent`
 - for this workflow, you really want the pull request title to be in the top line of the merge commit message
--
+- some `git` commands don't support `--first-parent` (but some do even if they're not documented as doing so!)
 
 ## Thanks
 
