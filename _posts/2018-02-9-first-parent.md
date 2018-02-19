@@ -1,11 +1,9 @@
 ---
 layout: post
 category: posts
-draft: true
+draft: false
 title: Git First-Parent-- Have your messy history and eat it too
 ---
-
-(Draft)
 
 ## Intro
 
@@ -34,7 +32,7 @@ Now I know about `--first-parent` (because my last company used it) which gets y
 
 ## First Parent
 
-When `git log` encounters a merge commit, it normally follows the history backwards through both parents. 
+When `git log` encounters a merge commit, it normally follows the history backwards through both parents.
 
 For example, after branching off master, adding some commits, and merging into master[^4], we might see[^5]:
 
@@ -56,6 +54,8 @@ But if we say `--first-parent`, `git log` will ignore all of the history in the 
 725034c David Chudzicki Sat Feb 10 14:21:23 2018 -0500  first commit on master
 ```
 
+Which is the "first" and which is the "second" parent of a merge? If you're on branch `some-branch` and say `git merge some-other branch`, then the *first* parent is the latest commit on `some-branch` and the *second* is the latest commit on `some-other-branch`.
+
 You can also use `--first-parent` with other git commands, like `blame` and `rev-list`. By default we see the two individual commits in the file introduced by the merge:
 
 ```
@@ -75,12 +75,12 @@ You can also use `--first-parent` with other git commands, like `blame` and `rev
 
 ## Don't fast forward
 
-By default, git uses a "fast-forward" when the two branches haven't diverged at all so you don't really need a merge at all. The new commits are just applied as-is with no merge. If you're hoping to get a clean history from `--first-parent`, you should avoid that because then the individual commits from your feature branch would show up in `git log --first parent`. You should only merge with the  `--no-ff` option, which is Github's default merge strategy.
+By default, git uses a "fast-forward" when the two branches haven't diverged at all so you don't really need a merge at all. The new commits are just applied as-is with no merge. If you're hoping to get a clean history from `--first-parent`, you should avoid that because then the individual commits from your feature branch would show up in `git log --first-parent`. You should only merge with the  `--no-ff` option, which is Github's default merge strategy.
 
 You can turn fast-forward off (for a particular local repository) by running:
 
 ```
-git config --global --add merge.ff false
+git config --local --add merge.ff false
 ```
 
 ## Give your merge commits a good top-line message
@@ -104,6 +104,12 @@ The workflow I've described here seems good enough that I would suggest it for m
 
 - most code reviewers (e.g. Github's, or my current company's internal one) will show you a list of commits on a branch, but won't let you filter that by `--first-parent`
 - some editors (e.g. PyCharm) will annotate lines with git history (like `git blame`), but often won't let you customize this by giving option like `--first-parent`
+- for this workflow, you really want the pull request title to be in the top line of the merge commit message
+-
+
+## Thanks
+
+Thanks to Ben Kuhn for comments on an earlier draft, and showing me this when we worked together.
 
 
 [^1]: If it weren't for the `--first-parent` option discussed in this post, I would find these considerations decisive.
