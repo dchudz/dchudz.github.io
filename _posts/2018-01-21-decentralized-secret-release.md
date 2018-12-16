@@ -46,7 +46,7 @@ I think we can use Ethereum to achieve these incentives. This procedure will req
 3. For convenience, let's say the secret is $s_0$.
 4. Everyone sends the hash of their $s_i$ to the contract.
 5. Then everyone computes and releases the sum `S = $\sum_{i=0}^n s_i$` without revealing anyone's `$s_i$` (see below for more on how to do this). `$S$` is now public, but doesn't reveal anything about the secret.
-6. If the contract's "release" condition is triggered, then the secret-sharers each release ~~$s_o$~~`$s_i$` (`$1 \leq i \leq N$`).
+6. If the contract's "release" condition is triggered, then the secret-sharers each release `$s_i$` (`$1 \leq i \leq N$`).
 7. Now the secret `$s_0$` is public, since `$s_0 = S - \sum_{i=1}^n s_i$`.
 
 ## Contract
