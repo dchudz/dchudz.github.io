@@ -31,7 +31,7 @@ There are some incentives we need to get right in order for this to work:
 - each secret-holder should be rewarded for participating in the process (regardless of whether the condition is triggered)
 - each secret-holder should be punished if they release their part of the secret too early
 - each secret-holder should be punished if they fail to release their part of the secret after the condition is triggered
-- each secret-holder should be able to trust that no one else knows their part of the secret 
+- each secret-holder should be able to trust that no one else knows their part of the secret
 
 The last condition rules out a straightforward application of [Shamir's secret sharing](https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing). We can't have the secret-sharer compute the secret-holders' shares of the secret, since then the secret-holders couldn't trust that they won't be wrongly punished (if the secret-holder accidentally or purposefully released some or all of the shares).
 
@@ -45,8 +45,9 @@ I think we can use Ethereum to achieve these incentives. This procedure will req
 2. Each secret-holder `$p_i$` (`$1 \leq i \leq N$`) generates a random string `$s_i$` of the same length as the secret.
 3. For convenience, let's say the secret is $s_0$.
 4. Everyone sends the hash of their $s_i$ to the contract.
-5. Then everyone computes the sum `S = $\sum_{i=0}^n s_i$` without revealing anyone's `$s_i$` (see below for more on how to do this). `$S$` is now public, but doesn't reveal anything about the secret.
-6. If the contract's "release" condition is triggered, then the secret-sharers each release $s_o$. 
+5. Then everyone computes and releases the sum `S = $\sum_{i=0}^n s_i$` without revealing anyone's `$s_i$` (see below for more on how to do this). `$S$` is now public, but doesn't reveal anything about the secret.
+6. If the contract's "release" condition is triggered, then the secret-sharers each release ~~$s_o$~~`$s_i$` (`$1 \leq i \leq N$`).
+7. Now the secret `$s_0$` is public, since `$s_0 = S - \sum_{i=1}^n s_i$`.
 
 ## Contract
 
@@ -89,7 +90,7 @@ We really want the secret to be reconstructable from just a smaller subset of th
 
 I think it's probably possible to do this using polynomials like in [Shamir's secret sharing](https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing) - but a very inefficient (probably too inefficient) way would be to repeat the procedure for each subset of `$M$` secret-holders.
 
-## Amortize 
+## Amortize
 
 It might make sense for a secret-holder to be able to use the same deposit for multiple different people's secrets. The benefit would be having a larger deposit overall, so perhaps greater security. The drawback would be that once a secret-holder has lost their deposit for revealing one `$s_i$` too early, they have no incentive to keep the others secret or reveal them at the right time.
 
